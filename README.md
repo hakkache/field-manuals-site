@@ -43,6 +43,15 @@ a `CNAME` DNS record at `YOUR-USERNAME.github.io`. Enable **Enforce HTTPS** in P
 
 Everything is driven by `assets/js/catalogue.js`.
 
+**Step zero — turn prices on.** They're hidden until you're ready:
+
+```js
+const SHOW_PRICES = true;   // currently false
+```
+
+While false, guides show a dash, bundles show their guide count, and the tiers
+say "Pricing soon". Flip it and every price appears at once.
+
 **Step one — set your Gumroad username**, at the top of the file:
 
 ```js
