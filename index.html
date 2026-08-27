@@ -73,45 +73,31 @@
       </p>
 
       <div class="hero-cta">
-        <a class="btn btn-primary" data-buy="autoloader" href="#free">
-          Get Auto Loader — Free
-          <span class="btn-meta">47 pages · complete manual</span>
+        <a class="btn btn-primary" id="hero-buy-btn" data-buy="1" href="#free">
+          <span id="hero-buy-label">Get Auto Loader — Free</span>
+          <span class="btn-meta" id="hero-buy-meta">47 pages · complete manual</span>
         </a>
         <a class="btn btn-ghost" href="#catalogue">Explore the Catalogue</a>
       </div>
 
-      <p class="hero-note">
+      <p class="hero-note" id="hero-note">
         <span class="badge badge-available">Available now</span>
-        <span>47 pages · Free</span>
+        <span id="hero-note-meta">47 pages · Free</span>
       </p>
     </div>
 
     <div class="hero-art">
-      <div class="cover-stack">
+      <div class="cover-stack" id="hero-slider">
         <div class="cover-ghost cover-ghost-2" aria-hidden="true"></div>
         <div class="cover-ghost cover-ghost-1" aria-hidden="true"></div>
-        <span class="cover-flag">Available now</span>
+        <span class="cover-flag" id="hero-flag">Available now</span>
 
-        <article class="cover" style="--cc:var(--teal)" aria-label="Auto Loader Field Manual cover">
-          <div class="grid-bg" aria-hidden="true"></div>
-          <p class="cover-series">Databricks Guide Series</p>
-          <p class="cover-kind">Field Manual</p>
-          <div class="cover-bar" aria-hidden="true"></div>
-          <h2 class="cover-name">Auto<br>Loader</h2>
-          <p class="cover-cat">01 — Ingestion</p>
-          <div class="cover-mid">
-            <div class="cover-spine">
-              <span>Architecture</span>
-              <span>Failure Modes</span>
-              <span>Production Patterns</span>
-              <span>Checklists</span>
-            </div>
-          </div>
-          <div class="cover-foot">
-            <p class="cover-pages">47<small>Pages</small></p>
-            <p class="cover-wm">HAKKACHE MOHAMED</p>
-          </div>
-        </article>
+        <button class="hero-sl-arrow hero-sl-prev" id="hero-prev" aria-label="Previous guide" type="button">‹</button>
+        <button class="hero-sl-arrow hero-sl-next" id="hero-next" aria-label="Next guide" type="button">›</button>
+
+        <div id="hero-cover-slot"><!-- injected: rotating cover --></div>
+
+        <div class="hero-sl-dots" id="hero-dots"></div>
       </div>
     </div>
   </div>
