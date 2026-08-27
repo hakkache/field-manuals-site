@@ -441,6 +441,11 @@ a{color:inherit;text-decoration:none}
 .grow-p{font-family:var(--m);font-size:11.5px;letter-spacing:.09em;
   color:var(--tx-lo);white-space:nowrap}
 .grow-p .na{color:var(--tx-dim);opacity:.5}
+.grow-badge{display:flex;align-items:center;gap:12px;white-space:nowrap}
+.grow-price{
+  font-family:var(--m);font-weight:600;font-size:12px;letter-spacing:.04em;
+  color:var(--cc,var(--teal));white-space:nowrap;
+}
 .grow-c{
   justify-self:end;width:8px;height:8px;
   border-right:1.5px solid var(--tx-dim);border-bottom:1.5px solid var(--tx-dim);
@@ -637,4 +642,48 @@ a{color:inherit;text-decoration:none}
   .step{grid-template-columns:40px 1fr;gap:18px}
   .spine::before{left:19px}
   .step-n{width:40px;height:40px;font-size:11px}
+}
+
+/* ---------- Hero cover slider ---------- */
+
+#hero-cover-slot{position:relative}
+.hero-cover-in{
+  animation:heroCoverFade .5s var(--ease) both;
+}
+@keyframes heroCoverFade{
+  from{opacity:0;transform:translateY(10px)}
+  to{opacity:1;transform:translateY(0)}
+}
+@media (prefers-reduced-motion:reduce){
+  .hero-cover-in{animation:none}
+}
+.hero-sl-dots{
+  display:flex;justify-content:center;gap:7px;margin-top:16px;
+}
+.hero-sl-dot{
+  width:7px;height:7px;border-radius:50%;border:1px solid var(--line-hi);
+  background:transparent;padding:0;cursor:pointer;transition:background .2s,transform .2s;
+}
+.hero-sl-dot.is-on{background:var(--cyan);transform:scale(1.25)}
+
+.hero-sl-arrow{
+  position:absolute;top:50%;transform:translateY(-50%);
+  width:38px;height:38px;border-radius:50%;z-index:4;
+  border:1px solid var(--line-hi);background:var(--bg-600);color:var(--tx-hi);
+  font-size:20px;line-height:1;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  opacity:.65;transition:opacity .2s,background .2s,border-color .2s,transform .2s;
+  box-shadow:0 14px 30px -14px rgba(0,0,0,.85);
+}
+.hero-sl-arrow:hover,
+.hero-sl-arrow:focus-visible{opacity:1;background:var(--bg-500);border-color:var(--cyan)}
+.hero-sl-prev{left:-19px}
+.hero-sl-next{right:-19px}
+.hero-sl-arrow[hidden]{display:none}
+
+@media (max-width:720px){
+  .hero-sl-dots{margin-top:12px}
+  .hero-sl-arrow{width:34px;height:34px;font-size:17px}
+  .hero-sl-prev{left:-8px}
+  .hero-sl-next{right:-8px}
 }
