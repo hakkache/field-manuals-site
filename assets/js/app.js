@@ -1,5 +1,5 @@
 /* ============================================================
-   Databricks Field Manuals — site behaviour
+   Databricks Guide Series — site behaviour
    ============================================================ */
 
 (function () {
@@ -7,236 +7,171 @@
 
   const $  = (s, r = document) => r.querySelector(s);
   const $$ = (s, r = document) => [...r.querySelectorAll(s)];
-  const esc = (s) => String(s).replace(/[&<>"]/g, c =>
+  const esc = s => String(s).replace(/[&<>"]/g, c =>
     ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;" }[c]));
 
   const ACCENT = {
-    flow:"var(--flow)", gate:"var(--gate)", iris:"var(--iris)",
-    gold:"var(--gold)", signal:"var(--signal)",
+    teal:"var(--teal)", cyan:"var(--cyan)", iris:"var(--iris)",
+    amber:"var(--amber)", orange:"var(--orange)",
   };
 
-  const catById  = id => CATEGORIES.find(c => c.id === id);
-  const money    = p => p === 0 ? "Free" : "$" + p.toFixed(2);
-  const inCat    = id => GUIDES.filter(g => g.cat === id);
-  const writtenIn= id => inCat(id).filter(g => g.pages).length;
+  const catById   = id => CATEGORIES.find(c => c.id === id);
+  const inCat     = id => GUIDES.filter(g => g.cat === id);
+  const writtenIn = id => inCat(id).filter(g => g.pages).length;
+  const pagesIn   = id => inCat(id).reduce((s, g) => s + (g.pages || 0), 0);
 
-  /* ---------- Coverage board ---------------------------- */
+  const STATUS = {
+    available:{ cls:"badge-available", label:"Available now" },
+    soon:     { cls:"badge-soon",      label:"Coming soon"  },
+    planned:  { cls:"badge-planned",   label:"Planned"      },
+  };
 
-  function renderBoard() {
-    const board = $("#board");
-    if (!board) return;
+  /* ---------- What's inside grid ------------------------ */
 
-    board.innerHTML = CATEGORIES.map(c => {
-      const guides  = inCat(c.id);
-      const done    = writtenIn(c.id);
-      const total   = guides.length;
-      const complete= done === total;
+  const INSIDE = [
+    ["Architecture diagrams","Custom vector diagrams showing how components actually connect."],
+    ["Failure scenarios","Sixteen per manual, grouped into families, with symptom and cause."],
+    ["Production patterns","The arrangements that hold up, and the trade-offs each one carries."],
+    ["Troubleshooting logic","First thing to check, second thing to check — in order."],
+    ["Checklists","Pre-production checklists you can actually work through."],
+    ["Cheat sheets","One page. “To do this, use that.” Built to be printed."],
+    ["Technical explanations","Why the system behaves the way it does, not just that it does."],
+    ["Practical examples","SQL and Python you can adapt, not pseudo-code."],
+  ];
 
-      const cells = guides.map(g =>
-        `<i class="cell${g.pages ? " on" : ""}"></i>`).join("");
-
-      return `
-        <article class="bcard rv" role="listitem" style="--bc:${ACCENT[c.accent]}">
-          <div class="bc-top">
-            <span class="bc-n">${c.n}</span>
-            <h3 class="bc-name">${esc(c.name)}</h3>
-          </div>
-          <p class="bc-blurb">${esc(c.blurb)}</p>
-          <div class="bc-cells" aria-hidden="true">${cells}</div>
-          <div class="bc-meta">
-            <span class="bc-count"><b>${done}</b> of ${total} written</span>
-            <span class="bc-state${complete ? " done" : ""}">${
-              complete ? "Complete" : done ? "In progress" : "Planned"}</span>
-          </div>
-        </article>`;
-    }).join("");
-  }
-
-  /* ---------- Collection tiers -------------------------- */
-
-  function renderTiers() {
-    const el = $("#tiers");
+  function renderInside() {
+    const el = $("#inside-grid");
     if (!el) return;
-
-    el.innerHTML = COLLECTIONS.map(t => {
-      const free = t.status === "free";
-      const label = free
-        ? `Download free<span class="btn-meta">47 pages · no email</span>`
-        : `Coming soon<span class="btn-meta">${esc(t.contents)}</span>`;
-
-      return `
-        <article class="tier tier-${t.tier} rv">
-          <span class="t-kicker">${esc(t.kicker)}</span>
-          <h3 class="t-name">${esc(t.name)}</h3>
-          <p class="t-contents">${esc(t.contents)}</p>
-          <p class="t-price">${
-            SHOW_PRICES || free
-              ? `<b>${esc(t.priceLabel)}</b><span>${free ? "always" : "one-time"}</span>`
-              : `<b class="t-tbc">Pricing soon</b>`}</p>
-          <ul class="t-points">${
-            t.points.map(p => `<li>${esc(p)}</li>`).join("")}</ul>
-          <button class="btn ${free ? "btn-primary" : "btn-ghost"} t-btn"
-                  data-buy="${t.id}"${free ? "" : " disabled"}>${label}</button>
-        </article>`;
-    }).join("");
+    el.innerHTML = INSIDE.map(([t, d], i) => `
+      <article class="ins rv">
+        <svg class="ins-i" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+             stroke-width="1.4" aria-hidden="true">${ICONS[i]}</svg>
+        <h3>${esc(t)}</h3>
+        <p>${esc(d)}</p>
+      </article>`).join("");
   }
+
+  const ICONS = [
+    '<rect x="3" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><path d="M6.5 10v4h11"/>',
+    '<path d="M12 3 2 20h20L12 3z"/><path d="M12 10v4"/><circle cx="12" cy="17.5" r=".6" fill="currentColor"/>',
+    '<rect x="3" y="4" width="18" height="6"/><rect x="3" y="14" width="8" height="6"/><rect x="15" y="14" width="6" height="6"/>',
+    '<path d="M12 3v4"/><path d="M12 11v4"/><path d="M12 19v2"/><circle cx="12" cy="9" r="2"/><circle cx="12" cy="17" r="2"/>',
+    '<path d="M4 6h16M4 12h16M4 18h10"/><path d="M17.5 17l1.5 1.5 3-3"/>',
+    '<rect x="3" y="3" width="18" height="18"/><path d="M7 8h10M7 12h10M7 16h6"/>',
+    '<circle cx="12" cy="12" r="9"/><path d="M12 8v5"/><circle cx="12" cy="16" r=".6" fill="currentColor"/>',
+    '<path d="M8 4H5v16h14V9"/><path d="M14 4h5v5"/><path d="M11 14l2 2 4-4"/>',
+  ];
 
   /* ---------- Catalogue --------------------------------- */
 
-  function renderFilters() {
-    const bar = $(".filters");
-    if (!bar) return;
-    $("#count-all").textContent = GUIDES.length;
+  function manualHTML(g, accent) {
+    const st = STATUS[g.status] || STATUS.planned;
+    const url = g.status === "available" ? gumroadURL(g.slug) : null;
 
-    bar.insertAdjacentHTML("beforeend", CATEGORIES.map(c =>
-      `<button class="filter" data-filter="${c.id}" role="tab" aria-selected="false">${
-        esc(c.name)}<span class="f-n">${inCat(c.id).length}</span></button>`).join(""));
-  }
-
-  function rowHTML(g) {
-    const c = catById(g.cat);
-    const free = g.status === "free";
-    const url = free ? gumroadURL(g.slug) : null;
-
-    const action = free
-      ? `<a class="pill pill-get" data-buy="c-free" href="${url || "#"}">Get it free</a>`
-      : `<span class="pill pill-soon">Coming soon</span>`;
-
-    const priceCell = !SHOW_PRICES
-      ? (free ? `<span class="is-free">Free</span>` : `<span class="none">&mdash;</span>`)
-      : (free ? `<span class="is-free">Free</span>` : `<b>${money(g.price)}</b>`);
+    const cta = g.status === "available"
+      ? `<a class="btn btn-primary btn-sm" data-buy="autoloader" href="${url || "#"}"
+            style="align-self:flex-start;margin-top:4px">Get the free guide →</a>`
+      : "";
 
     const covers = (g.covers || []).map(t => `<li>${esc(t)}</li>`).join("");
 
     return `
-      <article class="row rv" data-cat="${g.cat}" style="--rc:${ACCENT[c.accent]}">
-        <button class="r-head" aria-expanded="false">
-          <span class="r-name">
-            <span class="r-title">${esc(g.name)}</span>
-            ${g.idea ? `<span class="r-idea">${esc(g.idea)}</span>` : ""}
+      <article class="grow rv${g.status === "available" ? " is-available" : ""}"
+               style="--cc:${accent}">
+        <button class="grow-head" aria-expanded="false">
+          <span class="grow-name">
+            <span class="grow-t">${esc(g.name)}</span>
+            ${g.idea ? `<span class="grow-i">${esc(g.idea)}</span>` : ""}
           </span>
-          <span class="r-cat">${esc(c.name)}</span>
-          <span class="r-pages">${g.pages ? g.pages + " pp" : `<span class="none">&mdash;</span>`}</span>
-          <span class="r-price">${priceCell}</span>
-          <span class="r-chev" aria-hidden="true"></span>
+          <span class="grow-p">${g.pages ? g.pages + " pages" : `<span class="na">—</span>`}</span>
+          <span class="grow-badge">
+            <span class="badge ${st.cls}">${g.free ? "Free · " + st.label : st.label}</span>
+          </span>
+          <span class="grow-c" aria-hidden="true"></span>
         </button>
-
-        <div class="r-body">
-          <div class="r-body-in">
-            <div class="r-desc">
-              <p class="r-desc-label">What's inside</p>
-              <p class="r-desc-txt">${esc(g.desc || "")}</p>
-              <span class="r-act">${action}</span>
-            </div>
-            ${covers ? `<div class="r-covers">
-              <p class="r-desc-label">Topics covered</p>
-              <ul>${covers}</ul>
-            </div>` : ""}
+        <div class="grow-body"><div class="grow-in">
+          <div>
+            <p class="grow-lbl">What's inside</p>
+            <p class="grow-d">${esc(g.desc || "")}</p>
+            ${cta}
           </div>
-        </div>
+          ${covers ? `<div class="grow-cov">
+            <p class="grow-lbl">Topics covered</p><ul>${covers}</ul></div>` : ""}
+        </div></div>
       </article>`;
   }
 
-  function renderRows() {
-    const el = $("#rows");
-    if (!el) return;
-    // Free guide first, then catalogue order.
-    const ordered = [...GUIDES].sort((a, b) =>
-      (a.status === "free" ? -1 : 0) - (b.status === "free" ? -1 : 0));
-    el.innerHTML = ordered.map(rowHTML).join("");
-  }
-
-  function wireRows() {
-    const el = $("#rows");
-    if (!el) return;
-    el.addEventListener("click", e => {
-      const head = e.target.closest(".r-head");
-      if (!head) return;
-      const row = head.closest(".row");
-      const open = row.classList.toggle("open");
-      head.setAttribute("aria-expanded", String(open));
-    });
-  }
-
-  function wireFilters() {
-    const bar = $(".filters");
-    if (!bar) return;
-
-    bar.addEventListener("click", e => {
-      const btn = e.target.closest(".filter");
-      if (!btn) return;
-
-      $$(".filter", bar).forEach(b => {
-        const on = b === btn;
-        b.classList.toggle("is-on", on);
-        b.setAttribute("aria-selected", String(on));
-      });
-
-      const f = btn.dataset.filter;
-      $$("#rows .row").forEach(r => {
-        const show = f === "all" || r.dataset.cat === f;
-        r.style.display = show ? "" : "none";
-      });
-    });
-  }
-
-  /* ---------- Bundles ----------------------------------- */
-
-  function renderBundles() {
-    const el = $("#bundles-grid");
+  function renderCatalogue() {
+    const el = $("#catalogue-body");
     if (!el) return;
 
-    el.innerHTML = BUNDLES.map(b => {
-      const c = catById(b.cat);
-      const listPrice = inCat(b.cat).reduce((s, g) => s + g.price, 0);
-      const save = listPrice - b.price;
-
-      const priceBlock = SHOW_PRICES
-        ? `<div>
-             <span class="bu-price">$${b.price.toFixed(2)}</span>
-             ${save > 0 ? `<span class="bu-save">Save $${save.toFixed(2)}</span>` : ""}
-           </div>`
-        : `<div><span class="bu-count">${b.count} guides</span>
-             <span class="bu-save">${writtenIn(b.cat)} written so far</span></div>`;
+    el.innerHTML = CATEGORIES.map(c => {
+      const guides = inCat(c.id);
+      const accent = ACCENT[c.accent];
+      const pages  = pagesIn(c.id);
 
       return `
-        <article class="bundle rv" style="--bc:${ACCENT[c.accent]}">
-          <p class="bu-cat">${c.n} · ${esc(c.name)}</p>
-          <h3 class="bu-name">${esc(b.name)}</h3>
-          <p class="bu-desc">${esc(b.desc || "")}</p>
-          <div class="bu-foot">
-            ${priceBlock}
-            <span class="pill pill-soon">Coming soon</span>
+        <section class="cat-blk" id="cat-${c.id}" style="--cc:${accent}">
+          <header class="cat-head">
+            <span class="cat-n">${c.n}</span>
+            <h3 class="cat-name">${esc(c.name)}</h3>
+            <p class="cat-blurb">${esc(c.blurb)}</p>
+            <span class="cat-tot">${guides.length} guides${pages ? " · " + pages + " pages written" : ""}</span>
+          </header>
+          <div class="cat-rows">
+            ${guides.map(g => manualHTML(g, accent)).join("")}
           </div>
+        </section>`;
+    }).join("");
+  }
+
+  /* ---------- Next releases ----------------------------- */
+
+  function renderNext() {
+    const el = $("#next-grid");
+    if (!el) return;
+
+    el.innerHTML = NEXT_RELEASES.map((id, i) => {
+      const g = GUIDES.find(x => x.id === id);
+      if (!g) return "";
+      const c = catById(g.cat);
+      return `
+        <article class="nx rv" style="--nc:${ACCENT[c.accent]}">
+          <p class="nx-n">${String(i + 1).padStart(2, "0")} · ${esc(c.name.split(" ")[0])}</p>
+          <h3 class="nx-t">${esc(g.name)}</h3>
+          <p class="nx-s">Coming soon</p>
         </article>`;
     }).join("");
   }
 
-  /* ---------- Checkout ---------------------------------- */
+  /* ---------- Interaction ------------------------------- */
+
+  function wireExpand() {
+    const el = $("#catalogue-body");
+    if (!el) return;
+    el.addEventListener("click", e => {
+      const head = e.target.closest(".grow-head");
+      if (!head) return;
+      const row  = head.closest(".grow");
+      const open = row.classList.toggle("open");
+      head.setAttribute("aria-expanded", String(open));
+    });
+  }
 
   function wireCheckout() {
     document.addEventListener("click", e => {
       const el = e.target.closest("[data-buy]");
       if (!el) return;
 
-      const id = el.dataset.buy;
-      const item =
-        COLLECTIONS.find(c => c.id === id) ||
-        GUIDES.find(g => "c-" + g.id === id);
-      if (!item) return;
+      const g = GUIDES.find(x => x.status === "available");
+      const url = g ? gumroadURL(g.slug) : null;
 
-      const url = gumroadURL(item.slug);
       if (url) {
         e.preventDefault();
         window.open(url, "_blank", "noopener");
-      } else {
-        // Not yet wired to Gumroad — tell the visitor plainly.
+      } else if (el.getAttribute("href") === "#") {
         e.preventDefault();
-        notify(
-          item.status === "free"
-            ? "The download link isn't live yet. Set GUMROAD_USER and the product slug in assets/js/catalogue.js."
-            : "This guide hasn't shipped yet."
-        );
+        notify("The download link isn't connected yet. Set GUMROAD_USER and the Auto Loader slug in assets/js/catalogue.js.");
       }
     });
   }
@@ -248,14 +183,13 @@
       t.id = "toast";
       t.setAttribute("role", "status");
       Object.assign(t.style, {
-        position: "fixed", left: "50%", bottom: "28px",
-        transform: "translateX(-50%) translateY(14px)",
-        background: "var(--ink-600)", color: "var(--tx-hi)",
-        border: "1px solid var(--line-hi)", borderRadius: "5px",
-        padding: "14px 22px", fontSize: "14px", zIndex: "300",
-        maxWidth: "min(90vw,460px)", textAlign: "center",
-        boxShadow: "0 18px 44px -16px rgba(0,0,0,.85)",
-        opacity: "0", transition: "opacity .25s, transform .25s",
+        position:"fixed", left:"50%", bottom:"26px",
+        transform:"translateX(-50%) translateY(14px)",
+        background:"var(--bg-600)", color:"var(--tx-hi)",
+        border:"1px solid var(--line-hi)", padding:"14px 22px",
+        fontSize:"14px", zIndex:"300", maxWidth:"min(90vw,470px)",
+        textAlign:"center", boxShadow:"0 18px 44px -16px rgba(0,0,0,.9)",
+        opacity:"0", transition:"opacity .25s, transform .25s",
       });
       document.body.appendChild(t);
     }
@@ -268,19 +202,14 @@
     t._h = setTimeout(() => {
       t.style.opacity = "0";
       t.style.transform = "translateX(-50%) translateY(14px)";
-    }, 4200);
+    }, 4600);
   }
 
-  /* ---------- Chrome ------------------------------------ */
-
   function wireNav() {
-    const nav = $("#nav");
-    const toggle = $(".nav-toggle");
-    const links = $(".nav-links");
-
+    const nav = $("#nav"), toggle = $(".nav-toggle"), links = $(".nav-links");
     const onScroll = () => nav.classList.toggle("stuck", window.scrollY > 8);
     onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("scroll", onScroll, { passive:true });
 
     toggle?.addEventListener("click", () => {
       const open = links.classList.toggle("open");
@@ -301,36 +230,28 @@
       items.forEach(i => i.classList.add("in"));
       return;
     }
-    const io = new IntersectionObserver((entries) => {
+    const io = new IntersectionObserver(entries => {
       entries.forEach((en, i) => {
         if (!en.isIntersecting) return;
-        const d = Math.min(i * 55, 260);
-        setTimeout(() => en.target.classList.add("in"), d);
+        setTimeout(() => en.target.classList.add("in"), Math.min(i * 50, 240));
         io.unobserve(en.target);
       });
-    }, { rootMargin: "0px 0px -8% 0px", threshold: 0.06 });
-
+    }, { rootMargin:"0px 0px -6% 0px", threshold:0.05 });
     items.forEach(i => io.observe(i));
-  }
-
-  function duplicateMarquee() {
-    const track = $(".marquee-track");
-    if (track) track.innerHTML += track.innerHTML;
   }
 
   /* ---------- Boot -------------------------------------- */
 
   function init() {
-    renderBoard();
-    renderTiers();
-    renderFilters();
-    renderRows();
-    renderBundles();
-    wireRows();
-    wireFilters();
+    const y = $("#year");
+    if (y) y.textContent = new Date().getFullYear();
+
+    renderInside();
+    renderCatalogue();
+    renderNext();
+    wireExpand();
     wireCheckout();
     wireNav();
-    duplicateMarquee();
     wireReveal();
   }
 
