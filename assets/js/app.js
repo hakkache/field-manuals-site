@@ -69,8 +69,10 @@
           <span class="t-kicker">${esc(t.kicker)}</span>
           <h3 class="t-name">${esc(t.name)}</h3>
           <p class="t-contents">${esc(t.contents)}</p>
-          <p class="t-price"><b>${esc(t.priceLabel)}</b><span>${
-            free ? "always" : "one-time"}</span></p>
+          <p class="t-price">${
+            SHOW_PRICES || free
+              ? `<b>${esc(t.priceLabel)}</b><span>${free ? "always" : "one-time"}</span>`
+              : `<b class="t-tbc">Pricing soon</b>`}</p>
           <ul class="t-points">${
             t.points.map(p => `<li>${esc(p)}</li>`).join("")}</ul>
           <button class="btn ${free ? "btn-primary" : "btn-ghost"} t-btn"
@@ -100,18 +102,38 @@
       ? `<a class="pill pill-get" data-buy="c-free" href="${url || "#"}">Get it free</a>`
       : `<span class="pill pill-soon">Coming soon</span>`;
 
+    const priceCell = !SHOW_PRICES
+      ? (free ? `<span class="is-free">Free</span>` : `<span class="none">&mdash;</span>`)
+      : (free ? `<span class="is-free">Free</span>` : `<b>${money(g.price)}</b>`);
+
+    const covers = (g.covers || []).map(t => `<li>${esc(t)}</li>`).join("");
+
     return `
       <article class="row rv" data-cat="${g.cat}" style="--rc:${ACCENT[c.accent]}">
-        <div class="r-name">
-          <h3 class="r-title">${esc(g.name)}</h3>
-          ${g.idea ? `<p class="r-idea">${esc(g.idea)}</p>` : ""}
+        <button class="r-head" aria-expanded="false">
+          <span class="r-name">
+            <span class="r-title">${esc(g.name)}</span>
+            ${g.idea ? `<span class="r-idea">${esc(g.idea)}</span>` : ""}
+          </span>
+          <span class="r-cat">${esc(c.name)}</span>
+          <span class="r-pages">${g.pages ? g.pages + " pp" : `<span class="none">&mdash;</span>`}</span>
+          <span class="r-price">${priceCell}</span>
+          <span class="r-chev" aria-hidden="true"></span>
+        </button>
+
+        <div class="r-body">
+          <div class="r-body-in">
+            <div class="r-desc">
+              <p class="r-desc-label">What's inside</p>
+              <p class="r-desc-txt">${esc(g.desc || "")}</p>
+              <span class="r-act">${action}</span>
+            </div>
+            ${covers ? `<div class="r-covers">
+              <p class="r-desc-label">Topics covered</p>
+              <ul>${covers}</ul>
+            </div>` : ""}
+          </div>
         </div>
-        <span class="r-cat">${esc(c.name)}</span>
-        <span class="r-pages">${g.pages ? g.pages + " pp" : `<span class="none">—</span>`}</span>
-        <span class="r-price">${free
-          ? `<span class="is-free">Free</span>`
-          : `<b>${money(g.price)}</b>`}</span>
-        <span class="r-act">${action}</span>
       </article>`;
   }
 
@@ -122,6 +144,18 @@
     const ordered = [...GUIDES].sort((a, b) =>
       (a.status === "free" ? -1 : 0) - (b.status === "free" ? -1 : 0));
     el.innerHTML = ordered.map(rowHTML).join("");
+  }
+
+  function wireRows() {
+    const el = $("#rows");
+    if (!el) return;
+    el.addEventListener("click", e => {
+      const head = e.target.closest(".r-head");
+      if (!head) return;
+      const row = head.closest(".row");
+      const open = row.classList.toggle("open");
+      head.setAttribute("aria-expanded", String(open));
+    });
   }
 
   function wireFilters() {
@@ -157,16 +191,21 @@
       const listPrice = inCat(b.cat).reduce((s, g) => s + g.price, 0);
       const save = listPrice - b.price;
 
+      const priceBlock = SHOW_PRICES
+        ? `<div>
+             <span class="bu-price">$${b.price.toFixed(2)}</span>
+             ${save > 0 ? `<span class="bu-save">Save $${save.toFixed(2)}</span>` : ""}
+           </div>`
+        : `<div><span class="bu-count">${b.count} guides</span>
+             <span class="bu-save">${writtenIn(b.cat)} written so far</span></div>`;
+
       return `
         <article class="bundle rv" style="--bc:${ACCENT[c.accent]}">
           <p class="bu-cat">${c.n} · ${esc(c.name)}</p>
           <h3 class="bu-name">${esc(b.name)}</h3>
-          <p class="bu-meta">${b.count} guides · ${writtenIn(b.cat)} written</p>
+          <p class="bu-desc">${esc(b.desc || "")}</p>
           <div class="bu-foot">
-            <div>
-              <span class="bu-price">$${b.price.toFixed(2)}</span>
-              ${save > 0 ? `<span class="bu-save">Save $${save.toFixed(2)}</span>` : ""}
-            </div>
+            ${priceBlock}
             <span class="pill pill-soon">Coming soon</span>
           </div>
         </article>`;
@@ -287,6 +326,7 @@
     renderFilters();
     renderRows();
     renderBundles();
+    wireRows();
     wireFilters();
     wireCheckout();
     wireNav();
