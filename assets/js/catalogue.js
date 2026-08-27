@@ -13,7 +13,7 @@
    The CTA, the badges and every counter update themselves.
    ============================================================ */
 
-const GUMROAD_USER = "YOUR-GUMROAD-USERNAME";
+const GUMROAD_USER = "hakkache";
 const gumroadURL = (slug) =>
   slug ? `https://${GUMROAD_USER}.gumroad.com/l/${slug}` : null;
 
@@ -45,7 +45,7 @@ const CATEGORIES = [
 const GUIDES = [
 
 /* ══ 01 · INGESTION ══════════════════════════════════════ */
-{ id:1, cat:"ingestion", name:"Auto Loader", pages:47, status:"available", free:true, slug:"",
+{ id:1, cat:"ingestion", name:"Auto Loader", pages:47, status:"available", free:true, slug:"auto-loader-field-manual",
   idea:"Auto Loader's unit of work is a new file at a new path.",
   desc:"Incremental file ingestion, from the first stream to the ones that fail at 3am. Covers both discovery modes, how schema inference actually behaves, and why a file that changed is a file Auto Loader will never look at again.",
   covers:["Directory listing vs file notification","Schema inference, hints and evolution","Checkpoints and RocksDB state","16 failures: schema, state, discovery, scale","Backfills, rescued data and dead-letter patterns"] },
@@ -123,12 +123,12 @@ const GUIDES = [
   desc:"The governance model, from metastore to table. Covers privilege inheritance, why owners never appear in SHOW GRANTS, and the real difference between managed and external tables when someone runs DROP.",
   covers:["USE CATALOG, USE SCHEMA, SELECT","Privilege inheritance and ALL PRIVILEGES","Managed vs external tables, and UNDROP","Storage credentials and external locations","Object quotas and naming limits"] },
 
-{ id:16, cat:"governance", name:"Lakehouse Federation", status:"soon",
+{ id:16, cat:"governance", name:"Lakehouse Federation", pages:43, status:"soon",
   idea:"Query it where it lives, and inherit its limits.",
   desc:"Reading external systems through Unity Catalog without moving data. Covers connections and foreign catalogs, what pushes down to the source, and the performance ceiling federation cannot lift.",
   covers:["Connections, foreign catalogs and supported sources","Query pushdown, and what stays local","Governance over federated objects","Caching, materialized views and freshness","When to federate, and when to ingest"] },
 
-{ id:17, cat:"governance", name:"Delta Sharing / OpenSharing", status:"soon",
+{ id:17, cat:"governance", name:"Delta Sharing / OpenSharing", pages:41, status:"soon",
   idea:"Sharing is a grant on a share, not a copy of a table.",
   desc:"Open protocol and Databricks-to-Databricks sharing. Covers shares, recipients and tokens, what the recipient can actually see, and how sharing interacts with retention and change data feed.",
   covers:["Open sharing vs Databricks-to-Databricks","Shares, recipients and token lifecycle","Sharing views, volumes and models","History sharing and retention","Auditing who read what"] },
