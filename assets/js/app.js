@@ -64,13 +64,18 @@
 
   /* ---------- Catalogue --------------------------------- */
 
+  const priceLabel = g => g.free ? "Free" : (typeof g.price === "number" ? "$" + g.price.toFixed(2) : null);
+
   function manualHTML(g, accent) {
     const st = STATUS[g.status] || STATUS.planned;
     const url = g.status === "available" ? gumroadURL(g.slug) : null;
+    const price = priceLabel(g);
+
+    const ctaLabel = g.free ? "Get the free guide →" : (price ? `Buy the guide — ${price} →` : "Get the guide →");
 
     const cta = g.status === "available"
-      ? `<a class="btn btn-primary btn-sm" data-buy="autoloader" href="${url || "#"}"
-            style="align-self:flex-start;margin-top:4px">Get the free guide →</a>`
+      ? `<a class="btn btn-primary btn-sm" data-buy="${g.id}" href="${url || "#"}"
+            style="align-self:flex-start;margin-top:4px">${ctaLabel}</a>`
       : "";
 
     const covers = (g.covers || []).map(t => `<li>${esc(t)}</li>`).join("");
@@ -85,7 +90,8 @@
           </span>
           <span class="grow-p">${g.pages ? g.pages + " pages" : `<span class="na">—</span>`}</span>
           <span class="grow-badge">
-            <span class="badge ${st.cls}">${g.free ? "Free · " + st.label : st.label}</span>
+            ${price ? `<span class="grow-price">${price}</span>` : ""}
+            <span class="badge ${st.cls}">${st.label}</span>
           </span>
           <span class="grow-c" aria-hidden="true"></span>
         </button>
@@ -163,7 +169,9 @@
       const el = e.target.closest("[data-buy]");
       if (!el) return;
 
-      const g = GUIDES.find(x => x.status === "available");
+      const buyId = el.getAttribute("data-buy");
+      const g = GUIDES.find(x => String(x.id) === String(buyId)) ||
+                GUIDES.find(x => x.status === "available");
       const url = g ? gumroadURL(g.slug) : null;
 
       if (url) {
@@ -171,9 +179,142 @@
         window.open(url, "_blank", "noopener");
       } else if (el.getAttribute("href") === "#") {
         e.preventDefault();
-        notify("The download link isn't connected yet. Set GUMROAD_USER and the Auto Loader slug in assets/js/catalogue.js.");
+        notify("The download link isn't connected yet. Set GUMROAD_USER and this guide's slug in assets/js/catalogue.js.");
       }
     });
+  }
+
+  /* ---------- Hero slider ---------------------------------
+     The hero cover card rotates through the 5 most recently
+     released (status:"available") guides, auto-advancing.
+     You only see a given guide there by it sliding into view.
+  ---------------------------------------------------------- */
+
+  const HERO_SLIDER_INTERVAL = 4200;
+
+  function latestGuides(max = 5) {
+    return GUIDES.filter(g => g.status === "available").slice(-max);
+  }
+
+  function heroCoverHTML(g) {
+    const c = catById(g.cat);
+    const accent = ACCENT[c.accent];
+    const covers = (g.covers || []).slice(0, 4);
+    const nameParts = esc(g.name).split(" ");
+    const nameHTML = nameParts.length > 1
+      ? nameParts.join("<br>")
+      : esc(g.name);
+
+    return `
+      <article class="cover hero-cover-in" style="--cc:${accent}" aria-label="${esc(g.name)} Field Manual cover">
+        <div class="grid-bg" aria-hidden="true"></div>
+        <p class="cover-series">Databricks Guide Series</p>
+        <p class="cover-kind">Field Manual</p>
+        <div class="cover-bar" aria-hidden="true"></div>
+        <h2 class="cover-name">${nameHTML}</h2>
+        <p class="cover-cat">${esc(c.n)} — ${esc(c.name)}</p>
+        <div class="cover-mid">
+          <div class="cover-spine">
+            ${covers.map(t => `<span>${esc(t)}</span>`).join("")}
+          </div>
+        </div>
+        <div class="cover-foot">
+          <p class="cover-pages">${g.pages || "—"}<small>Pages</small></p>
+          <p class="cover-wm">HAKKACHE MOHAMED</p>
+        </div>
+      </article>`;
+  }
+
+  function renderHeroSlider() {
+    const slot = $("#hero-cover-slot");
+    const flag = $("#hero-flag");
+    const dots = $("#hero-dots");
+    if (!slot) return;
+
+    const guides = latestGuides(5);
+    if (!guides.length) return;
+
+    let index = 0;
+    let timer = null;
+    const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    if (dots) {
+      dots.innerHTML = guides.map((_, i) =>
+        `<button class="hero-sl-dot" aria-label="Show guide ${i + 1}" data-i="${i}"></button>`).join("");
+    }
+    const dotEls = dots ? $$(".hero-sl-dot", dots) : [];
+
+    function paint() {
+      const g = guides[index];
+      const price = priceLabel(g);
+      const c = catById(g.cat);
+      const url = gumroadURL(g.slug);
+
+      slot.innerHTML = heroCoverHTML(g);
+      if (flag) flag.textContent = price || "Available now";
+      dotEls.forEach((d, di) => d.classList.toggle("is-on", di === index));
+
+      const btn = $("#hero-buy-btn");
+      const btnLabel = $("#hero-buy-label");
+      const btnMeta = $("#hero-buy-meta");
+      const noteMeta = $("#hero-note-meta");
+
+      if (btn) {
+        btn.setAttribute("data-buy", g.id);
+        btn.setAttribute("href", url || "#");
+      }
+      if (btnLabel) {
+        btnLabel.textContent = g.free
+          ? `Get ${g.name} — Free`
+          : `Buy ${g.name}${price ? " — " + price : ""}`;
+      }
+      if (btnMeta) {
+        btnMeta.textContent = (g.pages ? g.pages + " pages · " : "") +
+          (g.free ? "complete manual" : "complete manual");
+      }
+      if (noteMeta) {
+        noteMeta.textContent = (g.pages ? g.pages + " pages · " : "") +
+          (g.free ? "Free" : (price || ""));
+      }
+    }
+
+    function go(i) {
+      index = (i + guides.length) % guides.length;
+      paint();
+    }
+
+    function start() {
+      if (reduce || guides.length < 2) return;
+      stop();
+      timer = setInterval(() => go(index + 1), HERO_SLIDER_INTERVAL);
+    }
+    function stop() { clearInterval(timer); timer = null; }
+
+    dots?.addEventListener("click", e => {
+      const b = e.target.closest(".hero-sl-dot");
+      if (!b) return;
+      go(Number(b.dataset.i));
+      start();
+    });
+
+    const prevBtn = $("#hero-prev");
+    const nextBtn = $("#hero-next");
+    if (guides.length < 2) {
+      prevBtn?.setAttribute("hidden", "");
+      nextBtn?.setAttribute("hidden", "");
+    } else {
+      prevBtn?.addEventListener("click", () => { go(index - 1); start(); });
+      nextBtn?.addEventListener("click", () => { go(index + 1); start(); });
+    }
+
+    const stack = $("#hero-slider");
+    stack?.addEventListener("mouseenter", stop);
+    stack?.addEventListener("mouseleave", start);
+    stack?.addEventListener("focusin", stop);
+    stack?.addEventListener("focusout", start);
+
+    paint();
+    start();
   }
 
   function notify(msg) {
@@ -249,6 +390,7 @@
     renderInside();
     renderCatalogue();
     renderNext();
+    renderHeroSlider();
     wireExpand();
     wireCheckout();
     wireNav();

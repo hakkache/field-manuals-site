@@ -6,11 +6,13 @@
      "soon"       amber  · written or in progress, not yet released
      "planned"    grey   · scoped, not yet written
 
-   PRICES ARE NOT DISPLAYED anywhere on this site.
+   PRICES are only displayed when a `price` field is set on a guide.
+   Leave `price` off (or set free:true) for a free release.
    When a manual goes live on Gumroad:
      1. set status to "available"
      2. add its `slug`
-   The CTA, the badges and every counter update themselves.
+     3. add `price` (in USD, e.g. price:7.99) if it isn't free
+   The CTA, the badges, the price and every counter update themselves.
    ============================================================ */
 
 const GUMROAD_USER = "hakkache";
@@ -50,7 +52,7 @@ const GUIDES = [
   desc:"Incremental file ingestion, from the first stream to the ones that fail at 3am. Covers both discovery modes, how schema inference actually behaves, and why a file that changed is a file Auto Loader will never look at again.",
   covers:["Directory listing vs file notification","Schema inference, hints and evolution","Checkpoints and RocksDB state","16 failures: schema, state, discovery, scale","Backfills, rescued data and dead-letter patterns"] },
 
-{ id:2, cat:"ingestion", name:"Lakeflow Connect", pages:42, status:"soon",
+{ id:2, cat:"ingestion", name:"Lakeflow Connect", pages:42, status:"available", price:7.99, slug:"lakeflow-connect-field-manual", // https://hakkache.gumroad.com/l/lakeflow-connect-field-manual
   idea:"You configure it; you do not control it.",
   desc:"Managed connectors for SaaS apps and databases. Mostly about the seven documented events that trigger a full refresh, because that is what turns a fifteen-minute sync into a six-hour one without warning.",
   covers:["Four connector types and when each applies","Gateway and ingestion pipeline architecture","Seven full-refresh triggers","Schema evolution: what's automatic, what isn't","Table count limits and scheduling"] },
