@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Databricks Field Manuals — practical guides for data engineers</title>
+<meta name="description" content="Print-quality field manuals for Databricks. Every guide is one idea, sixteen documented failure modes, production patterns and a cheat sheet. Auto Loader is free.">
+
+<meta property="og:title" content="Databricks Field Manuals">
+<meta property="og:description" content="One idea per guide. Sixteen failure modes. Production patterns. Auto Loader is free.">
+<meta property="og:type" content="website">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+
+<a class="skip" href="#main">Skip to content</a>
+
+<!-- ══════════ NAV ══════════ -->
+<header class="nav" id="nav">
+  <div class="wrap nav-in">
+    <a class="brand" href="#top">
+      <span class="brand-mark" aria-hidden="true"></span>
+      <span class="brand-txt">Field Manuals<span class="dot">.</span></span>
+    </a>
+    <nav class="nav-links" aria-label="Main">
+      <a href="#coverage">Coverage</a>
+      <a href="#free">Free guide</a>
+      <a href="#catalogue">Catalogue</a>
+      <a href="#bundles">Bundles</a>
+      <a href="#anatomy">What's inside</a>
+      <a href="#author">Author</a>
+    </nav>
+    <a class="btn btn-sm btn-primary" href="#free">Get Auto Loader free</a>
+    <button class="nav-toggle" aria-label="Menu" aria-expanded="false"><span></span><span></span></button>
+  </div>
+</header>
+
+<main id="main">
+
+<!-- ══════════ HERO ══════════ -->
+<section class="hero" id="top">
+  <div class="hero-grid" aria-hidden="true"></div>
+  <div class="hero-glow" aria-hidden="true"></div>
+  <div class="scanline" aria-hidden="true"></div>
+
+  <div class="wrap hero-in">
+    <div class="hero-copy">
+      <div class="rule" aria-hidden="true"></div>
+      <p class="eyebrow">Databricks &nbsp;·&nbsp; Practical Reference &nbsp;·&nbsp; Field Manuals</p>
+      <h1 class="hero-title">
+        The guides<br>you needed<br>at 3am<span class="dot">.</span>
+      </h1>
+      <p class="hero-sub">
+        Print-quality field manuals for Databricks. Every one is built around
+        <b>a single organising idea</b>, then sixteen documented failure modes with
+        symptom, cause and fix — the things that only appear in production.
+      </p>
+
+      <div class="hero-cta">
+        <a class="btn btn-primary" href="#free">
+          Get Auto Loader — free
+          <span class="btn-meta">47 pages · no email required</span>
+        </a>
+        <a class="btn btn-ghost" href="#catalogue">See all 51 guides</a>
+      </div>
+
+      <dl class="hero-stats">
+        <div><dt>15</dt><dd>guides written</dd></div>
+        <div><dt>643</dt><dd>pages shipped</dd></div>
+        <div><dt>240</dt><dd>failure modes documented</dd></div>
+      </dl>
+    </div>
+
+    <!-- Live cover, rendered in the same language as the books -->
+    <div class="hero-art" aria-label="Example guide cover">
+      <div class="cover-stack">
+        <div class="cover-ghost cover-ghost-2" aria-hidden="true"></div>
+        <div class="cover-ghost cover-ghost-1" aria-hidden="true"></div>
+
+        <article class="cover">
+          <div class="cover-grid-bg" aria-hidden="true"></div>
+          <div class="cover-top">
+            <div class="cover-rule" aria-hidden="true"></div>
+            <p class="cover-eyebrow">Databricks · Query Engine · Field Manual</p>
+            <h2 class="cover-title">Photon<span class="dot">.</span></h2>
+            <p class="cover-sub">The vectorized engine — <b>explained simply</b>, with the silent fallback and the cost equation.</p>
+          </div>
+
+          <div class="cover-diagram" aria-hidden="true">
+            <div class="cd-col">
+              <p class="cd-label cd-label-dim">Spark · JVM · row by row</p>
+              <div class="cd-rows">
+                <i></i><i></i><i></i><i></i><i></i><i></i>
+              </div>
+            </div>
+            <div class="cd-arrow">→</div>
+            <div class="cd-col">
+              <p class="cd-label cd-label-flow">Photon · C++ · columnar</p>
+              <div class="cd-bars">
+                <i></i><i></i><i></i><i></i><i></i><i></i>
+              </div>
+            </div>
+          </div>
+
+          <div class="cover-equation" aria-hidden="true">
+            <p class="cd-label cd-label-gold">The only question that matters</p>
+            <p class="ce-formula">speedup ≥ DBU multiplier ?</p>
+          </div>
+
+          <div class="cover-foot">
+            <div class="cover-chips">
+              <span class="cchip cchip-hot">16 failure modes</span>
+              <span class="cchip">Fallback</span>
+              <span class="cchip">Cost equation</span>
+            </div>
+            <p class="cover-wm">HAKKACHE MOHAMED</p>
+          </div>
+        </article>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ MARQUEE ══════════ -->
+<div class="marquee" aria-hidden="true">
+  <div class="marquee-track">
+    <span>Auto Loader's unit of work is a new file at a new path.</span><i>◆</i>
+    <span>The log is the table. The files are just storage.</span><i>◆</i>
+    <span>A copy of the data is not a copy of the guarantees.</span><i>◆</i>
+    <span>Photon is a bet, not a free upgrade.</span><i>◆</i>
+    <span>A streaming query is a contract with its checkpoint.</span><i>◆</i>
+    <span>The job decides when and whether. The task decides what.</span><i>◆</i>
+    <span>It remembers filenames, not contents.</span><i>◆</i>
+    <span>A UDF is a boundary crossing.</span><i>◆</i>
+  </div>
+</div>
+
+<!-- ══════════ COVERAGE BOARD — signature ══════════ -->
+<section class="sec" id="coverage">
+  <div class="wrap">
+    <header class="sec-head">
+      <p class="eyebrow">The catalogue</p>
+      <h2 class="sec-title">Nine categories.<br>Fifty-one guides<span class="dot">.</span></h2>
+      <p class="sec-lead">
+        The series covers the whole platform, category by category. Three are finished.
+        This board is live — it updates as guides ship.
+      </p>
+    </header>
+
+    <div class="board" id="board" role="list">
+      <!-- injected -->
+    </div>
+
+    <div class="board-legend">
+      <span><i class="sw sw-flow"></i>Shipped</span>
+      <span><i class="sw sw-dim"></i>In progress</span>
+      <span><i class="sw sw-line"></i>Planned</span>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ FREE GUIDE ══════════ -->
+<section class="sec sec-alt" id="free">
+  <div class="wrap">
+    <div class="free">
+      <div class="free-copy">
+        <p class="eyebrow eyebrow-flow">Start here · free</p>
+        <h2 class="sec-title">Auto Loader<span class="dot">.</span></h2>
+        <p class="free-idea">“Auto Loader's unit of work is a new file at a new path.”</p>
+        <p class="sec-lead">
+          The complete 47-page manual, given away in full. Not a sample, not a teaser chapter —
+          the same guide that sells in the Ingestion bundle. Read it, and decide from there.
+        </p>
+
+        <ul class="free-list">
+          <li><b>Explained simply</b> — the anatomy of a stream, and a three-day walkthrough of what actually happens</li>
+          <li><b>16 failure modes</b> — schema drift, state corruption, discovery gaps and scale limits</li>
+          <li><b>8 production patterns</b> — including backfills, schema evolution and file notification setup</li>
+          <li><b>Checklist and cheat sheet</b> — the two pages you'll print</li>
+        </ul>
+
+        <div class="free-cta">
+          <a class="btn btn-primary btn-lg" data-buy="c-free" href="#">
+            Download free
+            <span class="btn-meta">PDF · 47 pages · 12 MB</span>
+          </a>
+          <p class="free-note">No email required. Yours to keep.</p>
+        </div>
+      </div>
+
+      <aside class="free-spec">
+        <p class="spec-head">Specification</p>
+        <dl class="spec-list">
+          <div><dt>Format</dt><dd>PDF, print-ready A4</dd></div>
+          <div><dt>Pages</dt><dd>47</dd></div>
+          <div><dt>Failure modes</dt><dd>16, with fixes</dd></div>
+          <div><dt>Patterns</dt><dd>8</dd></div>
+          <div><dt>Diagrams</dt><dd>Custom vector, throughout</dd></div>
+          <div><dt>Edition</dt><dd>2026.08</dd></div>
+          <div><dt>Licence</dt><dd>Personal use</dd></div>
+        </dl>
+        <div class="spec-quote">
+          <p>“Every guide answers the same question: what breaks, and what do I do about it.”</p>
+        </div>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ ANATOMY ══════════ -->
+<section class="sec" id="anatomy">
+  <div class="wrap">
+    <header class="sec-head">
+      <p class="eyebrow">What's inside</p>
+      <h2 class="sec-title">Every guide<br>has the same spine<span class="dot">.</span></h2>
+      <p class="sec-lead">
+        Once you've read one, you know exactly where to find things in the next.
+        Nine parts, roughly forty pages, one idea holding it together.
+      </p>
+    </header>
+
+    <ol class="anatomy">
+      <li>
+        <span class="an-n">01</span>
+        <h3>One organising idea</h3>
+        <p>Each guide opens with the single sentence that makes the rest predictable. Everything after it is a consequence.</p>
+      </li>
+      <li>
+        <span class="an-n">02</span>
+        <h3>Explained simply</h3>
+        <p>How the thing actually works, in plain language, with diagrams drawn for the guide rather than pulled from docs.</p>
+      </li>
+      <li>
+        <span class="an-n">03</span>
+        <h3>Sixteen failure modes</h3>
+        <p>Grouped into four families. Symptom, cause, fix — the section people return to under pressure.</p>
+      </li>
+      <li>
+        <span class="an-n">04</span>
+        <h3>Production patterns</h3>
+        <p>Six arrangements that work, with the trade-offs stated and the situation each one suits.</p>
+      </li>
+      <li>
+        <span class="an-n">05</span>
+        <h3>Limits and checklist</h3>
+        <p>Every documented limit in one place, and a pre-production checklist you can actually run through.</p>
+      </li>
+      <li>
+        <span class="an-n">06</span>
+        <h3>Cheat sheet</h3>
+        <p>The last page. “To do this, use that.” Printed, pinned, and the reason people keep the file.</p>
+      </li>
+    </ol>
+  </div>
+</section>
+
+<!-- ══════════ AUTHOR ══════════ -->
+<section class="sec sec-alt" id="author">
+  <div class="wrap">
+    <div class="author">
+      <div class="author-copy">
+        <p class="eyebrow">Who writes these</p>
+        <h2 class="sec-title">Hakkache<br>Mohamed<span class="dot">.</span></h2>
+        <p class="sec-lead">
+          Data engineer. These guides come out of production work on Databricks — the
+          failure modes are documented because they happened, and the patterns are the ones
+          that held up afterwards.
+        </p>
+        <p class="sec-lead" style="margin-top:16px">
+          Every guide is researched against current Databricks documentation, then organised
+          around the one idea that makes the feature predictable.
+        </p>
+        <a class="btn btn-ghost author-btn" href="https://hakkache.github.io/hakkache-Med" target="_blank" rel="noopener">
+          Visit my portfolio
+          <span class="btn-meta">hakkache.github.io</span>
+        </a>
+      </div>
+
+      <a class="author-card" href="https://hakkache.github.io/hakkache-Med" target="_blank" rel="noopener">
+        <span class="ac-grid" aria-hidden="true"></span>
+        <span class="ac-in">
+          <span class="ac-mark" aria-hidden="true"></span>
+          <span class="ac-name">HAKKACHE MOHAMED</span>
+          <span class="ac-role">Data Engineer · Author</span>
+          <span class="ac-div" aria-hidden="true"></span>
+          <span class="ac-stats">
+            <span><b>15</b>guides</span>
+            <span><b>643</b>pages</span>
+            <span><b>9</b>categories</span>
+          </span>
+          <span class="ac-link">
+            hakkache.github.io/hakkache-Med
+            <span class="ac-arrow" aria-hidden="true">→</span>
+          </span>
+        </span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ COLLECTIONS ══════════ -->
+<section class="sec" id="collections">
+  <div class="wrap">
+    <header class="sec-head">
+      <p class="eyebrow">Pricing</p>
+      <h2 class="sec-title">Three ways in<span class="dot">.</span></h2>
+      <p class="sec-lead">
+        Buy one guide, one category, or the whole library. Early-access pricing is locked for life —
+        the library price rises as the catalogue grows.
+      </p>
+    </header>
+
+    <div class="tiers" id="tiers"><!-- injected --></div>
+  </div>
+</section>
+
+<!-- ══════════ CATALOGUE ══════════ -->
+<section class="sec sec-alt" id="catalogue">
+  <div class="wrap">
+    <header class="sec-head sec-head-row">
+      <div>
+        <p class="eyebrow">Every guide</p>
+        <h2 class="sec-title">The catalogue<span class="dot">.</span></h2>
+      </div>
+      <p class="sec-lead sec-lead-tight">
+        Fifteen written, the rest in progress. Prices are launch prices and rise once a category completes.
+      </p>
+    </header>
+
+    <div class="filters" role="tablist" aria-label="Filter by category">
+      <button class="filter is-on" data-filter="all" role="tab" aria-selected="true">All<span class="f-n" id="count-all"></span></button>
+      <!-- injected -->
+    </div>
+
+    <div class="table-head" aria-hidden="true">
+      <span>Guide</span><span>Category</span><span>Pages</span><span>Price</span><span></span>
+    </div>
+    <div class="rows" id="rows"><!-- injected --></div>
+  </div>
+</section>
+
+<!-- ══════════ BUNDLES ══════════ -->
+<section class="sec" id="bundles">
+  <div class="wrap">
+    <header class="sec-head">
+      <p class="eyebrow">By category</p>
+      <h2 class="sec-title">Bundles<span class="dot">.</span></h2>
+      <p class="sec-lead">
+        Every guide in a category, at roughly a third off buying them separately.
+        Bundles unlock as their category completes.
+      </p>
+    </header>
+
+    <div class="bundles" id="bundles-grid"><!-- injected --></div>
+  </div>
+</section>
+
+<!-- ══════════ FAQ ══════════ -->
+<section class="sec sec-alt" id="faq">
+  <div class="wrap wrap-narrow">
+    <header class="sec-head">
+      <p class="eyebrow">Before you ask</p>
+      <h2 class="sec-title">Questions<span class="dot">.</span></h2>
+    </header>
+
+    <div class="faq">
+      <details>
+        <summary>Why is Auto Loader free?</summary>
+        <p>Because the fastest way to find out whether these are useful to you is to read one. It's the complete guide, not a sample. If it doesn't earn a place in your bookmarks, nothing else here will either.</p>
+      </details>
+      <details>
+        <summary>What format are the guides?</summary>
+        <p>Print-ready A4 PDF, typeset for reading on screen or paper. Custom vector diagrams throughout, and a cheat sheet on the last page designed to be printed on its own.</p>
+      </details>
+      <details>
+        <summary>Isn't this all in the Databricks documentation?</summary>
+        <p>The facts are, mostly. What isn't is the organisation: one idea that makes a feature predictable, the failure modes collected in one place with fixes, and the trade-offs stated plainly. These guides are the thing you wanted when the docs told you what a setting does but not what happens when it's wrong.</p>
+      </details>
+      <details>
+        <summary>How current are they?</summary>
+        <p>Each guide carries an edition number and notes runtime requirements and preview status where they matter. Databricks moves quickly, so guides are revised — and revisions are free if you bought the guide, the bundle or the library.</p>
+      </details>
+      <details>
+        <summary>What does "coming soon" mean?</summary>
+        <p>Fifteen guides are written. The rest are planned and prices are set. Buying the Complete Library at early-access pricing locks that price for every future guide, however large the catalogue gets.</p>
+      </details>
+      <details>
+        <summary>Can I buy these for my team?</summary>
+        <p>The listed prices are for personal use. For team or organisation licences, get in touch and we'll sort something sensible out.</p>
+      </details>
+      <details>
+        <summary>How does checkout work?</summary>
+        <p>Through Gumroad. Card and PayPal, instant download, and Gumroad handles VAT and receipts.</p>
+      </details>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ FINAL CTA ══════════ -->
+<section class="final">
+  <div class="final-grid" aria-hidden="true"></div>
+  <div class="wrap final-in">
+    <h2 class="final-title">Start with the free one<span class="dot">.</span></h2>
+    <p class="final-sub">Forty-seven pages on Auto Loader. Everything that breaks, and what to do about it.</p>
+    <a class="btn btn-primary btn-lg" data-buy="c-free" href="#">
+      Download free
+      <span class="btn-meta">No email required</span>
+    </a>
+  </div>
+</section>
+
+</main>
+
+<!-- ══════════ FOOTER ══════════ -->
+<footer class="foot">
+  <div class="wrap foot-in">
+    <div class="foot-brand">
+      <span class="brand-mark" aria-hidden="true"></span>
+      <p class="foot-name">Databricks Field Manuals<span class="dot">.</span></p>
+      <p class="foot-by">Written and designed by
+        <a class="foot-author" href="https://hakkache.github.io/hakkache-Med" target="_blank" rel="noopener"><b>Hakkache Mohamed</b><span class="fa-arrow" aria-hidden="true">↗</span></a>
+      </p>
+    </div>
+    <nav class="foot-links" aria-label="Footer">
+      <div>
+        <p class="foot-h">Catalogue</p>
+        <a href="#free">Free guide</a>
+        <a href="#catalogue">All guides</a>
+        <a href="#bundles">Bundles</a>
+        <a href="#collections">Library</a>
+      </div>
+      <div>
+        <p class="foot-h">About</p>
+        <a href="#coverage">Coverage</a>
+        <a href="#anatomy">What's inside</a>
+        <a href="#author">The author</a>
+        <a href="#faq">Questions</a>
+        <a href="https://hakkache.github.io/hakkache-Med" target="_blank" rel="noopener">Portfolio &#8599;</a>
+      </div>
+    </nav>
+  </div>
+  <div class="wrap foot-base">
+    <p>Edition 2026.08 · Independent work, not affiliated with or endorsed by Databricks, Inc.</p>
+    <p>Runtime requirements and preview status change. Verify against your workspace.</p>
+  </div>
+</footer>
+
+<script src="assets/js/catalogue.js"></script>
+<script src="assets/js/app.js"></script>
+</body>
+</html>
