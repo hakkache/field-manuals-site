@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>Lakeflow Connect Dropped Changes After a Gateway Outage</title>
+<meta name="description" content="After a maintenance window, a gateway restart or a long weekend, the pipeline reports missing changes — or destination tables are quietly out of step… Cause, fix, and what to check first.">
+<link rel="canonical" href="https://hakkache.github.io/field-manuals-site/failures/lakeflow-connect-gateway-offline-changes-dropped/">
+
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Databricks Field Manuals">
+<meta property="og:url" content="https://hakkache.github.io/field-manuals-site/failures/lakeflow-connect-gateway-offline-changes-dropped/">
+<meta property="og:title" content="Lakeflow Connect Dropped Changes After a Gateway Outage">
+<meta property="og:description" content="After a maintenance window, a gateway restart or a long weekend, the pipeline reports missing changes — or destination tables are quietly out of step… Cause, fix, and what to check first.">
+<meta property="og:image" content="https://hakkache.github.io/field-manuals-site/assets/img/og-cover.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Lakeflow Connect Dropped Changes After a Gateway Outage">
+<meta name="twitter:description" content="After a maintenance window, a gateway restart or a long weekend, the pipeline reports missing changes — or destination tables are quietly out of step… Cause, fix, and what to check first.">
+<meta name="twitter:image" content="https://hakkache.github.io/field-manuals-site/assets/img/og-cover.png">
+
+<meta name="theme-color" content="#0A0D10">
+<link rel="icon" href="../../assets/img/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="../../assets/img/apple-touch-icon.png">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=IBM+Plex+Sans:wght@400;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/css/style.css">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "TechArticle",
+      "headline": "Lakeflow Connect Dropped Changes After a Gateway Outage",
+      "description": "After a maintenance window, a gateway restart or a long weekend, the pipeline reports missing changes — or destination tables are quietly out of step… Cause, fix, and what to check first.",
+      "url": "https://hakkache.github.io/field-manuals-site/failures/lakeflow-connect-gateway-offline-changes-dropped/",
+      "inLanguage": "en",
+      "author": {
+        "@type": "Person",
+        "name": "Mohamed Hakkache",
+        "url": "https://github.com/hakkache"
+      },
+      "about": "Databricks Lakeflow Connect",
+      "articleSection": "Gateway failures",
+      "isPartOf": {
+        "@type": "Book",
+        "name": "Lakeflow Connect Field Manual",
+        "url": "https://hakkache.github.io/field-manuals-site/manuals/lakeflow-connect/"
+      }
+    },
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Field Manuals",
+          "item": "https://hakkache.github.io/field-manuals-site/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Failure index",
+          "item": "https://hakkache.github.io/field-manuals-site/failures/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "name": "Changes went missing after the gateway was offline",
+          "item": "https://hakkache.github.io/field-manuals-site/failures/lakeflow-connect-gateway-offline-changes-dropped/"
+        }
+      ]
+    }
+  ]
+}
+</script>
+</head>
+
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="nav" id="nav">
+  <div class="wrap nav-in">
+    <a class="brand" href="../../">
+      <span class="brand-mark" aria-hidden="true"></span>
+      <span class="brand-txt">
+        <span class="brand-a">Databricks Guide Series</span>
+        <span class="brand-b">Field Manuals</span>
+      </span>
+    </a>
+    <nav class="nav-links" id="nav-links" aria-label="Main">
+      <a href="../../">Home</a>
+      <a href="../../failures/">Failure index</a>
+      <a href="../../library/">Catalogue</a>
+      <a href="../../manuals/auto-loader/">Auto Loader</a>
+      <a href="../../manuals/lakeflow-connect/">Lakeflow Connect</a>
+    </nav>
+    <a class="btn btn-sm btn-primary nav-cta" data-buy="auto-loader" href="https://hakkache.gumroad.com/l/auto-loader-field-manual">Free manual</a>
+    <button class="nav-toggle" type="button" aria-label="Open menu" aria-controls="nav-links" aria-expanded="false">
+      <span></span><span></span>
+    </button>
+  </div>
+</header>
+
+<main id="main">
+
+<section class="page-head">
+  <div class="grid-bg grid-fade" aria-hidden="true"></div>
+  <div class="wrap">
+    <p class="crumb"><a href="../../">Field Manuals</a><span>/</span><a href="../">Failure index</a><span>/</span>Lakeflow Connect</p>
+    <p class="eyebrow"><span>Lakeflow Connect · Gateway · failure 01 of 16</span></p>
+    <h1 class="sec-title">Changes went missing after the gateway was offline<span class="dot">.</span></h1>
+  </div>
+</section>
+
+<section class="sec">
+  <div class="wrap">
+    <article class="fm-card" style="max-width:900px">
+      <div class="fm-head">
+        <span class="fm-fam">Failure family · Gateway</span>
+        <span class="fm-folio">Lakeflow Connect · part 06 · failure 01 of 16</span>
+      </div>
+      <div class="fm-rows">
+        <div class="fm-row fm-row-symptom">
+          <div class="fm-k">Symptom</div><div class="fm-v">After a maintenance window, a gateway restart or a long weekend, the pipeline reports missing changes — or destination tables are quietly out of step with the source.</div>
+        </div>
+        <div class="fm-row fm-row-cause">
+          <div class="fm-k">Cause</div><div class="fm-v">The gateway was offline longer than the source&#x27;s change log retention. Databricks can resume from where it left off only while the logs remain on the source. Once the source truncates them, the changes are gone.</div>
+        </div>
+        <div class="fm-row fm-row-fix">
+          <div class="fm-k">Fix</div><div class="fm-v">Immediately, a full refresh of all affected tables — there is no incremental recovery path. For prevention, in order of value: raise retention on the source, never manually stop the gateway, and alert on gateway health directly rather than on pipeline success. On SQL Server the default is three days, which a long weekend can exceed.</div>
+        </div>
+      </div>
+      <p class="fm-foot"><b>Check first —</b> Set the source&#x27;s change retention to comfortably exceed your worst realistic outage — a long weekend plus a public holiday, not an average incident. It costs source storage, not DBUs.</p>
+    </article>
+
+    <div class="prose" style="margin-top:40px">
+      <h2>Where this comes from</h2>
+      <p>
+        This is failure 01 of sixteen documented in the
+        <a href="../../manuals/lakeflow-connect/">Lakeflow Connect Field Manual</a> — 42 pages covering
+        architecture, all sixteen failure modes with fixes, production patterns, every
+        documented limit, a pre-production checklist and a cheat sheet.
+      </p>
+      <div class="hero-cta" style="margin-top:24px">
+        <a class="btn btn-primary" data-buy="lakeflow-connect" href="https://hakkache.gumroad.com/l/lakeflow-connect-field-manual">
+          Get the manual — $7.99
+          <span class="btn-meta">42 pages · PDF · via Gumroad</span>
+        </a>
+        <a class="btn btn-ghost" href="../../manuals/lakeflow-connect/">See what's in it</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="sec sec-alt">
+  <div class="wrap">
+    <header class="sec-head">
+      <p class="eyebrow"><span>Related</span></p>
+      <h2 class="sec-title">Other Lakeflow Connect failures<span class="dot">.</span></h2>
+    </header>
+    <ul class="rel-list">
+        <li class="row-rel"><a href="../lakeflow-connect-deleting-pipeline-drops-tables/">Deleting the pipeline dropped the destination tables</a><span class="rel-fam">Operations</span></li>
+        <li class="row-rel"><a href="../lakeflow-connect-reused-column-name-pipeline-fails/">A reused column name broke the pipeline months later</a><span class="rel-fam">Schema</span></li>
+        <li class="row-rel"><a href="../lakeflow-connect-deletes-not-replicated/">Deleted rows never disappear from the destination</a><span class="rel-fam">Schema</span></li>
+        <li class="row-rel"><a href="../lakeflow-connect-failover-forces-full-refresh/">A failover invalidated every table in the pipeline</a><span class="rel-fam">Gateway</span></li>
+        <li class="row-rel"><a href="../lakeflow-connect-scheduled-update-skipped/">A scheduled update was silently skipped</a><span class="rel-fam">Operations</span></li>
+    </ul>
+    <p style="margin-top:24px"><a href="../" style="color:var(--teal)">All documented failures →</a></p>
+  </div>
+</section>
+
+<section class="sec">
+  <div class="wrap wrap-narrow">
+    <div class="signup">
+      <h2>Seventeen more manuals are written<span class="dot">.</span></h2>
+      <p>One short email per release — what it covers and what it costs. One click to stop.</p>
+      <form class="signup-form notify-form" method="POST" action="https://hakkache.gumroad.com/subscribe">
+        <label class="sr-only" for="notify-email">Email address</label>
+        <input id="notify-email" name="email" type="email" required autocomplete="email" placeholder="you@company.com">
+        <input class="hp" type="text" name="_gotcha" tabindex="-1" autocomplete="off" aria-hidden="true">
+        <button class="btn btn-primary" type="submit">Notify me</button>
+      </form>
+      <p class="signup-fine notify-msg" hidden></p>
+      <p class="signup-fine">No sharing, no selling. <a href="../../legal/">How your data is handled</a>.</p>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer class="foot">
+  <div class="wrap foot-legal">
+    <p class="disc">Independent educational publication. Not affiliated with or endorsed by Databricks.</p>
+    <p>Databricks is a trademark of Databricks, Inc. Runtime behaviour changes — verify against your own workspace.</p>
+    <p>&copy; <span id="year">2026</span> Mohamed Hakkache &middot; <a href="../../" style="color:var(--fg-2)">Field Manuals</a> &middot; <a href="../../failures/" style="color:var(--fg-2)">Failure index</a> &middot; <a href="../../legal/" style="color:var(--fg-2)">Privacy &amp; terms</a></p>
+  </div>
+</footer>
+
+<script src="../../assets/js/app.js" defer></script>
+<!-- Cloudflare Web Analytics -->
+<script type='module' src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "b52138e1d6cd45bcb4fa471087975469"}'></script>
+<!-- End Cloudflare Web Analytics -->
+</body>
+</html>

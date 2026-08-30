@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>Databricks Failure Modes — Symptom, Cause and Fix</title>
+<meta name="description" content="Documented Databricks failure modes with symptom, cause and fix — Auto Loader schema and discovery failures, Lakeflow Connect gateway and CDC failures.">
+<link rel="canonical" href="https://hakkache.github.io/field-manuals-site/failures/">
+
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Databricks Field Manuals">
+<meta property="og:url" content="https://hakkache.github.io/field-manuals-site/failures/">
+<meta property="og:title" content="Databricks Failure Modes — Symptom, Cause and Fix">
+<meta property="og:description" content="Documented Databricks failure modes with symptom, cause and fix — Auto Loader schema and discovery failures, Lakeflow Connect gateway and CDC failures.">
+<meta property="og:image" content="https://hakkache.github.io/field-manuals-site/assets/img/og-cover.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Databricks Failure Modes — Symptom, Cause and Fix">
+<meta name="twitter:description" content="Documented Databricks failure modes with symptom, cause and fix — Auto Loader schema and discovery failures, Lakeflow Connect gateway and CDC failures.">
+<meta name="twitter:image" content="https://hakkache.github.io/field-manuals-site/assets/img/og-cover.png">
+
+<meta name="theme-color" content="#0A0D10">
+<link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="../assets/img/apple-touch-icon.png">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=IBM+Plex+Sans:wght@400;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/css/style.css">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "CollectionPage",
+  "name": "Databricks Failure Modes — Symptom, Cause and Fix",
+  "description": "Documented Databricks failure modes with symptom, cause and fix — Auto Loader schema and discovery failures, Lakeflow Connect gateway and CDC failures.",
+  "url": "https://hakkache.github.io/field-manuals-site/failures/",
+  "hasPart": [
+    {
+      "@type": "TechArticle",
+      "headline": "Auto Loader Columns All STRING in Databricks — Cause and Fix",
+      "url": "https://hakkache.github.io/field-manuals-site/failures/auto-loader-columns-all-string/"
+    },
+    {
+      "@type": "TechArticle",
+      "headline": "Databricks Row Count Doubled After Deleting the Auto Loader Checkpoint",
+      "url": "https://hakkache.github.io/field-manuals-site/failures/auto-loader-duplicate-rows-after-deleting-checkpoint/"
+    },
+    {
+      "@type": "TechArticle",
+      "headline": "Auto Loader Not Picking Up Files — Six Causes, and Nothing Errors",
+      "url": "https://hakkache.github.io/field-manuals-site/failures/auto-loader-files-not-appearing-in-table/"
+    },
+    {
+      "@type": "TechArticle",
+      "headline": "UnknownFieldException in Databricks Auto Loader — Why It Happens",
+      "url": "https://hakkache.github.io/field-manuals-site/failures/unknownfieldexception-databricks-auto-loader/"
+    },
+    {
+      "@type": "TechArticle",
+      "headline": "Auto Loader Ignoring an Overwritten File — allowOverwrites Explained",
+      "url": "https://hakkache.github.io/field-manuals-site/failures/auto-loader-not-reprocessing-overwritten-file/"
+    },
+    {
+      "@type": "TechArticle",
+      "headline": "Auto Loader Checkpoint Growing and Startup Slowing — maxFileAge",
+      "url": "https://hakkache.github.io/field-manuals-site/failures/auto-loader-checkpoint-growing-slow-startup/"
+    },
+    {
+      "@type": "TechArticle",
+      "headline": "Lakeflow Connect Dropped Changes After a Gateway Outage",
+      "url": "https://hakkache.github.io/field-manuals-site/failures/lakeflow-connect-gateway-offline-changes-dropped/"
+    },
+    {
+      "@type": "TechArticle",
+      "headline": "Deleting a Lakeflow Connect Pipeline Drops Your Destination Tables",
+      "url": "https://hakkache.github.io/field-manuals-site/failures/lakeflow-connect-deleting-pipeline-drops-tables/"
+    },
+    {
+      "@type": "TechArticle",
+      "headline": "Lakeflow Connect Pipeline Fails After a Column Name Is Reused",
+      "url": "https://hakkache.github.io/field-manuals-site/failures/lakeflow-connect-reused-column-name-pipeline-fails/"
+    },
+    {
+      "@type": "TechArticle",
+      "headline": "Lakeflow Connect Not Deleting Rows — Cursor vs CDC Connectors",
+      "url": "https://hakkache.github.io/field-manuals-site/failures/lakeflow-connect-deletes-not-replicated/"
+    },
+    {
+      "@type": "TechArticle",
+      "headline": "Database Failover Forces a Full Refresh in Lakeflow Connect",
+      "url": "https://hakkache.github.io/field-manuals-site/failures/lakeflow-connect-failover-forces-full-refresh/"
+    },
+    {
+      "@type": "TechArticle",
+      "headline": "Lakeflow Connect Skipped a Scheduled Update — Overlap Protection",
+      "url": "https://hakkache.github.io/field-manuals-site/failures/lakeflow-connect-scheduled-update-skipped/"
+    }
+  ]
+}
+</script>
+</head>
+
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="nav" id="nav">
+  <div class="wrap nav-in">
+    <a class="brand" href="../">
+      <span class="brand-mark" aria-hidden="true"></span>
+      <span class="brand-txt">
+        <span class="brand-a">Databricks Guide Series</span>
+        <span class="brand-b">Field Manuals</span>
+      </span>
+    </a>
+    <nav class="nav-links" id="nav-links" aria-label="Main">
+      <a href="../">Home</a>
+      <a href="../failures/">Failure index</a>
+      <a href="../library/">Catalogue</a>
+      <a href="../manuals/auto-loader/">Auto Loader</a>
+      <a href="../manuals/lakeflow-connect/">Lakeflow Connect</a>
+    </nav>
+    <a class="btn btn-sm btn-primary nav-cta" data-buy="auto-loader" href="https://hakkache.gumroad.com/l/auto-loader-field-manual">Free manual</a>
+    <button class="nav-toggle" type="button" aria-label="Open menu" aria-controls="nav-links" aria-expanded="false">
+      <span></span><span></span>
+    </button>
+  </div>
+</header>
+
+<main id="main">
+
+<section class="page-head">
+  <div class="grid-bg grid-fade" aria-hidden="true"></div>
+  <div class="wrap">
+    <p class="crumb"><a href="../">Field Manuals</a><span>/</span>Failure index</p>
+    <p class="eyebrow"><span>Diagnostic index</span></p>
+    <h1 class="sec-title">Databricks failures,<br>by symptom<span class="dot">.</span></h1>
+    <p class="sec-lead">
+      Every entry follows the same shape: the symptom you actually see, the cause, the fix,
+      and the one thing to check first. Taken from part 06 of the field manuals, where each
+      topic documents sixteen of them.
+    </p>
+  </div>
+</section>
+
+<section class="sec">
+  <div class="wrap">
+    <section class="cat-block">
+      <div class="cat-head">
+        <h3 class="cat-name">Auto Loader</h3>
+        <span class="cat-count">6 of 16 published</span>
+      </div>
+      <ul class="rel-list">
+        <li class="row-rel"><a href="auto-loader-columns-all-string/">Every column came back as STRING</a><span class="rel-fam">Schema</span></li>
+        <li class="row-rel"><a href="auto-loader-duplicate-rows-after-deleting-checkpoint/">The row count doubled overnight</a><span class="rel-fam">State</span></li>
+        <li class="row-rel"><a href="auto-loader-files-not-appearing-in-table/">The file is in storage but never reaches the table</a><span class="rel-fam">Discovery</span></li>
+        <li class="row-rel"><a href="unknownfieldexception-databricks-auto-loader/">UnknownFieldException every time the schema changes</a><span class="rel-fam">Schema</span></li>
+        <li class="row-rel"><a href="auto-loader-not-reprocessing-overwritten-file/">The corrected re-upload never took effect</a><span class="rel-fam">Discovery</span></li>
+        <li class="row-rel"><a href="auto-loader-checkpoint-growing-slow-startup/">The checkpoint is tens of gigabytes and startup keeps slowing</a><span class="rel-fam">Scale</span></li>
+      </ul>
+    </section>
+    <section class="cat-block">
+      <div class="cat-head">
+        <h3 class="cat-name">Lakeflow Connect</h3>
+        <span class="cat-count">6 of 16 published</span>
+      </div>
+      <ul class="rel-list">
+        <li class="row-rel"><a href="lakeflow-connect-gateway-offline-changes-dropped/">Changes went missing after the gateway was offline</a><span class="rel-fam">Gateway</span></li>
+        <li class="row-rel"><a href="lakeflow-connect-deleting-pipeline-drops-tables/">Deleting the pipeline dropped the destination tables</a><span class="rel-fam">Operations</span></li>
+        <li class="row-rel"><a href="lakeflow-connect-reused-column-name-pipeline-fails/">A reused column name broke the pipeline months later</a><span class="rel-fam">Schema</span></li>
+        <li class="row-rel"><a href="lakeflow-connect-deletes-not-replicated/">Deleted rows never disappear from the destination</a><span class="rel-fam">Schema</span></li>
+        <li class="row-rel"><a href="lakeflow-connect-failover-forces-full-refresh/">A failover invalidated every table in the pipeline</a><span class="rel-fam">Gateway</span></li>
+        <li class="row-rel"><a href="lakeflow-connect-scheduled-update-skipped/">A scheduled update was silently skipped</a><span class="rel-fam">Operations</span></li>
+      </ul>
+    </section>
+  </div>
+</section>
+
+<section class="sec">
+  <div class="wrap wrap-narrow">
+    <div class="signup">
+      <h2>Seventeen more manuals are written<span class="dot">.</span></h2>
+      <p>One short email per release — what it covers and what it costs. One click to stop.</p>
+      <form class="signup-form notify-form" method="POST" action="https://hakkache.gumroad.com/subscribe">
+        <label class="sr-only" for="notify-email">Email address</label>
+        <input id="notify-email" name="email" type="email" required autocomplete="email" placeholder="you@company.com">
+        <input class="hp" type="text" name="_gotcha" tabindex="-1" autocomplete="off" aria-hidden="true">
+        <button class="btn btn-primary" type="submit">Notify me</button>
+      </form>
+      <p class="signup-fine notify-msg" hidden></p>
+      <p class="signup-fine">No sharing, no selling. <a href="../legal/">How your data is handled</a>.</p>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer class="foot">
+  <div class="wrap foot-legal">
+    <p class="disc">Independent educational publication. Not affiliated with or endorsed by Databricks.</p>
+    <p>Databricks is a trademark of Databricks, Inc. Runtime behaviour changes — verify against your own workspace.</p>
+    <p>&copy; <span id="year">2026</span> Mohamed Hakkache &middot; <a href="../" style="color:var(--fg-2)">Field Manuals</a> &middot; <a href="../failures/" style="color:var(--fg-2)">Failure index</a> &middot; <a href="../legal/" style="color:var(--fg-2)">Privacy &amp; terms</a></p>
+  </div>
+</footer>
+
+<script src="../assets/js/app.js" defer></script>
+<!-- Cloudflare Web Analytics -->
+<script type='module' src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "b52138e1d6cd45bcb4fa471087975469"}'></script>
+<!-- End Cloudflare Web Analytics -->
+</body>
+</html>

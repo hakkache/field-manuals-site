@@ -25,9 +25,87 @@
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://hakkache.github.io/field-manuals-site/failures/</loc>
+    <lastmod>2026-08-30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
     <loc>https://hakkache.github.io/field-manuals-site/legal/</loc>
     <lastmod>2026-08-30</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
+  </url>
+  <url>
+    <loc>https://hakkache.github.io/field-manuals-site/failures/auto-loader-columns-all-string/</loc>
+    <lastmod>2026-08-30</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://hakkache.github.io/field-manuals-site/failures/auto-loader-duplicate-rows-after-deleting-checkpoint/</loc>
+    <lastmod>2026-08-30</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://hakkache.github.io/field-manuals-site/failures/auto-loader-files-not-appearing-in-table/</loc>
+    <lastmod>2026-08-30</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://hakkache.github.io/field-manuals-site/failures/unknownfieldexception-databricks-auto-loader/</loc>
+    <lastmod>2026-08-30</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://hakkache.github.io/field-manuals-site/failures/auto-loader-not-reprocessing-overwritten-file/</loc>
+    <lastmod>2026-08-30</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://hakkache.github.io/field-manuals-site/failures/auto-loader-checkpoint-growing-slow-startup/</loc>
+    <lastmod>2026-08-30</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://hakkache.github.io/field-manuals-site/failures/lakeflow-connect-gateway-offline-changes-dropped/</loc>
+    <lastmod>2026-08-30</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://hakkache.github.io/field-manuals-site/failures/lakeflow-connect-deleting-pipeline-drops-tables/</loc>
+    <lastmod>2026-08-30</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://hakkache.github.io/field-manuals-site/failures/lakeflow-connect-reused-column-name-pipeline-fails/</loc>
+    <lastmod>2026-08-30</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://hakkache.github.io/field-manuals-site/failures/lakeflow-connect-deletes-not-replicated/</loc>
+    <lastmod>2026-08-30</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://hakkache.github.io/field-manuals-site/failures/lakeflow-connect-failover-forces-full-refresh/</loc>
+    <lastmod>2026-08-30</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://hakkache.github.io/field-manuals-site/failures/lakeflow-connect-scheduled-update-skipped/</loc>
+    <lastmod>2026-08-30</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
   </url>
 </urlset>

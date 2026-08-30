@@ -22,6 +22,7 @@ No dependencies. Python 3.8+.
 
 import html
 import json
+import build_failures
 import pathlib
 import re
 import sys
@@ -306,15 +307,19 @@ def inject(path, name, content):
     return True
 
 
-def build_sitemap(cat):
+def build_sitemap(cat, extra=()):
     base = cat["site"]["baseUrl"].rstrip("/")
     pages = [
         ("/", "1.0", "weekly"),
         ("/manuals/auto-loader/", "0.9", "monthly"),
         ("/manuals/lakeflow-connect/", "0.9", "monthly"),
         ("/library/", "0.8", "weekly"),
+        ("/failures/", "0.8", "weekly"),
         ("/legal/", "0.3", "yearly"),
     ]
+    for loc in extra:
+        if loc != "/failures/":
+            pages.append((loc, "0.7", "monthly"))
     today = date.today().isoformat()
     lines = [
         '<?xml version="1.0" encoding="UTF-8"?>',
@@ -368,7 +373,8 @@ def main():
             if inject(path, name, content):
                 touched += 1
 
-    build_sitemap(cat)
+    failure_pages = build_failures.generate(cat)
+    build_sitemap(cat, failure_pages)
 
     built = [m for m in cat["manuals"] if m["status"] in BUILT]
     sale = [m for m in cat["manuals"] if m["status"] == "sale"]
@@ -379,6 +385,7 @@ def main():
         f"{len(cat['manuals']) - len(built)} topics remaining"
     )
     print("  on sale: " + ", ".join(f"{m['name']} ({m['price']})" for m in sale))
+    print(f"  {len(failure_pages) - 1} failure pages generated + index")
     print("  sitemap.xml regenerated")
 
 

@@ -11,12 +11,14 @@ index.html                      home
 manuals/auto-loader/            free manual (47pp) — own indexable URL
 manuals/lakeflow-connect/       $7.99 manual (42pp) — own indexable URL
 library/                        full 51-topic catalogue
+failures/                       one indexable page per failure mode (generated)
 legal/                          privacy & terms
 404.html
 robots.txt · sitemap.xml · .nojekyll
 
 data/catalogue.json             ALL content — edit this, not the HTML
 build.py                        renders catalogue.json into the HTML
+build_failures.py               generates one SEO page per failure mode
 utm.py                          builds tagged campaign links
 DEPLOY.md                       how to push this to GitHub
 LAUNCH.md                       launch checklist + growth playbook

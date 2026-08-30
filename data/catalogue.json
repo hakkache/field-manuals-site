@@ -527,7 +527,12 @@
         "symptom": "Your bronze table has amount, order_date and qty all typed as STRING. Every downstream cast fails, or silently returns null.",
         "cause": "For JSON and CSV, cloudFiles.inferColumnTypes defaults to false. Auto Loader reads everything as a string on purpose, so that a single malformed value cannot poison a column's inferred type.",
         "fix": "Turn inference on — or better, stop relying on inference for the columns that matter and name the types explicitly with cloudFiles.schemaHints. Careful: changing this on a running stream does not retroactively fix the stored schema. You must clear the schema location, the checkpoint and the table together, then reload.",
-        "check": "Look at the stored schema under cloudFiles.schemaLocation rather than at the table — that is where the decision was actually made."
+        "check": "Look at the stored schema under cloudFiles.schemaLocation rather than at the table — that is where the decision was actually made.",
+        "slug": "auto-loader-columns-all-string",
+        "title": "Auto Loader Columns All STRING in Databricks — Cause and Fix",
+        "h1": "Every column came back as STRING",
+        "manual": "auto-loader",
+        "manualName": "Auto Loader"
       },
       {
         "id": "al-04",
@@ -537,7 +542,12 @@
         "symptom": "Row count doubled overnight. No errors anywhere. Usually discovered by a business user noticing revenue is exactly 2×.",
         "cause": "The checkpoint is the memory. Delete it and every file in the directory becomes new again, so the entire history is appended a second time.",
         "fix": "Find the damage by grouping on the source file column, then roll back with Delta time travel — DESCRIBE HISTORY, then RESTORE TABLE to the version before the bad run. After that, reset the checkpoint and the table together and reload. The golden rule is that the checkpoint and the target table are one unit: reset both, or neither.",
-        "check": "Group by your source-file column and look for files with more rows than expected. That query finds the blast radius in seconds."
+        "check": "Group by your source-file column and look for files with more rows than expected. That query finds the blast radius in seconds.",
+        "slug": "auto-loader-duplicate-rows-after-deleting-checkpoint",
+        "title": "Databricks Row Count Doubled After Deleting the Auto Loader Checkpoint",
+        "h1": "The row count doubled overnight",
+        "manual": "auto-loader",
+        "manualName": "Auto Loader"
       },
       {
         "id": "al-05",
@@ -547,7 +557,12 @@
         "symptom": "You can see the file in the bucket. It is not in the table. Nothing errored, no alert fired, and the run was green.",
         "cause": "Six independent causes produce this same silent symptom: incremental listing skipping files because it assumes lexicographically ordered filenames; a lost notification event; a case-sensitive glob filter excluding more than you meant; maxFileAge expiring the file before discovery; includeExistingFiles being false; or a hidden file starting with an underscore or a dot.",
         "fix": "Work the list in that order — it is ranked by how often each turns out to be the culprit. Set useIncrementalListing to false if your filenames are not date-prefixed, set backfillInterval if you are on notification mode, and check the exact extension casing on your glob.",
-        "check": "Capture _metadata.file_path and an ingestion timestamp as columns on every bronze table, then compare the count of distinct source files against the file count in storage. Two columns, zero cost, and the only way to detect this family at all."
+        "check": "Capture _metadata.file_path and an ingestion timestamp as columns on every bronze table, then compare the count of distinct source files against the file count in storage. Two columns, zero cost, and the only way to detect this family at all.",
+        "slug": "auto-loader-files-not-appearing-in-table",
+        "title": "Auto Loader Not Picking Up Files — Six Causes, and Nothing Errors",
+        "h1": "The file is in storage but never reaches the table",
+        "manual": "auto-loader",
+        "manualName": "Auto Loader"
       },
       {
         "id": "al-02",
@@ -557,7 +572,12 @@
         "symptom": "The job fails with a message about new fields found in the data, at unpredictable times — usually when an upstream team ships a release.",
         "cause": "This is normal, intended behaviour of the default addNewColumns mode. Auto Loader saw an unknown column, saved the updated schema to the schema location, and stopped so that you notice.",
         "fix": "Run the job with automatic retries so a schema change is a thirty-second self-heal rather than a pager alert. Then set mergeSchema on the write side too — otherwise Auto Loader evolves the schema successfully and the Delta write fails instead, which is a confusing half-fix.",
-        "check": "The schema location holds a numbered history of every schema version. The diff between the last two tells you exactly which field arrived."
+        "check": "The schema location holds a numbered history of every schema version. The diff between the last two tells you exactly which field arrived.",
+        "slug": "unknownfieldexception-databricks-auto-loader",
+        "title": "UnknownFieldException in Databricks Auto Loader — Why It Happens",
+        "h1": "UnknownFieldException every time the schema changes",
+        "manual": "auto-loader",
+        "manualName": "Auto Loader"
       },
       {
         "id": "al-07",
@@ -567,7 +587,12 @@
         "symptom": "The vendor corrected a bad record and re-uploaded the file at the same path. Your table still shows the old values.",
         "cause": "Same path means already seen, so it is skipped. This is by design — the path is the file's identity.",
         "fix": "There is a partial fix and a real fix. cloudFiles.allowOverwrites makes Auto Loader reprocess a file when its modification time changes — but it appends rather than replaces, so you now hold both the old and the corrected rows and still need deduplication downstream. The real fix is to have the source write a new path and resolve versions with a MERGE in silver.",
-        "check": "If the same bytes keep arriving at the same path, you have a snapshot problem rather than an incremental file problem. Solve it with MERGE or overwrite semantics, not with discovery options."
+        "check": "If the same bytes keep arriving at the same path, you have a snapshot problem rather than an incremental file problem. Solve it with MERGE or overwrite semantics, not with discovery options.",
+        "slug": "auto-loader-not-reprocessing-overwritten-file",
+        "title": "Auto Loader Ignoring an Overwritten File — allowOverwrites Explained",
+        "h1": "The corrected re-upload never took effect",
+        "manual": "auto-loader",
+        "manualName": "Auto Loader"
       },
       {
         "id": "al-10",
@@ -577,7 +602,12 @@
         "symptom": "The checkpoint directory is tens of gigabytes. Stream startup is slow and getting slower every week.",
         "cause": "Auto Loader remembers every file it has ever seen, permanently. On a stream ingesting millions of files per hour, that state grows without bound.",
         "fix": "Bound the state with cloudFiles.maxFileAge, and upgrade to a runtime where the stream no longer waits for the entire RocksDB state to download before starting. Understand the trade-off first: maxFileAge is a cost knob, not a correctness knob. The minimum accepted value is 14 days, and if a file older than the window ever appears — a very late delivery, a replayed archive — it is treated as brand new and ingested again.",
-        "check": "Do the arithmetic before setting it. Two million files an hour over thirty days is roughly 1.4 billion entries, so confirm your real maximum arrival lateness rather than guessing."
+        "check": "Do the arithmetic before setting it. Two million files an hour over thirty days is roughly 1.4 billion entries, so confirm your real maximum arrival lateness rather than guessing.",
+        "slug": "auto-loader-checkpoint-growing-slow-startup",
+        "title": "Auto Loader Checkpoint Growing and Startup Slowing — maxFileAge",
+        "h1": "The checkpoint is tens of gigabytes and startup keeps slowing",
+        "manual": "auto-loader",
+        "manualName": "Auto Loader"
       }
     ],
     "lakeflow-connect": [
@@ -589,7 +619,12 @@
         "symptom": "After a maintenance window, a gateway restart or a long weekend, the pipeline reports missing changes — or destination tables are quietly out of step with the source.",
         "cause": "The gateway was offline longer than the source's change log retention. Databricks can resume from where it left off only while the logs remain on the source. Once the source truncates them, the changes are gone.",
         "fix": "Immediately, a full refresh of all affected tables — there is no incremental recovery path. For prevention, in order of value: raise retention on the source, never manually stop the gateway, and alert on gateway health directly rather than on pipeline success. On SQL Server the default is three days, which a long weekend can exceed.",
-        "check": "Set the source's change retention to comfortably exceed your worst realistic outage — a long weekend plus a public holiday, not an average incident. It costs source storage, not DBUs."
+        "check": "Set the source's change retention to comfortably exceed your worst realistic outage — a long weekend plus a public holiday, not an average incident. It costs source storage, not DBUs.",
+        "slug": "lakeflow-connect-gateway-offline-changes-dropped",
+        "title": "Lakeflow Connect Dropped Changes After a Gateway Outage",
+        "h1": "Changes went missing after the gateway was offline",
+        "manual": "lakeflow-connect",
+        "manualName": "Lakeflow Connect"
       },
       {
         "id": "lc-13",
@@ -599,7 +634,12 @@
         "symptom": "Someone removed an ingestion pipeline during a cleanup. The destination tables went with it, along with everything built on top of them.",
         "cause": "The destination tables are dropped when the ingestion pipeline is deleted. This is documented behaviour, not an accident, and it is the single most dangerous fact in the product.",
         "fix": "Prevention is the only real answer. Treat the destination schema as a disposable bronze landing layer and nothing else, build silver and gold in a separate schema with their own pipelines, restrict who can delete ingestion pipelines the way you would restrict destructive DDL, and make deletion a reviewed action rather than a cleanup task.",
-        "check": "Ask which tables in that schema something else depends on structurally. Anything you cannot afford to lose should not live in a schema a managed pipeline controls."
+        "check": "Ask which tables in that schema something else depends on structurally. Anything you cannot afford to lose should not live in a schema a managed pipeline controls.",
+        "slug": "lakeflow-connect-deleting-pipeline-drops-tables",
+        "title": "Deleting a Lakeflow Connect Pipeline Drops Your Destination Tables",
+        "h1": "Deleting the pipeline dropped the destination tables",
+        "manual": "lakeflow-connect",
+        "manualName": "Lakeflow Connect"
       },
       {
         "id": "lc-09",
@@ -609,7 +649,12 @@
         "symptom": "A pipeline that ran cleanly for months fails after a routine source change. Nobody deployed anything to Databricks.",
         "cause": "A column was deleted at the source at some earlier point. Databricks did not delete it — it marked it inactive via a table property. When another column later appears with the same name, the pipeline fails.",
         "fix": "Two documented options: trigger a full refresh of the affected table, or manually drop the inactive column from the destination table, which avoids the refresh. The second is usually much cheaper on a large table. The same behaviour applies at table level, so the same collision can happen with a reused table name.",
-        "check": "This is the delayed family. A column deleted in March breaks the pipeline in June, when somebody unrelated reuses the name — so check the source's change history, not just the last deployment."
+        "check": "This is the delayed family. A column deleted in March breaks the pipeline in June, when somebody unrelated reuses the name — so check the source's change history, not just the last deployment.",
+        "slug": "lakeflow-connect-reused-column-name-pipeline-fails",
+        "title": "Lakeflow Connect Pipeline Fails After a Column Name Is Reused",
+        "h1": "A reused column name broke the pipeline months later",
+        "manual": "lakeflow-connect",
+        "manualName": "Lakeflow Connect"
       },
       {
         "id": "lc-12",
@@ -619,7 +664,12 @@
         "symptom": "Rows deleted at the source remain in the destination indefinitely, and a dropped source table is still present in Databricks.",
         "cause": "Two separate causes with the same appearance. Cursor-based connectors cannot detect deletes — a deleted row simply stops appearing rather than generating an event. And when a source table is deleted the destination table is not automatically deleted; you must remove it manually.",
         "fix": "Confirm your connector's delete semantics before designing around them, because CDC-based connectors detect deletes and cursor-based ones do not. Where deletes matter and the connector cannot detect them, schedule periodic full refreshes or reconcile against a source count. Add a manual cleanup step when source tables are decommissioned — nothing will prompt you.",
-        "check": "If deletes matter to your business logic, and for anything financial or regulatory they do, verify the mechanism for your specific source rather than assuming every managed connector does native CDC."
+        "check": "If deletes matter to your business logic, and for anything financial or regulatory they do, verify the mechanism for your specific source rather than assuming every managed connector does native CDC.",
+        "slug": "lakeflow-connect-deletes-not-replicated",
+        "title": "Lakeflow Connect Not Deleting Rows — Cursor vs CDC Connectors",
+        "h1": "Deleted rows never disappear from the destination",
+        "manual": "lakeflow-connect",
+        "manualName": "Lakeflow Connect"
       },
       {
         "id": "lc-03",
@@ -629,7 +679,12 @@
         "symptom": "A routine availability-group failover on the source database invalidated the entire pipeline, not just the tables that were mid-transaction.",
         "cause": "Any source node change, including an AG failover, requires a full refresh of all tables in the pipeline. The connector's position in the change log is node-specific.",
         "fix": "Accept the refresh, but size your pipelines with it in mind — a single pipeline carrying 200 tables means a 200-table refresh after every failover. Splitting into several gateway-and-pipeline pairs by domain limits the blast radius, at the cost of another gateway each. Coordinate with the DBA team so planned failovers are known events with a refresh scheduled after them.",
-        "check": "Blast radius scales with pipeline size, and Databricks recommends 250 or fewer tables per pipeline. Both point the same way: smaller pipelines."
+        "check": "Blast radius scales with pipeline size, and Databricks recommends 250 or fewer tables per pipeline. Both point the same way: smaller pipelines.",
+        "slug": "lakeflow-connect-failover-forces-full-refresh",
+        "title": "Database Failover Forces a Full Refresh in Lakeflow Connect",
+        "h1": "A failover invalidated every table in the pipeline",
+        "manual": "lakeflow-connect",
+        "manualName": "Lakeflow Connect"
       },
       {
         "id": "lc-14",
@@ -639,7 +694,12 @@
         "symptom": "A pipeline scheduled hourly appears to have run only every other hour. Nothing failed.",
         "cause": "If update N is still running when update N+1 is scheduled, Databricks skips N+1 and picks up at N+2, assuming N completes in time. This is overlap protection, not an error.",
         "fix": "Match the schedule to the actual runtime — if updates routinely take fifty minutes, an hourly schedule is fragile. Split large pipelines so each update finishes comfortably inside its window, and monitor update duration as a trend rather than just success or failure.",
-        "check": "Skipped updates are invisible in a success-only view. Monitor destination table freshness directly instead; a table that has not updated within its expected window is the signal that arrives on time."
+        "check": "Skipped updates are invisible in a success-only view. Monitor destination table freshness directly instead; a table that has not updated within its expected window is the signal that arrives on time.",
+        "slug": "lakeflow-connect-scheduled-update-skipped",
+        "title": "Lakeflow Connect Skipped a Scheduled Update — Overlap Protection",
+        "h1": "A scheduled update was silently skipped",
+        "manual": "lakeflow-connect",
+        "manualName": "Lakeflow Connect"
       }
     ]
   },
