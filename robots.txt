@@ -1,0 +1,5 @@
+# Databricks Field Manuals
+User-agent: *
+Allow: /
+
+Sitemap: https://hakkache.github.io/field-manuals-site/sitemap.xml

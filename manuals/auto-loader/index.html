@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>Databricks Auto Loader Field Manual — 16 Failure Modes, Free 47-Page PDF</title>
+<meta name="description" content="A free 47-page Databricks Auto Loader field manual: architecture, schema evolution, _rescued_data, file discovery, 16 documented failure modes with symptom, cause and fix.">
+<link rel="canonical" href="https://hakkache.github.io/field-manuals-site/manuals/auto-loader/">
+
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Databricks Field Manuals">
+<meta property="og:url" content="https://hakkache.github.io/field-manuals-site/manuals/auto-loader/">
+<meta property="og:title" content="Databricks Auto Loader Field Manual — free, 47 pages">
+<meta property="og:description" content="Architecture, schema evolution, _rescued_data and 16 documented failure modes with symptom, cause and fix.">
+<meta property="og:image" content="https://hakkache.github.io/field-manuals-site/assets/img/og-cover.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Databricks Auto Loader Field Manual — free, 47 pages">
+<meta name="twitter:description" content="Sixteen documented failure modes, each with symptom, cause and fix.">
+<meta name="twitter:image" content="https://hakkache.github.io/field-manuals-site/assets/img/og-cover.png">
+
+<meta name="theme-color" content="#0A0D10">
+<link rel="icon" href="../../assets/img/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="../../assets/img/apple-touch-icon.png">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=IBM+Plex+Sans:wght@400;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/css/style.css">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Field Manuals", "item": "https://hakkache.github.io/field-manuals-site/" },
+    { "@type": "ListItem", "position": 2, "name": "Manuals", "item": "https://hakkache.github.io/field-manuals-site/library/" },
+    { "@type": "ListItem", "position": 3, "name": "Auto Loader", "item": "https://hakkache.github.io/field-manuals-site/manuals/auto-loader/" }
+  ]
+}
+</script>
+</head>
+
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="nav" id="nav">
+  <div class="wrap nav-in">
+    <a class="brand" href="../../">
+      <span class="brand-mark" aria-hidden="true"></span>
+      <span class="brand-txt">
+        <span class="brand-a">Databricks Guide Series</span>
+        <span class="brand-b">Field Manuals</span>
+      </span>
+    </a>
+    <nav class="nav-links" id="nav-links" aria-label="Main">
+      <a href="../../">Home</a>
+      <a href="../../library/">Catalogue</a>
+      <a href="#modes">Failure modes</a>
+      <a href="#contents">Contents</a>
+      <a href="../../#faq">FAQ</a>
+    </nav>
+    <a class="btn btn-sm btn-primary nav-cta" data-buy="auto-loader" href="https://hakkache.gumroad.com/l/auto-loader-field-manual">Get it — free</a>
+    <button class="nav-toggle" type="button" aria-label="Open menu" aria-controls="nav-links" aria-expanded="false">
+      <span></span><span></span>
+    </button>
+  </div>
+</header>
+
+<main id="main">
+
+<section class="page-head">
+  <div class="grid-bg grid-fade" aria-hidden="true"></div>
+  <div class="wrap">
+    <p class="crumb"><a href="../../">Field Manuals</a><span>/</span><a href="../../library/">Catalogue</a><span>/</span>Auto Loader</p>
+    <p class="eyebrow"><span>01 — Ingestion · Available now · Free</span></p>
+    <h1 class="sec-title">Databricks Auto Loader<br>Field Manual<span class="dot">.</span></h1>
+    <p class="sec-lead">
+      Forty-seven pages on the <code style="font-family:var(--mono);color:var(--cyan)">cloudFiles</code>
+      source: how discovery, schema inference and checkpointing actually work, sixteen documented
+      failure modes with fixes, eight production patterns, and a one-page cheat sheet.
+    </p>
+    <div class="hero-cta">
+      <a class="btn btn-primary" data-buy="auto-loader" href="https://hakkache.gumroad.com/l/auto-loader-field-manual">
+        Download the manual
+        <span class="btn-meta">Free · PDF · no email required</span>
+      </a>
+      <a class="btn btn-ghost" href="#modes">Read six failure modes first</a>
+    </div>
+  </div>
+</section>
+
+<section class="sec">
+  <div class="wrap">
+    <div class="prose">
+      <h2 id="idea">The organising idea</h2>
+      <p>
+        Almost every surprising thing Auto Loader does follows from one sentence:
+        <b>its unit of work is a new file at a new path.</b>
+      </p>
+      <p>
+        Three consequences follow immediately. It is <b>file-based</b> — you cannot ask for only
+        the rows changed since the last run; it reads a whole file or none of it. It is
+        <b>append-only</b> — it has no concept of an update or a delete, and removing a file from
+        the source does nothing to your table. And it is <b>storage-only</b> — no databases, no
+        Kafka, no APIs. If there is no file, there is no Auto Loader.
+      </p>
+      <p>
+        Not a new record. Not changed contents. A path that the file registry has not seen before.
+        Once that lands, the rest stops being surprising: editing a file in place changes nothing
+        downstream, re-uploading the same data under a new prefix reprocesses all of it, and
+        deleting the checkpoint does not "reset" the stream so much as create a different one.
+      </p>
+      <p>
+        The manual works outward from that sentence — through the architecture, then through the
+        sixteen ways it goes wrong in production.
+      </p>
+
+      <h2>What the manual covers</h2>
+      <ul>
+        <li>Discovery: directory listing, incremental listing, file notification and managed file events — and the cost model of each.</li>
+        <li>The file registry, the checkpoint and the schema location: three pieces of state, and what happens when each is lost.</li>
+        <li>Schema inference, <code>schemaHints</code>, the evolution modes, and reading <code>_rescued_data</code> as a data quality signal.</li>
+        <li>Throughput controls, trigger choices, and running ingestion as a scheduled batch instead of continuously.</li>
+        <li>Backfills, migrations and multiplexed sources without duplicating history.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="sec sec-alt" id="modes">
+  <div class="wrap">
+    <header class="sec-head">
+      <p class="eyebrow"><span>Part 06 · sample</span></p>
+      <h2 class="sec-title">Six of the sixteen<br>failure modes<span class="dot">.</span></h2>
+      <p class="sec-lead">
+        Reproduced in full from the manual, in the same structure as the printed page. If these
+        are useful, the other ten are in the free PDF.
+      </p>
+    </header>
+
+    <div class="fm-list">
+<!--BUILD:fmprose-->
+      <article class="fm-card" data-fm-card="al-01" id="panel-al-01" role="tabpanel" aria-labelledby="tab-al-01" tabindex="0">
+        <div class="fm-head">
+          <span class="fm-fam">Failure family · Schema</span>
+          <span class="fm-folio">Failure 01 of 16</span>
+        </div>
+        <div class="fm-rows">
+          <div class="fm-row fm-row-symptom">
+            <div class="fm-k">Symptom</div>
+            <div class="fm-v">Your bronze table has amount, order_date and qty all typed as STRING. Every downstream cast fails, or silently returns null.</div>
+          </div>
+          <div class="fm-row fm-row-cause">
+            <div class="fm-k">Cause</div>
+            <div class="fm-v">For JSON and CSV, cloudFiles.inferColumnTypes defaults to false. Auto Loader reads everything as a string on purpose, so that a single malformed value cannot poison a column&#x27;s inferred type.</div>
+          </div>
+          <div class="fm-row fm-row-fix">
+            <div class="fm-k">Fix</div>
+            <div class="fm-v">Turn inference on — or better, stop relying on inference for the columns that matter and name the types explicitly with cloudFiles.schemaHints. Careful: changing this on a running stream does not retroactively fix the stored schema. You must clear the schema location, the checkpoint and the table together, then reload.</div>
+          </div>
+        </div>
+        <p class="fm-foot"><b>Check first —</b> Look at the stored schema under cloudFiles.schemaLocation rather than at the table — that is where the decision was actually made.</p>
+      </article>
+      <article class="fm-card" data-fm-card="al-04" id="panel-al-04" role="tabpanel" aria-labelledby="tab-al-04" tabindex="0">
+        <div class="fm-head">
+          <span class="fm-fam">Failure family · State</span>
+          <span class="fm-folio">Failure 04 of 16</span>
+        </div>
+        <div class="fm-rows">
+          <div class="fm-row fm-row-symptom">
+            <div class="fm-k">Symptom</div>
+            <div class="fm-v">Row count doubled overnight. No errors anywhere. Usually discovered by a business user noticing revenue is exactly 2×.</div>
+          </div>
+          <div class="fm-row fm-row-cause">
+            <div class="fm-k">Cause</div>
+            <div class="fm-v">The checkpoint is the memory. Delete it and every file in the directory becomes new again, so the entire history is appended a second time.</div>
+          </div>
+          <div class="fm-row fm-row-fix">
+            <div class="fm-k">Fix</div>
+            <div class="fm-v">Find the damage by grouping on the source file column, then roll back with Delta time travel — DESCRIBE HISTORY, then RESTORE TABLE to the version before the bad run. After that, reset the checkpoint and the table together and reload. The golden rule is that the checkpoint and the target table are one unit: reset both, or neither.</div>
+          </div>
+        </div>
+        <p class="fm-foot"><b>Check first —</b> Group by your source-file column and look for files with more rows than expected. That query finds the blast radius in seconds.</p>
+      </article>
+      <article class="fm-card" data-fm-card="al-05" id="panel-al-05" role="tabpanel" aria-labelledby="tab-al-05" tabindex="0">
+        <div class="fm-head">
+          <span class="fm-fam">Failure family · Discovery</span>
+          <span class="fm-folio">Failure 05 of 16</span>
+        </div>
+        <div class="fm-rows">
+          <div class="fm-row fm-row-symptom">
+            <div class="fm-k">Symptom</div>
+            <div class="fm-v">You can see the file in the bucket. It is not in the table. Nothing errored, no alert fired, and the run was green.</div>
+          </div>
+          <div class="fm-row fm-row-cause">
+            <div class="fm-k">Cause</div>
+            <div class="fm-v">Six independent causes produce this same silent symptom: incremental listing skipping files because it assumes lexicographically ordered filenames; a lost notification event; a case-sensitive glob filter excluding more than you meant; maxFileAge expiring the file before discovery; includeExistingFiles being false; or a hidden file starting with an underscore or a dot.</div>
+          </div>
+          <div class="fm-row fm-row-fix">
+            <div class="fm-k">Fix</div>
+            <div class="fm-v">Work the list in that order — it is ranked by how often each turns out to be the culprit. Set useIncrementalListing to false if your filenames are not date-prefixed, set backfillInterval if you are on notification mode, and check the exact extension casing on your glob.</div>
+          </div>
+        </div>
+        <p class="fm-foot"><b>Check first —</b> Capture _metadata.file_path and an ingestion timestamp as columns on every bronze table, then compare the count of distinct source files against the file count in storage. Two columns, zero cost, and the only way to detect this family at all.</p>
+      </article>
+      <article class="fm-card" data-fm-card="al-02" id="panel-al-02" role="tabpanel" aria-labelledby="tab-al-02" tabindex="0">
+        <div class="fm-head">
+          <span class="fm-fam">Failure family · Schema</span>
+          <span class="fm-folio">Failure 02 of 16</span>
+        </div>
+        <div class="fm-rows">
+          <div class="fm-row fm-row-symptom">
+            <div class="fm-k">Symptom</div>
+            <div class="fm-v">The job fails with a message about new fields found in the data, at unpredictable times — usually when an upstream team ships a release.</div>
+          </div>
+          <div class="fm-row fm-row-cause">
+            <div class="fm-k">Cause</div>
+            <div class="fm-v">This is normal, intended behaviour of the default addNewColumns mode. Auto Loader saw an unknown column, saved the updated schema to the schema location, and stopped so that you notice.</div>
+          </div>
+          <div class="fm-row fm-row-fix">
+            <div class="fm-k">Fix</div>
+            <div class="fm-v">Run the job with automatic retries so a schema change is a thirty-second self-heal rather than a pager alert. Then set mergeSchema on the write side too — otherwise Auto Loader evolves the schema successfully and the Delta write fails instead, which is a confusing half-fix.</div>
+          </div>
+        </div>
+        <p class="fm-foot"><b>Check first —</b> The schema location holds a numbered history of every schema version. The diff between the last two tells you exactly which field arrived.</p>
+      </article>
+      <article class="fm-card" data-fm-card="al-07" id="panel-al-07" role="tabpanel" aria-labelledby="tab-al-07" tabindex="0">
+        <div class="fm-head">
+          <span class="fm-fam">Failure family · Discovery</span>
+          <span class="fm-folio">Failure 07 of 16</span>
+        </div>
+        <div class="fm-rows">
+          <div class="fm-row fm-row-symptom">
+            <div class="fm-k">Symptom</div>
+            <div class="fm-v">The vendor corrected a bad record and re-uploaded the file at the same path. Your table still shows the old values.</div>
+          </div>
+          <div class="fm-row fm-row-cause">
+            <div class="fm-k">Cause</div>
+            <div class="fm-v">Same path means already seen, so it is skipped. This is by design — the path is the file&#x27;s identity.</div>
+          </div>
+          <div class="fm-row fm-row-fix">
+            <div class="fm-k">Fix</div>
+            <div class="fm-v">There is a partial fix and a real fix. cloudFiles.allowOverwrites makes Auto Loader reprocess a file when its modification time changes — but it appends rather than replaces, so you now hold both the old and the corrected rows and still need deduplication downstream. The real fix is to have the source write a new path and resolve versions with a MERGE in silver.</div>
+          </div>
+        </div>
+        <p class="fm-foot"><b>Check first —</b> If the same bytes keep arriving at the same path, you have a snapshot problem rather than an incremental file problem. Solve it with MERGE or overwrite semantics, not with discovery options.</p>
+      </article>
+      <article class="fm-card" data-fm-card="al-10" id="panel-al-10" role="tabpanel" aria-labelledby="tab-al-10" tabindex="0">
+        <div class="fm-head">
+          <span class="fm-fam">Failure family · Scale</span>
+          <span class="fm-folio">Failure 10 of 16</span>
+        </div>
+        <div class="fm-rows">
+          <div class="fm-row fm-row-symptom">
+            <div class="fm-k">Symptom</div>
+            <div class="fm-v">The checkpoint directory is tens of gigabytes. Stream startup is slow and getting slower every week.</div>
+          </div>
+          <div class="fm-row fm-row-cause">
+            <div class="fm-k">Cause</div>
+            <div class="fm-v">Auto Loader remembers every file it has ever seen, permanently. On a stream ingesting millions of files per hour, that state grows without bound.</div>
+          </div>
+          <div class="fm-row fm-row-fix">
+            <div class="fm-k">Fix</div>
+            <div class="fm-v">Bound the state with cloudFiles.maxFileAge, and upgrade to a runtime where the stream no longer waits for the entire RocksDB state to download before starting. Understand the trade-off first: maxFileAge is a cost knob, not a correctness knob. The minimum accepted value is 14 days, and if a file older than the window ever appears — a very late delivery, a replayed archive — it is treated as brand new and ingested again.</div>
+          </div>
+        </div>
+        <p class="fm-foot"><b>Check first —</b> Do the arithmetic before setting it. Two million files an hour over thirty days is roughly 1.4 billion entries, so confirm your real maximum arrival lateness rather than guessing.</p>
+      </article>
+<!--/BUILD:fmprose-->
+    </div>
+
+    <div style="text-align:center;margin-top:40px">
+      <a class="btn btn-primary btn-lg" data-buy="auto-loader" href="https://hakkache.gumroad.com/l/auto-loader-field-manual">
+        Get the other ten
+        <span class="btn-meta">Free · 47-page PDF</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="contents">
+  <div class="wrap wrap-narrow">
+    <header class="sec-head">
+      <p class="eyebrow"><span>Contents</span></p>
+      <h2 class="sec-title">All nine parts<span class="dot">.</span></h2>
+    </header>
+    <ol class="toc">
+<!--BUILD:toc-->
+        <li>
+          <span class="toc-n">01</span>
+          <div>
+            <h3>Auto Loader, explained simply</h3>
+            <p>The mailbox model, the one sentence that explains every limitation, and where Auto Loader does not belong at all.</p>
+          </div>
+          <span class="toc-p">p.03</span>
+        </li>
+        <li>
+          <span class="toc-n">02</span>
+          <div>
+            <h3>Anatomy of a job</h3>
+            <p>Every option line by line, and the two folders that cause most production incidents.</p>
+          </div>
+          <span class="toc-p">p.07</span>
+        </li>
+        <li>
+          <span class="toc-n">03</span>
+          <div>
+            <h3>Watch it work: a three-day walkthrough</h3>
+            <p>Exactly what happens on day 1, day 2, and the day the source adds a column.</p>
+          </div>
+          <span class="toc-p">p.11</span>
+        </li>
+        <li>
+          <span class="toc-n">04</span>
+          <div>
+            <h3>How it finds files</h3>
+            <p>Directory listing, file notification and File Events — with a decision tree and the cost maths.</p>
+          </div>
+          <span class="toc-p">p.13</span>
+        </li>
+        <li>
+          <span class="toc-n">05</span>
+          <div>
+            <h3>Schema inference and evolution</h3>
+            <p>Five evolution modes, the rescued data column, and why your stream is supposed to crash.</p>
+          </div>
+          <span class="toc-p">p.16</span>
+        </li>
+        <li>
+          <span class="toc-n">06</span>
+          <div>
+            <h3>Sixteen failures and their fixes</h3>
+            <p>Symptom, cause, fix — including the silent ones, where nothing errors and rows just never arrive.</p>
+          </div>
+          <span class="toc-p">p.20</span>
+        </li>
+        <li>
+          <span class="toc-n">07</span>
+          <div>
+            <h3>Eight production patterns</h3>
+            <p>Vendor drops, IoT at scale, CDC upserts, the snapshot anti-pattern, multi-table zones, backfills, archives, idempotency.</p>
+          </div>
+          <span class="toc-p">p.31</span>
+        </li>
+        <li>
+          <span class="toc-n">08</span>
+          <div>
+            <h3>Production checklist</h3>
+            <p>Twelve things to confirm before a stream is allowed near production data.</p>
+          </div>
+          <span class="toc-p">p.40</span>
+        </li>
+        <li>
+          <span class="toc-n">09</span>
+          <div>
+            <h3>Cheat sheet</h3>
+            <p>Decision trees, the options that actually matter, and three rules worth memorising.</p>
+          </div>
+          <span class="toc-p">p.43</span>
+        </li>
+<!--/BUILD:toc-->
+    </ol>
+  </div>
+</section>
+
+<section class="final">
+  <div class="grid-bg grid-fade" aria-hidden="true"></div>
+  <div class="wrap final-in">
+    <div class="final-lines">
+      <span>Forty-seven pages.</span>
+      <span>Free.</span>
+    </div>
+    <p class="final-sub">Architecture, sixteen failure modes, eight production patterns, a checklist and a cheat sheet.</p>
+    <a class="btn btn-primary btn-lg" data-buy="auto-loader" href="https://hakkache.gumroad.com/l/auto-loader-field-manual">
+      Download the manual
+      <span class="btn-meta">Free · PDF · via Gumroad</span>
+    </a>
+  </div>
+</section>
+
+</main>
+
+<footer class="foot">
+  <div class="wrap foot-legal">
+    <p class="disc">Independent educational publication. Not affiliated with or endorsed by Databricks.</p>
+    <p>Databricks is a trademark of Databricks, Inc. Runtime behaviour changes — verify against your own workspace.</p>
+    <p>© <span id="year">2026</span> Mohamed Hakkache · <a href="../../" style="color:var(--fg-2)">Field Manuals</a> · <a href="../../legal/" style="color:var(--fg-2)">Privacy &amp; terms</a></p>
+  </div>
+</footer>
+
+<script src="../../assets/js/app.js" defer></script>
+<!-- Cloudflare Web Analytics -->
+<script type='module' src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "b52138e1d6cd45bcb4fa471087975469"}'></script>
+<!-- End Cloudflare Web Analytics -->
+</body>
+</html>

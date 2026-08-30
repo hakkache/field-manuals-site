@@ -1,0 +1,760 @@
+{
+  "site": {
+    "name": "Databricks Field Manuals",
+    "series": "Databricks Guide Series",
+    "tagline": "Practical Field Manuals for Databricks Engineers.",
+    "baseUrl": "https://hakkache.github.io/field-manuals-site",
+    "author": "Hakkache Mohamed",
+    "authorUrl": "https://hakkache.github.io/hakkache-Med",
+    "contactEmail": "hakkache.mohamed@gmail.com",
+    "gumroadUser": "hakkache",
+    "gumroadSubscribe": "https://hakkache.gumroad.com/subscribe",
+    "failureModesPerManual": 16,
+    "linkedin": "https://www.linkedin.com/in/hakkache-mohamed/",
+    "github": "https://github.com/hakkache",
+    "medium": "https://medium.com/@hakkache.mohamed",
+    "cloudflareToken": "b52138e1d6cd45bcb4fa471087975469",
+    "partsPerManual": 9
+  },
+  "statusLabels": {
+    "sale": "On sale",
+    "created": "Written",
+    "planned": "Not created",
+    "deferred": "Deferred"
+  },
+  "categories": [
+    {
+      "id": "ingestion",
+      "n": "1",
+      "name": "Ingestion",
+      "colour": "teal",
+      "desc": "Getting data in incrementally — without losing files, duplicating history or reprocessing the world."
+    },
+    {
+      "id": "storage",
+      "n": "2",
+      "name": "Storage & table format",
+      "colour": "cyan",
+      "desc": "What the files on disk actually are: the transaction log, maintenance, change feeds and open formats."
+    },
+    {
+      "id": "transform",
+      "n": "3",
+      "name": "Transformation & processing",
+      "colour": "iris",
+      "desc": "Pipelines, jobs and the Spark execution model — why a workload is slow rather than that it is."
+    },
+    {
+      "id": "governance",
+      "n": "4",
+      "name": "Governance",
+      "colour": "amber",
+      "desc": "Identity, permissions, federation, sharing, and proving what happened to a table."
+    },
+    {
+      "id": "serving",
+      "n": "5",
+      "name": "Serving, BI & apps",
+      "colour": "teal",
+      "desc": "The query and application layer: warehouses, dashboards, transactional serving and apps.",
+      "note": "Lakebase is written. The SQL warehouse manual is the highest-priority gap in the series."
+    },
+    {
+      "id": "ai",
+      "n": "6",
+      "name": "AI & ML",
+      "colour": "iris",
+      "desc": "The production side of models — tracking, features, serving, retrieval and agents.",
+      "note": "Nothing written yet. MLflow 3 is the entry point for this category."
+    },
+    {
+      "id": "platform",
+      "n": "7",
+      "name": "Platform & operations",
+      "colour": "amber",
+      "desc": "Deployment as code, cost, compute shape, observability and recovery.",
+      "note": "The largest uncovered category, and the one production teams ask about most."
+    },
+    {
+      "id": "security",
+      "n": "8",
+      "name": "Security & networking",
+      "colour": "rose",
+      "desc": "Network architecture, identity, secrets and encryption across a real workspace.",
+      "note": "Referenced repeatedly by the Lakehouse Federation and Delta Sharing manuals."
+    },
+    {
+      "id": "migration",
+      "n": "9",
+      "name": "Migration",
+      "colour": "cyan",
+      "desc": "Moving onto Unity Catalog, off DBFS, and onto Databricks from another platform."
+    }
+  ],
+  "manuals": [
+    {
+      "id": 1,
+      "cat": "ingestion",
+      "name": "Auto Loader",
+      "status": "sale",
+      "pages": 47,
+      "price": "Free",
+      "priceValue": "0",
+      "url": "https://hakkache.gumroad.com/l/auto-loader-field-manual",
+      "page": "manuals/auto-loader/",
+      "idea": "Auto Loader's unit of work is a new file at a new path.",
+      "blurb": "The mailbox model, the two folders everyone confuses, three discovery modes and their cost curves, five schema evolution modes, sixteen failures with fixes, and eight production patterns."
+    },
+    {
+      "id": 2,
+      "cat": "ingestion",
+      "name": "Lakeflow Connect",
+      "status": "sale",
+      "pages": 42,
+      "price": "$7.99",
+      "priceValue": "7.99",
+      "url": "https://hakkache.gumroad.com/l/lakeflow-connect-field-manual",
+      "page": "manuals/lakeflow-connect/",
+      "idea": "You configure it. You do not control it.",
+      "blurb": "Managed SaaS and database CDC connectors: the two architectures, the gateway that must never stop, schema evolution you cannot configure, and the sixteen failures that mostly end in a full refresh."
+    },
+    {
+      "id": 3,
+      "cat": "ingestion",
+      "name": "Structured Streaming",
+      "status": "created",
+      "pages": 43,
+      "blurb": "Micro-batches, triggers, checkpoints and state — the guarantees you actually get, and the failures that only appear after a restart."
+    },
+    {
+      "id": 4,
+      "cat": "ingestion",
+      "name": "COPY INTO",
+      "status": "created",
+      "pages": 42,
+      "blurb": "Idempotent batch loads, the file-tracking behaviour behind them, retries, and where COPY INTO beats a stream."
+    },
+    {
+      "id": 5,
+      "cat": "storage",
+      "name": "Delta Lake performance and maintenance",
+      "status": "created",
+      "pages": 45,
+      "blurb": "File sizing, compaction, clustering, data skipping statistics and vacuum — the layout work that decides query speed."
+    },
+    {
+      "id": 6,
+      "cat": "storage",
+      "name": "Delta Lake internals",
+      "status": "created",
+      "pages": 41,
+      "blurb": "The transaction log, commits, checkpoints, protocol versions and concurrency — reading _delta_log when a table misbehaves."
+    },
+    {
+      "id": 7,
+      "cat": "storage",
+      "name": "Change Data Feed",
+      "status": "created",
+      "pages": 41,
+      "blurb": "Row-level change tracking, retention, reading CDF downstream, and the CDC patterns that survive a backfill."
+    },
+    {
+      "id": 8,
+      "cat": "storage",
+      "name": "Iceberg on Databricks",
+      "status": "created",
+      "pages": 43,
+      "blurb": "Interoperability, managed and foreign Iceberg tables, catalog integration, and where the format boundary actually bites."
+    },
+    {
+      "id": 9,
+      "cat": "storage",
+      "name": "Clone, constraints, generated columns",
+      "status": "created",
+      "pages": 44,
+      "blurb": "Shallow and deep clones, enforced constraints, generated columns, and using them for safe testing and environment promotion."
+    },
+    {
+      "id": 10,
+      "cat": "transform",
+      "name": "Lakeflow Declarative Pipelines",
+      "status": "created",
+      "pages": 43,
+      "blurb": "Declared tables, expectations, full refresh semantics, streaming versus materialised targets, and pipeline recovery."
+    },
+    {
+      "id": 11,
+      "cat": "transform",
+      "name": "Spark on Databricks",
+      "status": "created",
+      "pages": 44,
+      "blurb": "Jobs, stages, tasks and partitions; shuffle, joins, skew and spill — reading a query plan instead of guessing at one."
+    },
+    {
+      "id": 12,
+      "cat": "transform",
+      "name": "Lakeflow Jobs / orchestration",
+      "status": "created",
+      "pages": 41,
+      "blurb": "Task graphs, retries, parameters, triggers and overlapping runs — plus the failures that only reproduce on the scheduler."
+    },
+    {
+      "id": 13,
+      "cat": "transform",
+      "name": "Photon",
+      "status": "created",
+      "pages": 41,
+      "blurb": "What Photon accelerates, what silently falls back to Spark, how to see the fallback in a plan, and when it pays for itself."
+    },
+    {
+      "id": 14,
+      "cat": "transform",
+      "name": "UDFs",
+      "status": "created",
+      "pages": 44,
+      "blurb": "Python, pandas and SQL UDFs: serialisation cost, Arrow batches, Unity Catalog registration, and when a UDF is the right answer."
+    },
+    {
+      "id": 15,
+      "cat": "governance",
+      "name": "Unity Catalog",
+      "status": "created",
+      "pages": 40,
+      "blurb": "Metastore, three-level namespace, identity, privileges, ownership and external locations in a working workspace."
+    },
+    {
+      "id": 16,
+      "cat": "governance",
+      "name": "Lakehouse Federation",
+      "status": "created",
+      "pages": 43,
+      "blurb": "Foreign catalogs, connection objects, pushdown behaviour, credentials, and the load you put on the source system."
+    },
+    {
+      "id": 17,
+      "cat": "governance",
+      "name": "Delta Sharing / Open Sharing",
+      "status": "created",
+      "pages": 41,
+      "blurb": "Providers, recipients, open versus Databricks-to-Databricks sharing, and the operational surface of sharing outside the account."
+    },
+    {
+      "id": 18,
+      "cat": "governance",
+      "name": "Lakehouse Monitoring & data quality",
+      "status": "created",
+      "pages": 42,
+      "blurb": "Profile and drift metrics, quality expectations, alerting, and telling a green pipeline apart from correct data."
+    },
+    {
+      "id": 19,
+      "cat": "governance",
+      "name": "Audit logs & system tables",
+      "status": "planned",
+      "priority": 2,
+      "blurb": "System tables, audit event schemas, retention, and reconstructing who changed what."
+    },
+    {
+      "id": 20,
+      "cat": "governance",
+      "name": "Clean Rooms",
+      "status": "planned",
+      "priority": 1,
+      "blurb": "Collaborator setup, allowed operations, and where the privacy boundary actually sits."
+    },
+    {
+      "id": 21,
+      "cat": "governance",
+      "name": "Unity Catalog Metrics",
+      "status": "planned",
+      "priority": 1,
+      "blurb": "Metric views, semantic definitions, and keeping one definition of a number across every tool."
+    },
+    {
+      "id": 22,
+      "cat": "governance",
+      "name": "Catalog Federation",
+      "status": "deferred",
+      "priority": 1,
+      "blurb": "Federating external catalogs into Unity Catalog. Deferred until the feature settles."
+    },
+    {
+      "id": 23,
+      "cat": "serving",
+      "name": "Lakebase",
+      "status": "created",
+      "pages": 46,
+      "blurb": "Transactional Postgres alongside the lakehouse: branching, sync to and from Delta, and the operational model."
+    },
+    {
+      "id": 24,
+      "cat": "serving",
+      "name": "Databricks SQL warehouses",
+      "status": "planned",
+      "priority": 3,
+      "blurb": "Sizing, scaling, queueing, result caching and concurrency for BI workloads that have to stay fast."
+    },
+    {
+      "id": 25,
+      "cat": "serving",
+      "name": "Databricks Apps",
+      "status": "planned",
+      "priority": 2,
+      "blurb": "Hosting applications next to your data: runtime, permissions, secrets and deployment."
+    },
+    {
+      "id": 26,
+      "cat": "serving",
+      "name": "AI/BI Dashboards",
+      "status": "planned",
+      "priority": 2,
+      "blurb": "Datasets, parameters, refresh behaviour, sharing, and performance under real usage."
+    },
+    {
+      "id": 27,
+      "cat": "serving",
+      "name": "AI/BI Genie",
+      "status": "deferred",
+      "priority": 1,
+      "blurb": "Natural-language querying, instruction tuning and trust boundaries. Deferred."
+    },
+    {
+      "id": 28,
+      "cat": "ai",
+      "name": "MLflow 3 & model lifecycle",
+      "status": "planned",
+      "priority": 3,
+      "blurb": "Runs, experiments, model versions, aliases, and reproducing a model six months later."
+    },
+    {
+      "id": 29,
+      "cat": "ai",
+      "name": "Model Serving",
+      "status": "planned",
+      "priority": 2,
+      "blurb": "Endpoints, scaling, cold starts, and the latency budget of a real request."
+    },
+    {
+      "id": 30,
+      "cat": "ai",
+      "name": "Feature Engineering",
+      "status": "planned",
+      "priority": 2,
+      "blurb": "Feature tables, point-in-time lookups, online stores and training/serving skew."
+    },
+    {
+      "id": 31,
+      "cat": "ai",
+      "name": "Vector Search",
+      "status": "planned",
+      "priority": 2,
+      "blurb": "Index types, sync from Delta, chunking, and retrieval quality you can actually measure."
+    },
+    {
+      "id": 32,
+      "cat": "ai",
+      "name": "Mosaic AI Agent Framework",
+      "status": "planned",
+      "priority": 2,
+      "blurb": "Authoring, tracing, evaluating and deploying agents as governed assets."
+    },
+    {
+      "id": 33,
+      "cat": "ai",
+      "name": "Foundation Model APIs",
+      "status": "planned",
+      "priority": 2,
+      "blurb": "Pay-per-token and provisioned throughput, rate limits, cost per row, and failure handling."
+    },
+    {
+      "id": 34,
+      "cat": "ai",
+      "name": "Agent Bricks / Unity AI Gateway",
+      "status": "deferred",
+      "priority": 1,
+      "blurb": "Governed model access, routing and usage control. Deferred until it stabilises."
+    },
+    {
+      "id": 35,
+      "cat": "platform",
+      "name": "Databricks Asset Bundles / CI-CD",
+      "status": "planned",
+      "priority": 3,
+      "blurb": "Workspaces as code, environments, promotion without drift, and pipelines that deploy themselves."
+    },
+    {
+      "id": 36,
+      "cat": "platform",
+      "name": "Cost management & FinOps",
+      "status": "planned",
+      "priority": 3,
+      "blurb": "DBU accounting, tagging, system tables, chargeback, and finding the workload that tripled the bill."
+    },
+    {
+      "id": 37,
+      "cat": "platform",
+      "name": "Compute configuration",
+      "status": "planned",
+      "priority": 2,
+      "blurb": "Instance families, autoscaling behaviour, driver pressure, spot interruptions and pools."
+    },
+    {
+      "id": 38,
+      "cat": "platform",
+      "name": "Observability & monitoring",
+      "status": "planned",
+      "priority": 2,
+      "blurb": "Streaming metrics, query history, system tables, and alerts actually worth waking up for."
+    },
+    {
+      "id": 39,
+      "cat": "platform",
+      "name": "Disaster recovery",
+      "status": "planned",
+      "priority": 2,
+      "blurb": "Replication strategy, RPO and RTO, failover mechanics, and rehearsing a recovery before you need it."
+    },
+    {
+      "id": 40,
+      "cat": "platform",
+      "name": "Terraform provider",
+      "status": "planned",
+      "priority": 2,
+      "blurb": "Managing workspaces, catalogs and permissions declaratively, and surviving state drift."
+    },
+    {
+      "id": 41,
+      "cat": "platform",
+      "name": "Serverless compute",
+      "status": "planned",
+      "priority": 1,
+      "blurb": "What serverless changes about startup, networking, cost shape and debugging."
+    },
+    {
+      "id": 42,
+      "cat": "platform",
+      "name": "CLI / SDK / REST API",
+      "status": "planned",
+      "priority": 1,
+      "blurb": "Authentication, automation patterns, pagination, and scripting a workspace safely."
+    },
+    {
+      "id": 43,
+      "cat": "platform",
+      "name": "Git folders & dev workflow",
+      "status": "planned",
+      "priority": 1,
+      "blurb": "Branching in the workspace, review, environment separation and reproducible development."
+    },
+    {
+      "id": 44,
+      "cat": "security",
+      "name": "Networking",
+      "status": "planned",
+      "priority": 3,
+      "blurb": "VPC and VNet architecture, private connectivity, egress control, and the failure signature of each."
+    },
+    {
+      "id": 45,
+      "cat": "security",
+      "name": "Identity & access",
+      "status": "planned",
+      "priority": 3,
+      "blurb": "SSO, SCIM provisioning, groups, service principals, and diagnosing a permission denied that should not be."
+    },
+    {
+      "id": 46,
+      "cat": "security",
+      "name": "Secrets management",
+      "status": "planned",
+      "priority": 2,
+      "blurb": "Secret scopes, backends, rotation, and keeping credentials out of notebooks and logs."
+    },
+    {
+      "id": 47,
+      "cat": "security",
+      "name": "Encryption & CMK",
+      "status": "planned",
+      "priority": 2,
+      "blurb": "Encryption at rest and in transit, customer-managed keys, and the operational cost of rotation."
+    },
+    {
+      "id": 48,
+      "cat": "security",
+      "name": "Compliance profiles",
+      "status": "planned",
+      "priority": 1,
+      "blurb": "Enhanced security settings, compliance standards, and what each one actually restricts."
+    },
+    {
+      "id": 49,
+      "cat": "migration",
+      "name": "Hive metastore → Unity Catalog",
+      "status": "planned",
+      "priority": 3,
+      "blurb": "Assessment, upgrade paths, external locations, cutover sequencing and rollback."
+    },
+    {
+      "id": 50,
+      "cat": "migration",
+      "name": "DBFS mounts → Volumes",
+      "status": "planned",
+      "priority": 2,
+      "blurb": "Replacing mounts with volumes and external locations, and rewriting every path that assumed a mount."
+    },
+    {
+      "id": 51,
+      "cat": "migration",
+      "name": "From Snowflake / Synapse / Hadoop",
+      "status": "planned",
+      "priority": 2,
+      "blurb": "Mapping concepts across platforms, translating workloads, and sequencing a migration that stays reversible."
+    }
+  ],
+  "nextReleases": [
+    3,
+    5,
+    11,
+    15
+  ],
+  "failureModes": {
+    "auto-loader": [
+      {
+        "id": "al-01",
+        "n": "01",
+        "family": "Schema",
+        "query": "everything landed as STRING databricks auto loader",
+        "symptom": "Your bronze table has amount, order_date and qty all typed as STRING. Every downstream cast fails, or silently returns null.",
+        "cause": "For JSON and CSV, cloudFiles.inferColumnTypes defaults to false. Auto Loader reads everything as a string on purpose, so that a single malformed value cannot poison a column's inferred type.",
+        "fix": "Turn inference on — or better, stop relying on inference for the columns that matter and name the types explicitly with cloudFiles.schemaHints. Careful: changing this on a running stream does not retroactively fix the stored schema. You must clear the schema location, the checkpoint and the table together, then reload.",
+        "check": "Look at the stored schema under cloudFiles.schemaLocation rather than at the table — that is where the decision was actually made."
+      },
+      {
+        "id": "al-04",
+        "n": "04",
+        "family": "State",
+        "query": "deleted checkpoint duplicates row count doubled",
+        "symptom": "Row count doubled overnight. No errors anywhere. Usually discovered by a business user noticing revenue is exactly 2×.",
+        "cause": "The checkpoint is the memory. Delete it and every file in the directory becomes new again, so the entire history is appended a second time.",
+        "fix": "Find the damage by grouping on the source file column, then roll back with Delta time travel — DESCRIBE HISTORY, then RESTORE TABLE to the version before the bad run. After that, reset the checkpoint and the table together and reload. The golden rule is that the checkpoint and the target table are one unit: reset both, or neither.",
+        "check": "Group by your source-file column and look for files with more rows than expected. That query finds the blast radius in seconds."
+      },
+      {
+        "id": "al-05",
+        "n": "05",
+        "family": "Discovery",
+        "query": "file in storage but not in table no error",
+        "symptom": "You can see the file in the bucket. It is not in the table. Nothing errored, no alert fired, and the run was green.",
+        "cause": "Six independent causes produce this same silent symptom: incremental listing skipping files because it assumes lexicographically ordered filenames; a lost notification event; a case-sensitive glob filter excluding more than you meant; maxFileAge expiring the file before discovery; includeExistingFiles being false; or a hidden file starting with an underscore or a dot.",
+        "fix": "Work the list in that order — it is ranked by how often each turns out to be the culprit. Set useIncrementalListing to false if your filenames are not date-prefixed, set backfillInterval if you are on notification mode, and check the exact extension casing on your glob.",
+        "check": "Capture _metadata.file_path and an ingestion timestamp as columns on every bronze table, then compare the count of distinct source files against the file count in storage. Two columns, zero cost, and the only way to detect this family at all."
+      },
+      {
+        "id": "al-02",
+        "n": "02",
+        "family": "Schema",
+        "query": "UnknownFieldException auto loader new column",
+        "symptom": "The job fails with a message about new fields found in the data, at unpredictable times — usually when an upstream team ships a release.",
+        "cause": "This is normal, intended behaviour of the default addNewColumns mode. Auto Loader saw an unknown column, saved the updated schema to the schema location, and stopped so that you notice.",
+        "fix": "Run the job with automatic retries so a schema change is a thirty-second self-heal rather than a pager alert. Then set mergeSchema on the write side too — otherwise Auto Loader evolves the schema successfully and the Delta write fails instead, which is a confusing half-fix.",
+        "check": "The schema location holds a numbered history of every schema version. The diff between the last two tells you exactly which field arrived."
+      },
+      {
+        "id": "al-07",
+        "n": "07",
+        "family": "Discovery",
+        "query": "vendor re-uploaded corrected file not processed",
+        "symptom": "The vendor corrected a bad record and re-uploaded the file at the same path. Your table still shows the old values.",
+        "cause": "Same path means already seen, so it is skipped. This is by design — the path is the file's identity.",
+        "fix": "There is a partial fix and a real fix. cloudFiles.allowOverwrites makes Auto Loader reprocess a file when its modification time changes — but it appends rather than replaces, so you now hold both the old and the corrected rows and still need deduplication downstream. The real fix is to have the source write a new path and resolve versions with a MERGE in silver.",
+        "check": "If the same bytes keep arriving at the same path, you have a snapshot problem rather than an incremental file problem. Solve it with MERGE or overwrite semantics, not with discovery options."
+      },
+      {
+        "id": "al-10",
+        "n": "10",
+        "family": "Scale",
+        "query": "rocksdb checkpoint state growing startup slow",
+        "symptom": "The checkpoint directory is tens of gigabytes. Stream startup is slow and getting slower every week.",
+        "cause": "Auto Loader remembers every file it has ever seen, permanently. On a stream ingesting millions of files per hour, that state grows without bound.",
+        "fix": "Bound the state with cloudFiles.maxFileAge, and upgrade to a runtime where the stream no longer waits for the entire RocksDB state to download before starting. Understand the trade-off first: maxFileAge is a cost knob, not a correctness knob. The minimum accepted value is 14 days, and if a file older than the window ever appears — a very late delivery, a replayed archive — it is treated as brand new and ingested again.",
+        "check": "Do the arithmetic before setting it. Two million files an hour over thirty days is roughly 1.4 billion entries, so confirm your real maximum arrival lateness rather than guessing."
+      }
+    ],
+    "lakeflow-connect": [
+      {
+        "id": "lc-01",
+        "n": "01",
+        "family": "Gateway",
+        "query": "changes dropped after gateway outage full refresh",
+        "symptom": "After a maintenance window, a gateway restart or a long weekend, the pipeline reports missing changes — or destination tables are quietly out of step with the source.",
+        "cause": "The gateway was offline longer than the source's change log retention. Databricks can resume from where it left off only while the logs remain on the source. Once the source truncates them, the changes are gone.",
+        "fix": "Immediately, a full refresh of all affected tables — there is no incremental recovery path. For prevention, in order of value: raise retention on the source, never manually stop the gateway, and alert on gateway health directly rather than on pipeline success. On SQL Server the default is three days, which a long weekend can exceed.",
+        "check": "Set the source's change retention to comfortably exceed your worst realistic outage — a long weekend plus a public holiday, not an average incident. It costs source storage, not DBUs."
+      },
+      {
+        "id": "lc-13",
+        "n": "13",
+        "family": "Operations",
+        "query": "deleting ingestion pipeline dropped destination tables",
+        "symptom": "Someone removed an ingestion pipeline during a cleanup. The destination tables went with it, along with everything built on top of them.",
+        "cause": "The destination tables are dropped when the ingestion pipeline is deleted. This is documented behaviour, not an accident, and it is the single most dangerous fact in the product.",
+        "fix": "Prevention is the only real answer. Treat the destination schema as a disposable bronze landing layer and nothing else, build silver and gold in a separate schema with their own pipelines, restrict who can delete ingestion pipelines the way you would restrict destructive DDL, and make deletion a reviewed action rather than a cleanup task.",
+        "check": "Ask which tables in that schema something else depends on structurally. Anything you cannot afford to lose should not live in a schema a managed pipeline controls."
+      },
+      {
+        "id": "lc-09",
+        "n": "09",
+        "family": "Schema",
+        "query": "reused column name broke pipeline months later",
+        "symptom": "A pipeline that ran cleanly for months fails after a routine source change. Nobody deployed anything to Databricks.",
+        "cause": "A column was deleted at the source at some earlier point. Databricks did not delete it — it marked it inactive via a table property. When another column later appears with the same name, the pipeline fails.",
+        "fix": "Two documented options: trigger a full refresh of the affected table, or manually drop the inactive column from the destination table, which avoids the refresh. The second is usually much cheaper on a large table. The same behaviour applies at table level, so the same collision can happen with a reused table name.",
+        "check": "This is the delayed family. A column deleted in March breaks the pipeline in June, when somebody unrelated reuses the name — so check the source's change history, not just the last deployment."
+      },
+      {
+        "id": "lc-12",
+        "n": "12",
+        "family": "Schema",
+        "query": "deleted rows still in destination table cursor connector",
+        "symptom": "Rows deleted at the source remain in the destination indefinitely, and a dropped source table is still present in Databricks.",
+        "cause": "Two separate causes with the same appearance. Cursor-based connectors cannot detect deletes — a deleted row simply stops appearing rather than generating an event. And when a source table is deleted the destination table is not automatically deleted; you must remove it manually.",
+        "fix": "Confirm your connector's delete semantics before designing around them, because CDC-based connectors detect deletes and cursor-based ones do not. Where deletes matter and the connector cannot detect them, schedule periodic full refreshes or reconcile against a source count. Add a manual cleanup step when source tables are decommissioned — nothing will prompt you.",
+        "check": "If deletes matter to your business logic, and for anything financial or regulatory they do, verify the mechanism for your specific source rather than assuming every managed connector does native CDC."
+      },
+      {
+        "id": "lc-03",
+        "n": "03",
+        "family": "Gateway",
+        "query": "availability group failover full refresh every table",
+        "symptom": "A routine availability-group failover on the source database invalidated the entire pipeline, not just the tables that were mid-transaction.",
+        "cause": "Any source node change, including an AG failover, requires a full refresh of all tables in the pipeline. The connector's position in the change log is node-specific.",
+        "fix": "Accept the refresh, but size your pipelines with it in mind — a single pipeline carrying 200 tables means a 200-table refresh after every failover. Splitting into several gateway-and-pipeline pairs by domain limits the blast radius, at the cost of another gateway each. Coordinate with the DBA team so planned failovers are known events with a refresh scheduled after them.",
+        "check": "Blast radius scales with pipeline size, and Databricks recommends 250 or fewer tables per pipeline. Both point the same way: smaller pipelines."
+      },
+      {
+        "id": "lc-14",
+        "n": "14",
+        "family": "Operations",
+        "query": "scheduled pipeline update skipped silently",
+        "symptom": "A pipeline scheduled hourly appears to have run only every other hour. Nothing failed.",
+        "cause": "If update N is still running when update N+1 is scheduled, Databricks skips N+1 and picks up at N+2, assuming N completes in time. This is overlap protection, not an error.",
+        "fix": "Match the schedule to the actual runtime — if updates routinely take fifty minutes, an hourly schedule is fragile. Split large pipelines so each update finishes comfortably inside its window, and monitor update duration as a trend rather than just success or failure.",
+        "check": "Skipped updates are invisible in a success-only view. Monitor destination table freshness directly instead; a table that has not updated within its expected window is the signal that arrives on time."
+      }
+    ]
+  },
+  "tocs": {
+    "auto-loader": [
+      {
+        "n": "01",
+        "t": "Auto Loader, explained simply",
+        "p": "03",
+        "d": "The mailbox model, the one sentence that explains every limitation, and where Auto Loader does not belong at all."
+      },
+      {
+        "n": "02",
+        "t": "Anatomy of a job",
+        "p": "07",
+        "d": "Every option line by line, and the two folders that cause most production incidents."
+      },
+      {
+        "n": "03",
+        "t": "Watch it work: a three-day walkthrough",
+        "p": "11",
+        "d": "Exactly what happens on day 1, day 2, and the day the source adds a column."
+      },
+      {
+        "n": "04",
+        "t": "How it finds files",
+        "p": "13",
+        "d": "Directory listing, file notification and File Events — with a decision tree and the cost maths."
+      },
+      {
+        "n": "05",
+        "t": "Schema inference and evolution",
+        "p": "16",
+        "d": "Five evolution modes, the rescued data column, and why your stream is supposed to crash."
+      },
+      {
+        "n": "06",
+        "t": "Sixteen failures and their fixes",
+        "p": "20",
+        "d": "Symptom, cause, fix — including the silent ones, where nothing errors and rows just never arrive."
+      },
+      {
+        "n": "07",
+        "t": "Eight production patterns",
+        "p": "31",
+        "d": "Vendor drops, IoT at scale, CDC upserts, the snapshot anti-pattern, multi-table zones, backfills, archives, idempotency."
+      },
+      {
+        "n": "08",
+        "t": "Production checklist",
+        "p": "40",
+        "d": "Twelve things to confirm before a stream is allowed near production data."
+      },
+      {
+        "n": "09",
+        "t": "Cheat sheet",
+        "p": "43",
+        "d": "Decision trees, the options that actually matter, and three rules worth memorising."
+      }
+    ],
+    "lakeflow-connect": [
+      {
+        "n": "01",
+        "t": "Lakeflow Connect, explained simply",
+        "p": "04",
+        "d": "What it replaces, the four connector types, and the trade you are making by using it."
+      },
+      {
+        "n": "02",
+        "t": "Two architectures",
+        "p": "07",
+        "d": "SaaS connectors have three parts; database CDC connectors have five. The two extra parts cause most incidents."
+      },
+      {
+        "n": "03",
+        "t": "The gateway",
+        "p": "10",
+        "d": "Classic compute, continuous mode, log retention — and why stopping it costs you a full refresh."
+      },
+      {
+        "n": "04",
+        "t": "Incremental ingestion and schema evolution",
+        "p": "14",
+        "d": "What “incremental” actually means per source, and exactly how columns and tables change over time."
+      },
+      {
+        "n": "05",
+        "t": "Choosing the right tool",
+        "p": "17",
+        "d": "Managed connectors versus Auto Loader, Lakehouse Federation, Delta Sharing and hand-built pipelines."
+      },
+      {
+        "n": "06",
+        "t": "Sixteen failures and their fixes",
+        "p": "20",
+        "d": "Dropped changes, name collisions, schema conflicts, and pipelines that lock themselves out of the UI."
+      },
+      {
+        "n": "07",
+        "t": "Operating a pipeline",
+        "p": "30",
+        "d": "Interfaces, bundles, scheduling, permissions, cost, and what a full refresh really costs you."
+      },
+      {
+        "n": "08",
+        "t": "Production patterns",
+        "p": "33",
+        "d": "Gateway resilience, pipeline splitting, bronze landing design, and migrating off a hand-built CDC stack."
+      },
+      {
+        "n": "09",
+        "t": "Limits, checklist and cheat sheet",
+        "p": "38",
+        "d": "Every documented limit, a pre-production checklist, and the full-refresh triggers worth memorising."
+      }
+    ]
+  }
+}

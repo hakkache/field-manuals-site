@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>Databricks Lakeflow Connect Field Manual — 42-Page Practical Guide</title>
+<meta name="description" content="A 42-page Databricks Lakeflow Connect field manual: managed ingestion connectors, authentication, sync and recovery, 16 documented failure modes with symptom, cause and fix.">
+<link rel="canonical" href="https://hakkache.github.io/field-manuals-site/manuals/lakeflow-connect/">
+
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Databricks Field Manuals">
+<meta property="og:url" content="https://hakkache.github.io/field-manuals-site/manuals/lakeflow-connect/">
+<meta property="og:title" content="Databricks Lakeflow Connect Field Manual — 42 pages">
+<meta property="og:description" content="Managed ingestion connectors: authentication, sync, recovery, and 16 documented failure modes with fixes.">
+<meta property="og:image" content="https://hakkache.github.io/field-manuals-site/assets/img/og-cover.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Databricks Lakeflow Connect Field Manual — 42 pages">
+<meta name="twitter:description" content="Managed ingestion connectors, and the sixteen ways they go wrong in production.">
+<meta name="twitter:image" content="https://hakkache.github.io/field-manuals-site/assets/img/og-cover.png">
+
+<meta name="theme-color" content="#0A0D10">
+<link rel="icon" href="../../assets/img/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="../../assets/img/apple-touch-icon.png">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=IBM+Plex+Sans:wght@400;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/css/style.css">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Book",
+      "name": "Lakeflow Connect Field Manual",
+      "url": "https://hakkache.github.io/field-manuals-site/manuals/lakeflow-connect/",
+      "image": "https://hakkache.github.io/field-manuals-site/assets/img/og-cover.png",
+      "bookFormat": "https://schema.org/EBook",
+      "numberOfPages": 42,
+      "inLanguage": "en",
+      "author": { "@type": "Person", "name": "Mohamed Hakkache" },
+      "isPartOf": { "@type": "BookSeries", "name": "Databricks Guide Series" },
+      "description": "A 42-page practical field manual on Databricks Lakeflow Connect: managed ingestion connectors, authentication, sync and recovery, 16 failure modes with symptom, cause and fix, production patterns, limits, a checklist and a cheat sheet.",
+      "offers": {
+        "@type": "Offer",
+        "price": "7.99",
+        "priceCurrency": "USD",
+        "availability": "https://schema.org/InStock",
+        "url": "https://hakkache.gumroad.com/l/lakeflow-connect-field-manual"
+      }
+    },
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Field Manuals", "item": "https://hakkache.github.io/field-manuals-site/" },
+        { "@type": "ListItem", "position": 2, "name": "Catalogue", "item": "https://hakkache.github.io/field-manuals-site/library/" },
+        { "@type": "ListItem", "position": 3, "name": "Lakeflow Connect", "item": "https://hakkache.github.io/field-manuals-site/manuals/lakeflow-connect/" }
+      ]
+    }
+  ]
+}
+</script>
+</head>
+
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="nav" id="nav">
+  <div class="wrap nav-in">
+    <a class="brand" href="../../">
+      <span class="brand-mark" aria-hidden="true"></span>
+      <span class="brand-txt">
+        <span class="brand-a">Databricks Guide Series</span>
+        <span class="brand-b">Field Manuals</span>
+      </span>
+    </a>
+    <nav class="nav-links" id="nav-links" aria-label="Main">
+      <a href="../../">Home</a>
+      <a href="../../library/">Catalogue</a>
+      <a href="#modes">Failure modes</a>
+      <a href="#contents">Contents</a>
+      <a href="../../#faq">FAQ</a>
+    </nav>
+    <a class="btn btn-sm btn-primary nav-cta" data-buy="lakeflow-connect" href="https://hakkache.gumroad.com/l/lakeflow-connect-field-manual">Buy — $7.99</a>
+    <button class="nav-toggle" type="button" aria-label="Open menu" aria-controls="nav-links" aria-expanded="false">
+      <span></span><span></span>
+    </button>
+  </div>
+</header>
+
+<main id="main">
+
+<section class="page-head">
+  <div class="grid-bg grid-fade" aria-hidden="true"></div>
+  <div class="wrap">
+    <p class="crumb"><a href="../../">Field Manuals</a><span>/</span><a href="../../library/">Catalogue</a><span>/</span>Lakeflow Connect</p>
+    <p class="eyebrow"><span>1 — Ingestion · On sale · $7.99</span></p>
+    <h1 class="sec-title">Databricks Lakeflow Connect<br>Field Manual<span class="dot">.</span></h1>
+    <p class="sec-lead">
+      Forty-two pages on managed ingestion connectors: how they authenticate, schedule and
+      recover, what they take off your hands, what they hide, and the point at which you should
+      drop back to a pipeline you control.
+    </p>
+    <div class="hero-cta">
+      <a class="btn btn-primary" data-buy="lakeflow-connect" href="https://hakkache.gumroad.com/l/lakeflow-connect-field-manual">
+        Buy the manual — $7.99
+        <span class="btn-meta">42 pages · PDF · one-time</span>
+      </a>
+      <a class="btn btn-ghost" href="#modes">
+        Read six failure modes first
+        <span class="btn-meta">free · on this page</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<section class="sec">
+  <div class="wrap">
+    <div class="prose">
+      <h2 id="idea">The organising idea</h2>
+      <p><b>You configure it. You do not control it.</b></p>
+      <p>
+        You choose the objects, the destination, the schedule, permissions and notifications. You
+        cannot customise the ingestion process itself. That is the whole bargain — and it is why
+        the repair for almost everything in the failure section is the same blunt instrument: a
+        full refresh.
+      </p>
+      <p>
+        Seven documented causes end in one. That single fact is what makes prevention — retention
+        headroom, gateway monitoring, small pipelines, coordinated schema changes — worth far more
+        here than diagnostic skill.
+      </p>
+
+      <h2>What the manual covers</h2>
+      <ul>
+        <li>The four connector types — managed SaaS, database CDC, query-based and streaming — and two myths that will cost you a design review.</li>
+        <li>Two architectures: SaaS connectors have three parts, database CDC connectors have five, and those two extra parts cause most incidents.</li>
+        <li>The ingestion gateway: classic compute only, continuous mode, and the log-retention clock you are racing.</li>
+        <li>What "incremental" actually means per source, and why a cursor-based connector cannot see deletes.</li>
+        <li>Schema evolution you cannot configure, including the deleted column that breaks the pipeline months later.</li>
+        <li>Choosing between managed connectors, Auto Loader, Lakehouse Federation, Delta Sharing and building it yourself.</li>
+        <li>Sixteen documented failure modes with symptom, cause and fix, plus six production patterns and every documented limit.</li>
+      </ul>
+
+      <h2>Who it's for</h2>
+      <p>
+        Data and platform engineers evaluating managed ingestion, or already running it and
+        trying to work out why a sync is behaving the way it is. It assumes you know what a
+        pipeline is; it does not assume you have used Lakeflow Connect before.
+      </p>
+
+      <div class="launch" style="margin-top:36px">
+        <p class="launch-tag">Same spine as every manual</p>
+        <p>
+          Organising idea, architecture, sixteen failure modes, production patterns, limits and
+          trade-offs, a pre-production checklist and a one-page cheat sheet. If you have read the
+          free Auto Loader manual, you already know where everything is.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="sec sec-alt" id="modes">
+  <div class="wrap">
+    <header class="sec-head">
+      <p class="eyebrow"><span>Part 06 · sample</span></p>
+      <h2 class="sec-title">Six of the sixteen<br>failure modes<span class="dot">.</span></h2>
+      <p class="sec-lead">
+        Reproduced from the manual, in the same structure as the printed page. If these are
+        useful, the other ten are in the PDF.
+      </p>
+    </header>
+
+    <div class="fm-list">
+<!--BUILD:fmprose-->
+      <article class="fm-card" data-fm-card="lc-01" id="panel-lc-01" role="tabpanel" aria-labelledby="tab-lc-01" tabindex="0">
+        <div class="fm-head">
+          <span class="fm-fam">Failure family · Gateway</span>
+          <span class="fm-folio">Failure 01 of 16</span>
+        </div>
+        <div class="fm-rows">
+          <div class="fm-row fm-row-symptom">
+            <div class="fm-k">Symptom</div>
+            <div class="fm-v">After a maintenance window, a gateway restart or a long weekend, the pipeline reports missing changes — or destination tables are quietly out of step with the source.</div>
+          </div>
+          <div class="fm-row fm-row-cause">
+            <div class="fm-k">Cause</div>
+            <div class="fm-v">The gateway was offline longer than the source&#x27;s change log retention. Databricks can resume from where it left off only while the logs remain on the source. Once the source truncates them, the changes are gone.</div>
+          </div>
+          <div class="fm-row fm-row-fix">
+            <div class="fm-k">Fix</div>
+            <div class="fm-v">Immediately, a full refresh of all affected tables — there is no incremental recovery path. For prevention, in order of value: raise retention on the source, never manually stop the gateway, and alert on gateway health directly rather than on pipeline success. On SQL Server the default is three days, which a long weekend can exceed.</div>
+          </div>
+        </div>
+        <p class="fm-foot"><b>Check first —</b> Set the source&#x27;s change retention to comfortably exceed your worst realistic outage — a long weekend plus a public holiday, not an average incident. It costs source storage, not DBUs.</p>
+      </article>
+      <article class="fm-card" data-fm-card="lc-13" id="panel-lc-13" role="tabpanel" aria-labelledby="tab-lc-13" tabindex="0">
+        <div class="fm-head">
+          <span class="fm-fam">Failure family · Operations</span>
+          <span class="fm-folio">Failure 13 of 16</span>
+        </div>
+        <div class="fm-rows">
+          <div class="fm-row fm-row-symptom">
+            <div class="fm-k">Symptom</div>
+            <div class="fm-v">Someone removed an ingestion pipeline during a cleanup. The destination tables went with it, along with everything built on top of them.</div>
+          </div>
+          <div class="fm-row fm-row-cause">
+            <div class="fm-k">Cause</div>
+            <div class="fm-v">The destination tables are dropped when the ingestion pipeline is deleted. This is documented behaviour, not an accident, and it is the single most dangerous fact in the product.</div>
+          </div>
+          <div class="fm-row fm-row-fix">
+            <div class="fm-k">Fix</div>
+            <div class="fm-v">Prevention is the only real answer. Treat the destination schema as a disposable bronze landing layer and nothing else, build silver and gold in a separate schema with their own pipelines, restrict who can delete ingestion pipelines the way you would restrict destructive DDL, and make deletion a reviewed action rather than a cleanup task.</div>
+          </div>
+        </div>
+        <p class="fm-foot"><b>Check first —</b> Ask which tables in that schema something else depends on structurally. Anything you cannot afford to lose should not live in a schema a managed pipeline controls.</p>
+      </article>
+      <article class="fm-card" data-fm-card="lc-09" id="panel-lc-09" role="tabpanel" aria-labelledby="tab-lc-09" tabindex="0">
+        <div class="fm-head">
+          <span class="fm-fam">Failure family · Schema</span>
+          <span class="fm-folio">Failure 09 of 16</span>
+        </div>
+        <div class="fm-rows">
+          <div class="fm-row fm-row-symptom">
+            <div class="fm-k">Symptom</div>
+            <div class="fm-v">A pipeline that ran cleanly for months fails after a routine source change. Nobody deployed anything to Databricks.</div>
+          </div>
+          <div class="fm-row fm-row-cause">
+            <div class="fm-k">Cause</div>
+            <div class="fm-v">A column was deleted at the source at some earlier point. Databricks did not delete it — it marked it inactive via a table property. When another column later appears with the same name, the pipeline fails.</div>
+          </div>
+          <div class="fm-row fm-row-fix">
+            <div class="fm-k">Fix</div>
+            <div class="fm-v">Two documented options: trigger a full refresh of the affected table, or manually drop the inactive column from the destination table, which avoids the refresh. The second is usually much cheaper on a large table. The same behaviour applies at table level, so the same collision can happen with a reused table name.</div>
+          </div>
+        </div>
+        <p class="fm-foot"><b>Check first —</b> This is the delayed family. A column deleted in March breaks the pipeline in June, when somebody unrelated reuses the name — so check the source&#x27;s change history, not just the last deployment.</p>
+      </article>
+      <article class="fm-card" data-fm-card="lc-12" id="panel-lc-12" role="tabpanel" aria-labelledby="tab-lc-12" tabindex="0">
+        <div class="fm-head">
+          <span class="fm-fam">Failure family · Schema</span>
+          <span class="fm-folio">Failure 12 of 16</span>
+        </div>
+        <div class="fm-rows">
+          <div class="fm-row fm-row-symptom">
+            <div class="fm-k">Symptom</div>
+            <div class="fm-v">Rows deleted at the source remain in the destination indefinitely, and a dropped source table is still present in Databricks.</div>
+          </div>
+          <div class="fm-row fm-row-cause">
+            <div class="fm-k">Cause</div>
+            <div class="fm-v">Two separate causes with the same appearance. Cursor-based connectors cannot detect deletes — a deleted row simply stops appearing rather than generating an event. And when a source table is deleted the destination table is not automatically deleted; you must remove it manually.</div>
+          </div>
+          <div class="fm-row fm-row-fix">
+            <div class="fm-k">Fix</div>
+            <div class="fm-v">Confirm your connector&#x27;s delete semantics before designing around them, because CDC-based connectors detect deletes and cursor-based ones do not. Where deletes matter and the connector cannot detect them, schedule periodic full refreshes or reconcile against a source count. Add a manual cleanup step when source tables are decommissioned — nothing will prompt you.</div>
+          </div>
+        </div>
+        <p class="fm-foot"><b>Check first —</b> If deletes matter to your business logic, and for anything financial or regulatory they do, verify the mechanism for your specific source rather than assuming every managed connector does native CDC.</p>
+      </article>
+      <article class="fm-card" data-fm-card="lc-03" id="panel-lc-03" role="tabpanel" aria-labelledby="tab-lc-03" tabindex="0">
+        <div class="fm-head">
+          <span class="fm-fam">Failure family · Gateway</span>
+          <span class="fm-folio">Failure 03 of 16</span>
+        </div>
+        <div class="fm-rows">
+          <div class="fm-row fm-row-symptom">
+            <div class="fm-k">Symptom</div>
+            <div class="fm-v">A routine availability-group failover on the source database invalidated the entire pipeline, not just the tables that were mid-transaction.</div>
+          </div>
+          <div class="fm-row fm-row-cause">
+            <div class="fm-k">Cause</div>
+            <div class="fm-v">Any source node change, including an AG failover, requires a full refresh of all tables in the pipeline. The connector&#x27;s position in the change log is node-specific.</div>
+          </div>
+          <div class="fm-row fm-row-fix">
+            <div class="fm-k">Fix</div>
+            <div class="fm-v">Accept the refresh, but size your pipelines with it in mind — a single pipeline carrying 200 tables means a 200-table refresh after every failover. Splitting into several gateway-and-pipeline pairs by domain limits the blast radius, at the cost of another gateway each. Coordinate with the DBA team so planned failovers are known events with a refresh scheduled after them.</div>
+          </div>
+        </div>
+        <p class="fm-foot"><b>Check first —</b> Blast radius scales with pipeline size, and Databricks recommends 250 or fewer tables per pipeline. Both point the same way: smaller pipelines.</p>
+      </article>
+      <article class="fm-card" data-fm-card="lc-14" id="panel-lc-14" role="tabpanel" aria-labelledby="tab-lc-14" tabindex="0">
+        <div class="fm-head">
+          <span class="fm-fam">Failure family · Operations</span>
+          <span class="fm-folio">Failure 14 of 16</span>
+        </div>
+        <div class="fm-rows">
+          <div class="fm-row fm-row-symptom">
+            <div class="fm-k">Symptom</div>
+            <div class="fm-v">A pipeline scheduled hourly appears to have run only every other hour. Nothing failed.</div>
+          </div>
+          <div class="fm-row fm-row-cause">
+            <div class="fm-k">Cause</div>
+            <div class="fm-v">If update N is still running when update N+1 is scheduled, Databricks skips N+1 and picks up at N+2, assuming N completes in time. This is overlap protection, not an error.</div>
+          </div>
+          <div class="fm-row fm-row-fix">
+            <div class="fm-k">Fix</div>
+            <div class="fm-v">Match the schedule to the actual runtime — if updates routinely take fifty minutes, an hourly schedule is fragile. Split large pipelines so each update finishes comfortably inside its window, and monitor update duration as a trend rather than just success or failure.</div>
+          </div>
+        </div>
+        <p class="fm-foot"><b>Check first —</b> Skipped updates are invisible in a success-only view. Monitor destination table freshness directly instead; a table that has not updated within its expected window is the signal that arrives on time.</p>
+      </article>
+<!--/BUILD:fmprose-->
+    </div>
+
+    <div style="text-align:center;margin-top:40px">
+      <a class="btn btn-primary btn-lg" data-buy="lakeflow-connect" href="https://hakkache.gumroad.com/l/lakeflow-connect-field-manual">
+        Get the other ten
+        <span class="btn-meta">$7.99 · 42-page PDF</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="contents">
+  <div class="wrap wrap-narrow">
+    <header class="sec-head">
+      <p class="eyebrow"><span>Contents</span></p>
+      <h2 class="sec-title">All nine parts<span class="dot">.</span></h2>
+      <p class="sec-lead">Nine parts, forty-two pages, structured the same way as every other manual in the series.</p>
+    </header>
+    <ol class="toc">
+<!--BUILD:toc-->
+        <li>
+          <span class="toc-n">01</span>
+          <div>
+            <h3>Lakeflow Connect, explained simply</h3>
+            <p>What it replaces, the four connector types, and the trade you are making by using it.</p>
+          </div>
+          <span class="toc-p">p.04</span>
+        </li>
+        <li>
+          <span class="toc-n">02</span>
+          <div>
+            <h3>Two architectures</h3>
+            <p>SaaS connectors have three parts; database CDC connectors have five. The two extra parts cause most incidents.</p>
+          </div>
+          <span class="toc-p">p.07</span>
+        </li>
+        <li>
+          <span class="toc-n">03</span>
+          <div>
+            <h3>The gateway</h3>
+            <p>Classic compute, continuous mode, log retention — and why stopping it costs you a full refresh.</p>
+          </div>
+          <span class="toc-p">p.10</span>
+        </li>
+        <li>
+          <span class="toc-n">04</span>
+          <div>
+            <h3>Incremental ingestion and schema evolution</h3>
+            <p>What “incremental” actually means per source, and exactly how columns and tables change over time.</p>
+          </div>
+          <span class="toc-p">p.14</span>
+        </li>
+        <li>
+          <span class="toc-n">05</span>
+          <div>
+            <h3>Choosing the right tool</h3>
+            <p>Managed connectors versus Auto Loader, Lakehouse Federation, Delta Sharing and hand-built pipelines.</p>
+          </div>
+          <span class="toc-p">p.17</span>
+        </li>
+        <li>
+          <span class="toc-n">06</span>
+          <div>
+            <h3>Sixteen failures and their fixes</h3>
+            <p>Dropped changes, name collisions, schema conflicts, and pipelines that lock themselves out of the UI.</p>
+          </div>
+          <span class="toc-p">p.20</span>
+        </li>
+        <li>
+          <span class="toc-n">07</span>
+          <div>
+            <h3>Operating a pipeline</h3>
+            <p>Interfaces, bundles, scheduling, permissions, cost, and what a full refresh really costs you.</p>
+          </div>
+          <span class="toc-p">p.30</span>
+        </li>
+        <li>
+          <span class="toc-n">08</span>
+          <div>
+            <h3>Production patterns</h3>
+            <p>Gateway resilience, pipeline splitting, bronze landing design, and migrating off a hand-built CDC stack.</p>
+          </div>
+          <span class="toc-p">p.33</span>
+        </li>
+        <li>
+          <span class="toc-n">09</span>
+          <div>
+            <h3>Limits, checklist and cheat sheet</h3>
+            <p>Every documented limit, a pre-production checklist, and the full-refresh triggers worth memorising.</p>
+          </div>
+          <span class="toc-p">p.38</span>
+        </li>
+<!--/BUILD:toc-->
+    </ol>
+  </div>
+</section>
+
+<section class="final">
+  <div class="grid-bg grid-fade" aria-hidden="true"></div>
+  <div class="wrap final-in">
+    <div class="final-lines">
+      <span>Forty-two pages.</span>
+      <span>$7.99.</span>
+    </div>
+    <p class="final-sub">
+      Architecture, sixteen failure modes, production patterns, limits, a checklist and a cheat sheet.
+    </p>
+    <a class="btn btn-primary btn-lg" data-buy="lakeflow-connect" href="https://hakkache.gumroad.com/l/lakeflow-connect-field-manual">
+      Buy the manual
+      <span class="btn-meta">$7.99 · PDF · via Gumroad</span>
+    </a>
+  </div>
+</section>
+
+</main>
+
+<footer class="foot">
+  <div class="wrap foot-legal">
+    <p class="disc">Independent educational publication. Not affiliated with or endorsed by Databricks.</p>
+    <p>Databricks is a trademark of Databricks, Inc. Runtime behaviour changes — verify against your own workspace.</p>
+    <p>&copy; <span id="year">2026</span> Mohamed Hakkache &middot; <a href="../../" style="color:var(--fg-2)">Field Manuals</a> &middot; <a href="../../legal/" style="color:var(--fg-2)">Privacy &amp; terms</a></p>
+  </div>
+</footer>
+
+<script src="../../assets/js/app.js" defer></script>
+<!-- Cloudflare Web Analytics -->
+<script type='module' src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "b52138e1d6cd45bcb4fa471087975469"}'></script>
+<!-- End Cloudflare Web Analytics -->
+</body>
+</html>

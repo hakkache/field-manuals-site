@@ -1,0 +1,2200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>Databricks Field Manuals — Failure Modes, Architecture &amp; Production Patterns</title>
+<meta name="description" content="Practical Databricks field manuals: architecture, 16 documented failure modes per topic, production patterns and cheat sheets. The 47-page Auto Loader manual is free.">
+<link rel="canonical" href="https://hakkache.github.io/field-manuals-site/">
+
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Databricks Field Manuals">
+<meta property="og:url" content="https://hakkache.github.io/field-manuals-site/">
+<meta property="og:title" content="Databricks Field Manuals — the guides you needed at 3am">
+<meta property="og:description" content="Documentation tells you what a feature does. Field Manuals explain what happens when it breaks. The 47-page Auto Loader manual is free.">
+<meta property="og:image" content="https://hakkache.github.io/field-manuals-site/assets/img/og-cover.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Databricks Field Manuals — Auto Loader, 47 pages, free.">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Databricks Field Manuals — the guides you needed at 3am">
+<meta name="twitter:description" content="Architecture, failure modes and production patterns for Databricks engineers. The Auto Loader manual is free.">
+<meta name="twitter:image" content="https://hakkache.github.io/field-manuals-site/assets/img/og-cover.png">
+
+<meta name="theme-color" content="#0A0D10">
+<meta name="author" content="Mohamed Hakkache">
+<link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=IBM+Plex+Sans:wght@400;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/style.css">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebSite",
+      "@id": "https://hakkache.github.io/field-manuals-site/#website",
+      "url": "https://hakkache.github.io/field-manuals-site/",
+      "name": "Databricks Field Manuals",
+      "description": "Practical technical field manuals for Databricks engineers.",
+      "inLanguage": "en",
+      "publisher": { "@id": "https://hakkache.github.io/field-manuals-site/#person" }
+    },
+    {
+      "@type": "Person",
+      "@id": "https://hakkache.github.io/field-manuals-site/#person",
+      "name": "Mohamed Hakkache",
+      "url": "https://github.com/hakkache",
+      "jobTitle": "Lead Data Engineer",
+      "sameAs": [
+        "https://github.com/hakkache",
+        "https://www.linkedin.com/in/hakkache-mohamed/",
+        "https://medium.com/@hakkache.mohamed"
+      ],
+      "knowsAbout": ["Databricks", "Apache Spark", "Delta Lake", "Unity Catalog", "Lakeflow", "Data Engineering"]
+    },
+    {
+      "@type": "BookSeries",
+      "@id": "https://hakkache.github.io/field-manuals-site/#series",
+      "name": "Databricks Guide Series",
+      "description": "51 planned technical field manuals across 9 Databricks categories.",
+      "author": { "@id": "https://hakkache.github.io/field-manuals-site/#person" }
+    },
+    {
+      "@type": "Book",
+      "@id": "https://hakkache.github.io/field-manuals-site/manuals/auto-loader/#book",
+      "name": "Auto Loader Field Manual",
+      "url": "https://hakkache.github.io/field-manuals-site/manuals/auto-loader/",
+      "image": "https://hakkache.github.io/field-manuals-site/assets/img/og-cover.png",
+      "bookFormat": "https://schema.org/EBook",
+      "numberOfPages": 47,
+      "inLanguage": "en",
+      "isPartOf": { "@id": "https://hakkache.github.io/field-manuals-site/#series" },
+      "author": { "@id": "https://hakkache.github.io/field-manuals-site/#person" },
+      "description": "A 47-page practical field manual on Databricks Auto Loader: architecture, 16 failure modes with symptom, cause and fix, 8 production patterns, limits, a pre-production checklist and a cheat sheet.",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD",
+        "availability": "https://schema.org/InStock",
+        "url": "https://hakkache.github.io/field-manuals-site/manuals/auto-loader/"
+      }
+    }
+  ]
+}
+</script>
+
+<!--BUILD:faqschema-->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    { "@type": "Question", "name": "What is a Field Manual?",
+      "acceptedAnswer": { "@type": "Answer", "text": "A focused technical reference on one Databricks topic, built around a single organising idea and sixteen documented failure modes with symptom, cause and fix. It also includes architecture, production patterns, limits, a checklist and a cheat sheet across nine parts — roughly forty pages of engineering reference rather than tutorial prose." } },
+    { "@type": "Question", "name": "How is this different from the Databricks documentation?",
+      "acceptedAnswer": { "@type": "Answer", "text": "The documentation tells you what a feature does and how to configure it. A Field Manual tells you what happens when it is wrong: how to recognise the failure, why it happened, what to check first, and how to recover. Both are useful, and they answer different questions." } },
+    { "@type": "Question", "name": "Is the Auto Loader manual really free?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Yes. The complete 47-page Auto Loader Field Manual is free. Not a sample chapter, not a preview — the whole manual, as a print-ready PDF." } },
+    { "@type": "Question", "name": "Eighteen manuals are written. Why can I only get one?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Written is not the same as published. Each manual goes through a technical review pass against current Databricks behaviour before release, because a reference with a wrong fix in it is worse than no reference. They are released progressively as that pass completes." } },
+    { "@type": "Question", "name": "Will there be bundles?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Yes. Individual field manuals, category collections covering one of the nine technical domains, and a complete library are planned. Pricing is published when each product goes live." } },
+    { "@type": "Question", "name": "Are these official Databricks publications?",
+      "acceptedAnswer": { "@type": "Answer", "text": "No. They are independent educational publications and are not affiliated with or endorsed by Databricks." } },
+    { "@type": "Question", "name": "What format are the manuals in?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Print-ready PDF, laid out for reading on screen and for printing. The cheat sheet on the last page is designed to be printed on its own and pinned up." } }
+  ]
+}
+</script>
+<!--/BUILD:faqschema-->
+</head>
+
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<!-- ══════════════════ NAV ══════════════════ -->
+<header class="nav" id="nav">
+  <div class="wrap nav-in">
+    <a class="brand" href="#top">
+      <span class="brand-mark" aria-hidden="true"></span>
+      <span class="brand-txt">
+        <span class="brand-a">Databricks Guide Series</span>
+        <span class="brand-b">Field Manuals</span>
+      </span>
+    </a>
+
+    <nav class="nav-links" id="nav-links" aria-label="Main">
+      <a href="#read">Read a page</a>
+      <a href="#free">Free manual</a>
+      <a href="#catalogue">Catalogue</a>
+      <a href="#about">About</a>
+      <a href="#faq">FAQ</a>
+    </nav>
+
+    <a class="btn btn-sm btn-primary nav-cta" data-buy="auto-loader" href="https://hakkache.gumroad.com/l/auto-loader-field-manual">Get Auto Loader — free</a>
+
+    <button class="nav-toggle" type="button" aria-label="Open menu" aria-controls="nav-links" aria-expanded="false">
+      <span></span><span></span>
+    </button>
+  </div>
+</header>
+
+<main id="main">
+
+<!-- ══════════════════ HERO ══════════════════ -->
+<section class="hero" id="top">
+  <div class="grid-bg grid-fade" aria-hidden="true"></div>
+  <div class="hero-glow" aria-hidden="true"></div>
+
+  <div class="wrap hero-in">
+    <div>
+      <div class="rule" aria-hidden="true"></div>
+      <p class="eyebrow"><span>Independent technical publishing</span></p>
+
+      <h1 class="hero-title">The guides<br>you needed<br>at 3am<span class="dot">.</span></h1>
+
+      <p class="hero-sub">Databricks field manuals — architecture, failure modes and production patterns.</p>
+
+      <p class="hero-text">
+        When a pipeline runs green and produces the wrong numbers, you don't need a feature
+        overview. You need to know what broke, how to recognise it, and what to do next.
+      </p>
+
+      <div class="hero-cta">
+        <a class="btn btn-primary" data-buy="auto-loader" data-cover-hover="auto-loader" href="https://hakkache.gumroad.com/l/auto-loader-field-manual">
+          Get the Auto Loader manual
+          <span class="btn-meta">47 pages · free · PDF</span>
+        </a>
+        <a class="btn btn-ghost" data-buy="lakeflow-connect" data-cover-hover="lakeflow-connect" href="https://hakkache.gumroad.com/l/lakeflow-connect-field-manual">
+          Lakeflow Connect — $7.99
+          <span class="btn-meta">42 pages · on sale now</span>
+        </a>
+      </div>
+
+      <div class="hero-trust">
+        <span>Two manuals on sale now</span>
+        <span>Complete manuals, never samples</span>
+        <span>16 failure modes each, all with fixes</span>
+      </div>
+    </div>
+
+    <div class="hero-art">
+      <div class="cover-stack" id="cover-stack" data-active="auto-loader">
+        <div class="cover-ghost cover-ghost-2" aria-hidden="true"></div>
+        <div class="cover-ghost cover-ghost-1" aria-hidden="true"></div>
+
+        <span class="cover-flag" data-flag="auto-loader">Free</span>
+        <span class="cover-flag cover-flag-paid" data-flag="lakeflow-connect">$7.99</span>
+
+        <article class="cover cover-swap" data-cover="auto-loader" style="--cc:var(--teal)"
+                 aria-label="Auto Loader Field Manual, 47 pages, free">
+          <div class="grid-bg" aria-hidden="true"></div>
+          <p class="cover-series">Databricks Guide Series</p>
+          <p class="cover-kind">Field Manual</p>
+          <div class="cover-bar" aria-hidden="true"></div>
+          <p class="cover-name">Auto<br>Loader</p>
+          <p class="cover-cat">01 — Ingestion</p>
+          <div class="cover-mid">
+            <div class="cover-spine">
+              <span>16 failure modes</span>
+              <span>8 production patterns</span>
+              <span>Schema evolution</span>
+              <span>Cheat sheet</span>
+            </div>
+          </div>
+          <div class="cover-foot">
+            <p class="cover-pages">47<small>Pages</small></p>
+            <p class="cover-wm">HAKKACHE<br>MOHAMED</p>
+          </div>
+        </article>
+
+        <article class="cover cover-swap" data-cover="lakeflow-connect" style="--cc:var(--amber)"
+                 aria-label="Lakeflow Connect Field Manual, 42 pages, $7.99" aria-hidden="true">
+          <div class="grid-bg" aria-hidden="true"></div>
+          <p class="cover-series">Databricks Guide Series</p>
+          <p class="cover-kind">Field Manual</p>
+          <div class="cover-bar" aria-hidden="true"></div>
+          <p class="cover-name">Lakeflow<br>Connect</p>
+          <p class="cover-cat">01 — Ingestion</p>
+          <div class="cover-mid">
+            <div class="cover-spine">
+              <span>16 failure modes</span>
+              <span>Gateway &amp; staging</span>
+              <span>CDC connectors</span>
+              <span>Limits</span>
+            </div>
+          </div>
+          <div class="cover-foot">
+            <p class="cover-pages">42<small>Pages</small></p>
+            <p class="cover-wm">HAKKACHE<br>MOHAMED</p>
+          </div>
+        </article>
+      </div>
+      <p class="cover-hint" aria-hidden="true">Hover a button to preview the other manual</p>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════ STATS ══════════════════ -->
+<section class="stats" aria-label="Series at a glance">
+  <dl class="wrap stats-in">
+<!--BUILD:stats-->
+      <div class="stat"><dt>19</dt><dd>Guides written</dd></div>
+      <div class="stat"><dt>813</dt><dd>Pages created</dd></div>
+      <div class="stat"><dt>304</dt><dd>Failure modes documented</dd></div>
+      <div class="stat"><dt>2</dt><dd>On sale now</dd></div>
+      <div class="stat"><dt>32</dt><dd>Topics remaining</dd></div>
+<!--/BUILD:stats-->
+  </dl>
+</section>
+
+<!-- ══════════════════ SIGNATURE: THE 3AM LOOKUP ══════════════════ -->
+<section class="sec" id="read">
+  <div class="wrap">
+    <header class="sec-head">
+      <p class="eyebrow"><span>Read a page before you download</span></p>
+      <h2 class="sec-title">Paste the error.<br>Find the failure mode<span class="dot">.</span></h2>
+      <p class="sec-lead">
+        Six of the sixteen documented Auto Loader failure modes, reproduced in full from the
+        manual. Same structure as the printed page: symptom, cause, fix, and the one thing to
+        check first.
+      </p>
+    </header>
+
+    <div class="lookup rv">
+      <div class="lookup-bar">
+        <span class="lookup-dots" aria-hidden="true"><i></i><i></i><i></i></span>
+        <span class="lookup-path">field-manual — auto-loader — part 03 · failure modes</span>
+      </div>
+
+      <div class="lookup-body">
+        <p class="lookup-prompt"><b>$</b> what went wrong tonight?</p>
+
+        <div class="lookup-chips" role="tablist" aria-label="Failure modes">
+<!--BUILD:fmchips-->
+          <button class="chip" type="button" data-fm="al-01" id="tab-al-01" role="tab" aria-controls="panel-al-01" aria-selected="true" tabindex="0">everything landed as STRING databricks auto loader</button>
+          <button class="chip" type="button" data-fm="al-04" id="tab-al-04" role="tab" aria-controls="panel-al-04" aria-selected="false" tabindex="-1">deleted checkpoint duplicates row count doubled</button>
+          <button class="chip" type="button" data-fm="al-05" id="tab-al-05" role="tab" aria-controls="panel-al-05" aria-selected="false" tabindex="-1">file in storage but not in table no error</button>
+          <button class="chip" type="button" data-fm="al-02" id="tab-al-02" role="tab" aria-controls="panel-al-02" aria-selected="false" tabindex="-1">UnknownFieldException auto loader new column</button>
+          <button class="chip" type="button" data-fm="al-07" id="tab-al-07" role="tab" aria-controls="panel-al-07" aria-selected="false" tabindex="-1">vendor re-uploaded corrected file not processed</button>
+          <button class="chip" type="button" data-fm="al-10" id="tab-al-10" role="tab" aria-controls="panel-al-10" aria-selected="false" tabindex="-1">rocksdb checkpoint state growing startup slow</button>
+<!--/BUILD:fmchips-->
+        </div>
+
+<!--BUILD:fmcards-->
+        <article class="fm-card" data-fm-card="al-01" id="panel-al-01" role="tabpanel" aria-labelledby="tab-al-01" tabindex="0">
+          <div class="fm-head">
+            <span class="fm-fam">Failure family · Schema</span>
+            <span class="fm-folio">Auto Loader · part 06 · failure 01 of 16</span>
+          </div>
+          <div class="fm-rows">
+            <div class="fm-row fm-row-symptom">
+              <div class="fm-k">Symptom</div>
+              <div class="fm-v">Your bronze table has amount, order_date and qty all typed as STRING. Every downstream cast fails, or silently returns null.</div>
+            </div>
+            <div class="fm-row fm-row-cause">
+              <div class="fm-k">Cause</div>
+              <div class="fm-v">For JSON and CSV, cloudFiles.inferColumnTypes defaults to false. Auto Loader reads everything as a string on purpose, so that a single malformed value cannot poison a column&#x27;s inferred type.</div>
+            </div>
+            <div class="fm-row fm-row-fix">
+              <div class="fm-k">Fix</div>
+              <div class="fm-v">Turn inference on — or better, stop relying on inference for the columns that matter and name the types explicitly with cloudFiles.schemaHints. Careful: changing this on a running stream does not retroactively fix the stored schema. You must clear the schema location, the checkpoint and the table together, then reload.</div>
+            </div>
+          </div>
+          <p class="fm-foot"><b>Check first —</b> Look at the stored schema under cloudFiles.schemaLocation rather than at the table — that is where the decision was actually made.</p>
+        </article>
+        <article class="fm-card" data-fm-card="al-04" id="panel-al-04" role="tabpanel" aria-labelledby="tab-al-04" tabindex="0">
+          <div class="fm-head">
+            <span class="fm-fam">Failure family · State</span>
+            <span class="fm-folio">Auto Loader · part 06 · failure 04 of 16</span>
+          </div>
+          <div class="fm-rows">
+            <div class="fm-row fm-row-symptom">
+              <div class="fm-k">Symptom</div>
+              <div class="fm-v">Row count doubled overnight. No errors anywhere. Usually discovered by a business user noticing revenue is exactly 2×.</div>
+            </div>
+            <div class="fm-row fm-row-cause">
+              <div class="fm-k">Cause</div>
+              <div class="fm-v">The checkpoint is the memory. Delete it and every file in the directory becomes new again, so the entire history is appended a second time.</div>
+            </div>
+            <div class="fm-row fm-row-fix">
+              <div class="fm-k">Fix</div>
+              <div class="fm-v">Find the damage by grouping on the source file column, then roll back with Delta time travel — DESCRIBE HISTORY, then RESTORE TABLE to the version before the bad run. After that, reset the checkpoint and the table together and reload. The golden rule is that the checkpoint and the target table are one unit: reset both, or neither.</div>
+            </div>
+          </div>
+          <p class="fm-foot"><b>Check first —</b> Group by your source-file column and look for files with more rows than expected. That query finds the blast radius in seconds.</p>
+        </article>
+        <article class="fm-card" data-fm-card="al-05" id="panel-al-05" role="tabpanel" aria-labelledby="tab-al-05" tabindex="0">
+          <div class="fm-head">
+            <span class="fm-fam">Failure family · Discovery</span>
+            <span class="fm-folio">Auto Loader · part 06 · failure 05 of 16</span>
+          </div>
+          <div class="fm-rows">
+            <div class="fm-row fm-row-symptom">
+              <div class="fm-k">Symptom</div>
+              <div class="fm-v">You can see the file in the bucket. It is not in the table. Nothing errored, no alert fired, and the run was green.</div>
+            </div>
+            <div class="fm-row fm-row-cause">
+              <div class="fm-k">Cause</div>
+              <div class="fm-v">Six independent causes produce this same silent symptom: incremental listing skipping files because it assumes lexicographically ordered filenames; a lost notification event; a case-sensitive glob filter excluding more than you meant; maxFileAge expiring the file before discovery; includeExistingFiles being false; or a hidden file starting with an underscore or a dot.</div>
+            </div>
+            <div class="fm-row fm-row-fix">
+              <div class="fm-k">Fix</div>
+              <div class="fm-v">Work the list in that order — it is ranked by how often each turns out to be the culprit. Set useIncrementalListing to false if your filenames are not date-prefixed, set backfillInterval if you are on notification mode, and check the exact extension casing on your glob.</div>
+            </div>
+          </div>
+          <p class="fm-foot"><b>Check first —</b> Capture _metadata.file_path and an ingestion timestamp as columns on every bronze table, then compare the count of distinct source files against the file count in storage. Two columns, zero cost, and the only way to detect this family at all.</p>
+        </article>
+        <article class="fm-card" data-fm-card="al-02" id="panel-al-02" role="tabpanel" aria-labelledby="tab-al-02" tabindex="0">
+          <div class="fm-head">
+            <span class="fm-fam">Failure family · Schema</span>
+            <span class="fm-folio">Auto Loader · part 06 · failure 02 of 16</span>
+          </div>
+          <div class="fm-rows">
+            <div class="fm-row fm-row-symptom">
+              <div class="fm-k">Symptom</div>
+              <div class="fm-v">The job fails with a message about new fields found in the data, at unpredictable times — usually when an upstream team ships a release.</div>
+            </div>
+            <div class="fm-row fm-row-cause">
+              <div class="fm-k">Cause</div>
+              <div class="fm-v">This is normal, intended behaviour of the default addNewColumns mode. Auto Loader saw an unknown column, saved the updated schema to the schema location, and stopped so that you notice.</div>
+            </div>
+            <div class="fm-row fm-row-fix">
+              <div class="fm-k">Fix</div>
+              <div class="fm-v">Run the job with automatic retries so a schema change is a thirty-second self-heal rather than a pager alert. Then set mergeSchema on the write side too — otherwise Auto Loader evolves the schema successfully and the Delta write fails instead, which is a confusing half-fix.</div>
+            </div>
+          </div>
+          <p class="fm-foot"><b>Check first —</b> The schema location holds a numbered history of every schema version. The diff between the last two tells you exactly which field arrived.</p>
+        </article>
+        <article class="fm-card" data-fm-card="al-07" id="panel-al-07" role="tabpanel" aria-labelledby="tab-al-07" tabindex="0">
+          <div class="fm-head">
+            <span class="fm-fam">Failure family · Discovery</span>
+            <span class="fm-folio">Auto Loader · part 06 · failure 07 of 16</span>
+          </div>
+          <div class="fm-rows">
+            <div class="fm-row fm-row-symptom">
+              <div class="fm-k">Symptom</div>
+              <div class="fm-v">The vendor corrected a bad record and re-uploaded the file at the same path. Your table still shows the old values.</div>
+            </div>
+            <div class="fm-row fm-row-cause">
+              <div class="fm-k">Cause</div>
+              <div class="fm-v">Same path means already seen, so it is skipped. This is by design — the path is the file&#x27;s identity.</div>
+            </div>
+            <div class="fm-row fm-row-fix">
+              <div class="fm-k">Fix</div>
+              <div class="fm-v">There is a partial fix and a real fix. cloudFiles.allowOverwrites makes Auto Loader reprocess a file when its modification time changes — but it appends rather than replaces, so you now hold both the old and the corrected rows and still need deduplication downstream. The real fix is to have the source write a new path and resolve versions with a MERGE in silver.</div>
+            </div>
+          </div>
+          <p class="fm-foot"><b>Check first —</b> If the same bytes keep arriving at the same path, you have a snapshot problem rather than an incremental file problem. Solve it with MERGE or overwrite semantics, not with discovery options.</p>
+        </article>
+        <article class="fm-card" data-fm-card="al-10" id="panel-al-10" role="tabpanel" aria-labelledby="tab-al-10" tabindex="0">
+          <div class="fm-head">
+            <span class="fm-fam">Failure family · Scale</span>
+            <span class="fm-folio">Auto Loader · part 06 · failure 10 of 16</span>
+          </div>
+          <div class="fm-rows">
+            <div class="fm-row fm-row-symptom">
+              <div class="fm-k">Symptom</div>
+              <div class="fm-v">The checkpoint directory is tens of gigabytes. Stream startup is slow and getting slower every week.</div>
+            </div>
+            <div class="fm-row fm-row-cause">
+              <div class="fm-k">Cause</div>
+              <div class="fm-v">Auto Loader remembers every file it has ever seen, permanently. On a stream ingesting millions of files per hour, that state grows without bound.</div>
+            </div>
+            <div class="fm-row fm-row-fix">
+              <div class="fm-k">Fix</div>
+              <div class="fm-v">Bound the state with cloudFiles.maxFileAge, and upgrade to a runtime where the stream no longer waits for the entire RocksDB state to download before starting. Understand the trade-off first: maxFileAge is a cost knob, not a correctness knob. The minimum accepted value is 14 days, and if a file older than the window ever appears — a very late delivery, a replayed archive — it is treated as brand new and ingested again.</div>
+            </div>
+          </div>
+          <p class="fm-foot"><b>Check first —</b> Do the arithmetic before setting it. Two million files an hour over thirty days is roughly 1.4 billion entries, so confirm your real maximum arrival lateness rather than guessing.</p>
+        </article>
+<!--/BUILD:fmcards-->
+
+        <p class="lookup-note">
+          That's <b>6 of 16</b> failure modes, from <b>1 of 51</b> manuals. The other ten are in the
+          free PDF.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════ WHY ══════════════════ -->
+<section class="sec sec-alt" id="why">
+  <div class="wrap">
+    <header class="sec-head">
+      <p class="eyebrow"><span>Why field manuals</span></p>
+      <h2 class="sec-title">Documentation tells you<br>what a feature does<span class="dot">.</span></h2>
+      <p class="sec-lead">
+        Field manuals explain <b>what happens when it breaks</b> — the state you're actually in
+        when a pipeline ran successfully and produced the wrong numbers.
+      </p>
+    </header>
+
+    <div class="compare">
+      <div class="comp comp-doc">
+        <p class="comp-h">Documentation answers</p>
+        <h3 class="comp-t">What the feature does</h3>
+        <ul>
+          <li>What does this feature do?</li>
+          <li>What settings exist?</li>
+          <li>How do I configure it?</li>
+          <li>What APIs are available?</li>
+        </ul>
+      </div>
+
+      <div class="comp comp-fm">
+        <p class="comp-h">A field manual answers</p>
+        <h3 class="comp-t">What happens when it breaks</h3>
+        <ul>
+          <li>What can go wrong?</li>
+          <li>How do I recognise the failure?</li>
+          <li>Why did it happen?</li>
+          <li>What should I check first?</li>
+          <li>How do I recover?</li>
+          <li>What production pattern should I use?</li>
+          <li>What limits should I know?</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="compare-out">
+      <p>You leave knowing what to do on Monday.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════ FREE MANUAL ══════════════════ -->
+<section class="sec" id="free">
+  <div class="wrap">
+    <header class="sec-head">
+      <p class="eyebrow"><span>Start here — free</span></p>
+      <h2 class="sec-title">The Auto Loader<br>Field Manual<span class="dot">.</span></h2>
+    </header>
+
+    <div class="free">
+      <div class="free-cover">
+        <article class="cover" style="--cc:var(--teal)" aria-hidden="true">
+          <div class="grid-bg"></div>
+          <p class="cover-series">Databricks Guide Series</p>
+          <p class="cover-kind">Field Manual</p>
+          <div class="cover-bar"></div>
+          <p class="cover-name">Auto<br>Loader</p>
+          <p class="cover-cat">01 — Ingestion</p>
+          <div class="cover-mid">
+            <div class="cover-spine">
+              <span>Architecture</span>
+              <span>Failure modes</span>
+              <span>Production patterns</span>
+              <span>Cheat sheet</span>
+            </div>
+          </div>
+          <div class="cover-foot">
+            <p class="cover-pages">47<small>Pages</small></p>
+            <p class="cover-wm">HAKKACHE<br>MOHAMED</p>
+          </div>
+        </article>
+      </div>
+
+      <div>
+        <p class="free-idea">Auto Loader's unit of work is a new file at a new path.</p>
+
+        <p class="free-strong">
+          <b>The complete 47-page manual. Not a sample, not a teaser.</b> The same manual that
+          will sit inside the Ingestion collection, given away in full — so you can judge the
+          series by reading one rather than by reading about it.
+        </p>
+
+        <dl class="free-meta">
+          <div><dt>Length</dt><dd>47 pages</dd></div>
+          <div><dt>Format</dt><dd>Print-ready PDF</dd></div>
+          <div><dt>Price</dt><dd style="color:var(--teal)">Free</dd></div>
+          <div><dt>Failure modes</dt><dd>16, with fixes</dd></div>
+          <div><dt>Patterns</dt><dd>8 production</dd></div>
+          <div><dt>Structure</dt><dd>9 parts</dd></div>
+        </dl>
+
+        <div class="free-cta">
+          <a class="btn btn-primary btn-lg" data-buy="auto-loader" href="https://hakkache.gumroad.com/l/auto-loader-field-manual">
+            Download the manual
+            <span class="btn-meta">Free · PDF · via Gumroad</span>
+          </a>
+          <p class="free-note">No email required.<br>Nothing to cancel later.</p>
+        </div>
+
+        <h3 style="margin-top:44px;font-size:19px">What's in the 47 pages</h3>
+        <ol class="toc" style="margin-top:16px">
+<!--BUILD:toc-->
+        <li>
+          <span class="toc-n">01</span>
+          <div>
+            <h3>Auto Loader, explained simply</h3>
+            <p>The mailbox model, the one sentence that explains every limitation, and where Auto Loader does not belong at all.</p>
+          </div>
+          <span class="toc-p">p.03</span>
+        </li>
+        <li>
+          <span class="toc-n">02</span>
+          <div>
+            <h3>Anatomy of a job</h3>
+            <p>Every option line by line, and the two folders that cause most production incidents.</p>
+          </div>
+          <span class="toc-p">p.07</span>
+        </li>
+        <li>
+          <span class="toc-n">03</span>
+          <div>
+            <h3>Watch it work: a three-day walkthrough</h3>
+            <p>Exactly what happens on day 1, day 2, and the day the source adds a column.</p>
+          </div>
+          <span class="toc-p">p.11</span>
+        </li>
+        <li>
+          <span class="toc-n">04</span>
+          <div>
+            <h3>How it finds files</h3>
+            <p>Directory listing, file notification and File Events — with a decision tree and the cost maths.</p>
+          </div>
+          <span class="toc-p">p.13</span>
+        </li>
+        <li>
+          <span class="toc-n">05</span>
+          <div>
+            <h3>Schema inference and evolution</h3>
+            <p>Five evolution modes, the rescued data column, and why your stream is supposed to crash.</p>
+          </div>
+          <span class="toc-p">p.16</span>
+        </li>
+        <li>
+          <span class="toc-n">06</span>
+          <div>
+            <h3>Sixteen failures and their fixes</h3>
+            <p>Symptom, cause, fix — including the silent ones, where nothing errors and rows just never arrive.</p>
+          </div>
+          <span class="toc-p">p.20</span>
+        </li>
+        <li>
+          <span class="toc-n">07</span>
+          <div>
+            <h3>Eight production patterns</h3>
+            <p>Vendor drops, IoT at scale, CDC upserts, the snapshot anti-pattern, multi-table zones, backfills, archives, idempotency.</p>
+          </div>
+          <span class="toc-p">p.31</span>
+        </li>
+        <li>
+          <span class="toc-n">08</span>
+          <div>
+            <h3>Production checklist</h3>
+            <p>Twelve things to confirm before a stream is allowed near production data.</p>
+          </div>
+          <span class="toc-p">p.40</span>
+        </li>
+        <li>
+          <span class="toc-n">09</span>
+          <div>
+            <h3>Cheat sheet</h3>
+            <p>Decision trees, the options that actually matter, and three rules worth memorising.</p>
+          </div>
+          <span class="toc-p">p.43</span>
+        </li>
+<!--/BUILD:toc-->
+        </ol>
+
+        <p style="margin-top:20px;font-size:14.5px;color:var(--fg-3)">
+          Every manual in the series follows this same nine-part spine. Once you've read one,
+          you know where to find things in the next.
+          <a href="manuals/auto-loader/" style="color:var(--teal)">Full contents and sample pages →</a>
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════ CATALOGUE ══════════════════ -->
+<section class="sec sec-alt" id="catalogue">
+  <div class="wrap">
+    <header class="sec-head">
+      <p class="eyebrow"><span>The catalogue</span></p>
+      <h2 class="sec-title">Fifty-one topics,<br>nine categories<span class="dot">.</span></h2>
+      <p class="sec-lead">
+        Nineteen manuals are written and two are on sale. Click any topic to see what it covers,
+        how long it is, and whether you can buy it today. Status is shown honestly — including
+        the thirty-two topics that are still only scoped.
+      </p>
+    </header>
+
+    <div class="cat-filters" role="group" aria-label="Filter catalogue by status">
+      <button class="chip" type="button" data-filter="all" aria-pressed="true">All 51</button>
+      <button class="chip" type="button" data-filter="sale" aria-pressed="false">On sale (2)</button>
+      <button class="chip" type="button" data-filter="created" aria-pressed="false">Written (17)</button>
+      <button class="chip" type="button" data-filter="planned" aria-pressed="false">Not created (28)</button>
+      <button class="chip" type="button" data-filter="deferred" aria-pressed="false">Deferred (4)</button>
+    </div>
+
+<!--BUILD:catalogue-->
+    <section class="cat-block" data-cat-block style="--cc:var(--teal)">
+      <div class="cat-head">
+        <span class="cat-n">1</span>
+        <h3 class="cat-name">Ingestion</h3>
+        <span class="cat-count">4/4</span>
+      </div>
+      <p class="cat-desc">Getting data in incrementally — without losing files, duplicating history or reprocessing the world.</p>
+      <p class="cat-sum cat-sum-complete">Complete · 174 pages</p>
+      <div class="mans">
+        <details class="man man-sale" data-status="sale">
+          <summary class="man-head">
+            <span class="man-n">01</span>
+            <span class="man-name">Auto Loader</span>
+            <span class="man-price">Free</span>
+            <span class="man-pages">47 pages</span>
+            <span class="badge badge-sale">On sale</span>
+            <span class="man-chev" aria-hidden="true"></span>
+          </summary>
+          <div class="man-body">
+            <p class="man-idea">Auto Loader&#x27;s unit of work is a new file at a new path.</p>
+            <p class="man-blurb">The mailbox model, the two folders everyone confuses, three discovery modes and their cost curves, five schema evolution modes, sixteen failures with fixes, and eight production patterns.</p>
+            <dl class="man-meta">
+              <div><dt>Length</dt><dd>47 pages</dd></div>
+              <div><dt>Reference</dt><dd>16 failure modes</dd></div>
+              <div><dt>Category</dt><dd>1 — Ingestion</dd></div>
+            </dl>
+            <div class="man-cta">
+              <a class="btn btn-primary btn-sm" data-buy="auto-loader" href="https://hakkache.gumroad.com/l/auto-loader-field-manual" target="_blank" rel="noopener">Download free<span class="btn-meta">PDF · via Gumroad</span></a>
+              <a class="btn btn-ghost btn-sm" href="manuals/auto-loader/">Read more first</a>
+            </div>
+          </div>
+        </details>
+        <details class="man man-sale" data-status="sale">
+          <summary class="man-head">
+            <span class="man-n">02</span>
+            <span class="man-name">Lakeflow Connect</span>
+            <span class="man-price">$7.99</span>
+            <span class="man-pages">42 pages</span>
+            <span class="badge badge-sale">On sale</span>
+            <span class="man-chev" aria-hidden="true"></span>
+          </summary>
+          <div class="man-body">
+            <p class="man-idea">You configure it. You do not control it.</p>
+            <p class="man-blurb">Managed SaaS and database CDC connectors: the two architectures, the gateway that must never stop, schema evolution you cannot configure, and the sixteen failures that mostly end in a full refresh.</p>
+            <dl class="man-meta">
+              <div><dt>Length</dt><dd>42 pages</dd></div>
+              <div><dt>Reference</dt><dd>16 failure modes</dd></div>
+              <div><dt>Category</dt><dd>1 — Ingestion</dd></div>
+            </dl>
+            <div class="man-cta">
+              <a class="btn btn-primary btn-sm" data-buy="lakeflow-connect" href="https://hakkache.gumroad.com/l/lakeflow-connect-field-manual" target="_blank" rel="noopener">Buy — $7.99<span class="btn-meta">PDF · one-time · via Gumroad</span></a>
+              <a class="btn btn-ghost btn-sm" href="manuals/lakeflow-connect/">Read more first</a>
+            </div>
+          </div>
+        </details>
+        <details class="man man-created" data-status="created">
+          <summary class="man-head">
+            <span class="man-n">03</span>
+            <span class="man-name">Structured Streaming</span>
+            <span class="man-pages">43 pages</span>
+            <span class="badge badge-created">Written</span>
+            <span class="man-chev" aria-hidden="true"></span>
+          </summary>
+          <div class="man-body">
+            <p class="man-blurb">Micro-batches, triggers, checkpoints and state — the guarantees you actually get, and the failures that only appear after a restart.</p>
+            <dl class="man-meta">
+              <div><dt>Length</dt><dd>43 pages</dd></div>
+              <div><dt>Reference</dt><dd>16 failure modes</dd></div>
+              <div><dt>Category</dt><dd>1 — Ingestion</dd></div>
+            </dl>
+            <div class="man-cta">
+              <a class="btn btn-ghost btn-sm" href="#notify">Tell me when it ships<span class="btn-meta">written · not yet published</span></a>
+            </div>
+          </div>
+        </details>
+        <details class="man man-created" data-status="created">
+          <summary class="man-head">
+            <span class="man-n">04</span>
+            <span class="man-name">COPY INTO</span>
+            <span class="man-pages">42 pages</span>
+            <span class="badge badge-created">Written</span>
+            <span class="man-chev" aria-hidden="true"></span>
+          </summary>
+          <div class="man-body">
+            <p class="man-blurb">Idempotent batch loads, the file-tracking behaviour behind them, retries, and where COPY INTO beats a stream.</p>
+            <dl class="man-meta">
+              <div><dt>Length</dt><dd>42 pages</dd></div>
+              <div><dt>Reference</dt><dd>16 failure modes</dd></div>
+              <div><dt>Category</dt><dd>1 — Ingestion</dd></div>
+            </dl>
+            <div class="man-cta">
+              <a class="btn btn-ghost btn-sm" href="#notify">Tell me when it ships<span class="btn-meta">written · not yet published</span></a>
+            </div>
+          </div>
+        </details>
+      </div>
+    </section>
+    <section class="cat-block" data-cat-block style="--cc:var(--cyan)">
+      <div class="cat-head">
+        <span class="cat-n">2</span>
+        <h3 class="cat-name">Storage &amp; table format</h3>
+        <span class="cat-count">5/5</span>
+      </div>
+      <p class="cat-desc">What the files on disk actually are: the transaction log, maintenance, change feeds and open formats.</p>
+      <p class="cat-sum cat-sum-complete">Complete · 214 pages</p>
+      <div class="mans">
+        <details class="man man-created" data-status="created">
+          <summary class="man-head">
+            <span class="man-n">05</span>
+            <span class="man-name">Delta Lake performance and maintenance</span>
+            <span class="man-pages">45 pages</span>
+            <span class="badge badge-created">Written</span>
+            <span class="man-chev" aria-hidden="true"></span>
+          </summary>
+          <div class="man-body">
+            <p class="man-blurb">File sizing, compaction, clustering, data skipping statistics and vacuum — the layout work that decides query speed.</p>
+            <dl class="man-meta">
+              <div><dt>Length</dt><dd>45 pages</dd></div>
+              <div><dt>Reference</dt><dd>16 failure modes</dd></div>
+              <div><dt>Category</dt><dd>2 — Storage &amp; table format</dd></div>
+            </dl>
+            <div class="man-cta">
+              <a class="btn btn-ghost btn-sm" href="#notify">Tell me when it ships<span class="btn-meta">written · not yet published</span></a>
+            </div>
+          </div>
+        </details>
+        <details class="man man-created" data-status="created">
+          <summary class="man-head">
+            <span class="man-n">06</span>
+            <span class="man-name">Delta Lake internals</span>
+            <span class="man-pages">41 pages</span>
+            <span class="badge badge-created">Written</span>
+            <span class="man-chev" aria-hidden="true"></span>
+          </summary>
+          <div class="man-body">
+            <p class="man-blurb">The transaction log, commits, checkpoints, protocol versions and concurrency — reading _delta_log when a table misbehaves.</p>
+            <dl class="man-meta">
+              <div><dt>Length</dt><dd>41 pages</dd></div>
+              <div><dt>Reference</dt><dd>16 failure modes</dd></div>
+              <div><dt>Category</dt><dd>2 — Storage &amp; table format</dd></div>
+            </dl>
+            <div class="man-cta">
+              <a class="btn btn-ghost btn-sm" href="#notify">Tell me when it ships<span class="btn-meta">written · not yet published</span></a>
+            </div>
+          </div>
+        </details>
+        <details class="man man-created" data-status="created">
+          <summary class="man-head">
+            <span class="man-n">07</span>
+            <span class="man-name">Change Data Feed</span>
+            <span class="man-pages">41 pages</span>
+            <span class="badge badge-created">Written</span>
+            <span class="man-chev" aria-hidden="true"></span>
+          </summary>
+          <div class="man-body">
+            <p class="man-blurb">Row-level change tracking, retention, reading CDF downstream, and the CDC patterns that survive a backfill.</p>
+            <dl class="man-meta">
+              <div><dt>Length</dt><dd>41 pages</dd></div>
+              <div><dt>Reference</dt><dd>16 failure modes</dd></div>
+              <div><dt>Category</dt><dd>2 — Storage &amp; table format</dd></div>
+            </dl>
+            <div class="man-cta">
+              <a class="btn btn-ghost btn-sm" href="#notify">Tell me when it ships<span class="btn-meta">written · not yet published</span></a>
+            </div>
+          </div>
+        </details>
+        <details class="man man-created" data-status="created">
+          <summary class="man-head">
+            <span class="man-n">08</span>
+            <span class="man-name">Iceberg on Databricks</span>
+            <span class="man-pages">43 pages</span>
+            <span class="badge badge-created">Written</span>
+            <span class="man-chev" aria-hidden="true"></span>
+          </summary>
+          <div class="man-body">
+            <p class="man-blurb">Interoperability, managed and foreign Iceberg tables, catalog integration, and where the format boundary actually bites.</p>
+            <dl class="man-meta">
+              <div><dt>Length</dt><dd>43 pages</dd></div>
+              <div><dt>Reference</dt><dd>16 failure modes</dd></div>
+              <div><dt>Category</dt><dd>2 — Storage &amp; table format</dd></div>
+            </dl>
+            <div class="man-cta">
+              <a class="btn btn-ghost btn-sm" href="#notify">Tell me when it ships<span class="btn-meta">written · not yet published</span></a>
+            </div>
+          </div>
+        </details>
+        <details class="man man-created" data-status="created">
+          <summary class="man-head">
+            <span class="man-n">09</span>
+            <span class="man-name">Clone, constraints, generated columns</span>
+            <span class="man-pages">44 pages</span>
+            <span class="badge badge-created">Written</span>
+            <span class="man-chev" aria-hidden="true"></span>
+          </summary>
+          <div class="man-body">
+            <p class="man-blurb">Shallow and deep clones, enforced constraints, generated columns, and using them for safe testing and environment promotion.</p>
+            <dl class="man-meta">
+              <div><dt>Length</dt><dd>44 pages</dd></div>
+              <div><dt>Reference</dt><dd>16 failure modes</dd></div>
+              <div><dt>Category</dt><dd>2 — Storage &amp; table format</dd></div>
+            </dl>
+            <div class="man-cta">
+              <a class="btn btn-ghost btn-sm" href="#notify">Tell me when it ships<span class="btn-meta">written · not yet published</span></a>
+            </div>
+          </div>
+        </details>
+      </div>
+    </section>
+    <section class="cat-block" data-cat-block style="--cc:var(--iris)">
+      <div class="cat-head">
+        <span class="cat-n">3</span>
+        <h3 class="cat-name">Transformation &amp; processing</h3>
+        <span class="cat-count">5/5</span>
+      </div>
+      <p class="cat-desc">Pipelines, jobs and the Spark execution model — why a workload is slow rather than that it is.</p>
+      <p class="cat-sum cat-sum-complete">Complete · 213 pages</p>
+      <div class="mans">
+        <details class="man man-created" data-status="created">
+          <summary class="man-head">
+            <span class="man-n">10</span>
+            <span class="man-name">Lakeflow Declarative Pipelines</span>
+            <span class="man-pages">43 pages</span>
+            <span class="badge badge-created">Written</span>
+            <span class="man-chev" aria-hidden="true"></span>
+          </summary>
+          <div class="man-body">
+            <p class="man-blurb">Declared tables, expectations, full refresh semantics, streaming versus materialised targets, and pipeline recovery.</p>
+            <dl class="man-meta">
+              <div><dt>Length</dt><dd>43 pages</dd></div>
+              <div><dt>Reference</dt><dd>16 failure modes</dd></div>
+              <div><dt>Category</dt><dd>3 — Transformation &amp; processing</dd></div>
+            </dl>
+            <div class="man-cta">
+              <a class="btn btn-ghost btn-sm" href="#notify">Tell me when it ships<span class="btn-meta">written · not yet published</span></a>
+            </div>
+          </div>
+        </details>
+        <details class="man man-created" data-status="created">
+          <summary class="man-head">
+            <span class="man-n">11</span>
+            <span class="man-name">Spark on Databricks</span>
+            <span class="man-pages">44 pages</span>
+            <span class="badge badge-created">Written</span>
+            <span class="man-chev" aria-hidden="true"></span>
+          </summary>
+          <div class="man-body">
+            <p class="man-blurb">Jobs, stages, tasks and partitions; shuffle, joins, skew and spill — reading a query plan instead of guessing at one.</p>
+            <dl class="man-meta">
+              <div><dt>Length</dt><dd>44 pages</dd></div>
+              <div><dt>Reference</dt><dd>16 failure modes</dd></div>
+              <div><dt>Category</dt><dd>3 — Transformation &amp; processing</dd></div>
+            </dl>
+            <div class="man-cta">
+              <a class="btn btn-ghost btn-sm" href="#notify">Tell me when it ships<span class="btn-meta">written · not yet published</span></a>
+            </div>
+          </div>
+        </details>
+        <details class="man man-created" data-status="created">
+          <summary class="man-head">
+            <span class="man-n">12</span>
+            <span class="man-name">Lakeflow Jobs / orchestration</span>
+            <span class="man-pages">41 pages</span>
+            <span class="badge badge-created">Written</span>
+            <span class="man-chev" aria-hidden="true"></span>
+          </summary>
+          <div class="man-body">
+            <p class="man-blurb">Task graphs, retries, parameters, triggers and overlapping runs — plus the failures that only reproduce on the scheduler.</p>
+            <dl class="man-meta">
+              <div><dt>Length</dt><dd>41 pages</dd></div>
+              <div><dt>Reference</dt><dd>16 failure modes</dd></div>
+              <div><dt>Category</dt><dd>3 — Transformation &amp; processing</dd></div>
+            </dl>
+            <div class="man-cta">
+              <a class="btn btn-ghost btn-sm" href="#notify">Tell me when it ships<span class="btn-meta">written · not yet published</span></a>
+            </div>
+          </div>
+        </details>
+        <details class="man man-created" data-status="created">
+          <summary class="man-head">
+            <span class="man-n">13</span>
+            <span class="man-name">Photon</span>
+            <span class="man-pages">41 pages</span>
+            <span class="badge badge-created">Written</span>
+            <span class="man-chev" aria-hidden="true"></span>
+          </summary>
+          <div class="man-body">
+            <p class="man-blurb">What Photon accelerates, what silently falls back to Spark, how to see the fallback in a plan, and when it pays for itself.</p>
+            <dl class="man-meta">
+              <div><dt>Length</dt><dd>41 pages</dd></div>
+              <div><dt>Reference</dt><dd>16 failure modes</dd></div>
+              <div><dt>Category</dt><dd>3 — Transformation &amp; processing</dd></div>
+            </dl>
+            <div class="man-cta">
+              <a class="btn btn-ghost btn-sm" href="#notify">Tell me when it ships<span class="btn-meta">written · not yet published</span></a>
+            </div>
+          </div>
+        </details>
+        <details class="man man-created" data-status="created">
+          <summary class="man-head">
+            <span class="man-n">14</span>
+            <span class="man-name">UDFs</span>
+            <span class="man-pages">44 pages</span>
+            <span class="badge badge-created">Written</span>
+            <span class="man-chev" aria-hidden="true"></span>
+          </summary>
+          <div class="man-body">
+            <p class="man-blurb">Python, pandas and SQL UDFs: serialisation cost, Arrow batches, Unity Catalog registration, and when a UDF is the right answer.</p>
+            <dl class="man-meta">
+              <div><dt>Length</dt><dd>44 pages</dd></div>
+              <div><dt>Reference</dt><dd>16 failure modes</dd></div>
+              <div><dt>Category</dt><dd>3 — Transformation &amp; processing</dd></div>
+            </dl>
+            <div class="man-cta">
+              <a class="btn btn-ghost btn-sm" href="#notify">Tell me when it ships<span class="btn-meta">written · not yet published</span></a>
+            </div>
+          </div>
+        </details>
+      </div>
+    </section>
+    <section class="cat-block" data-cat-block style="--cc:var(--amber)">
+      <div class="cat-head">
+        <span class="cat-n">4</span>
+        <h3 class="cat-name">Governance</h3>
+        <span class="cat-count">4/8</span>
+      </div>
+      <p class="cat-desc">Identity, permissions, federation, sharing, and proving what happened to a table.</p>
+      <p class="cat-sum cat-sum-partial">4 of 8 written · 166 pages · no ★★★ left</p>
+      <div class="mans">
+        <details class="man man-created" data-status="created">
+          <summary class="man-head">
+            <span class="man-n">15</span>
+            <span class="man-name">Unity Catalog</span>
+            <span class="man-pages">40 pages</span>
+            <span class="badge badge-created">Written</span>
+            <span class="man-chev" aria-hidden="true"></span>
+          </summary>
+          <div class="man-body">
+            <p class="man-blurb">Metastore, three-level namespace, identity, privileges, ownership and external locations in a working workspace.</p>
+            <dl class="man-meta">
+              <div><dt>Length</dt><dd>40 pages</dd></div>
+              <div><dt>Reference</dt><dd>16 failure modes</dd></div>
+              <div><dt>Category</dt><dd>4 — Governance</dd></div>
+            </dl>
+            <div class="man-cta">
+              <a class="btn btn-ghost btn-sm" href="#notify">Tell me when it ships<span class="btn-meta">written · not yet published</span></a>
+            </div>
+          </div>
+        </details>
+        <details class="man man-created" data-status="created">
+          <summary class="man-head">
+            <span class="man-n">16</span>
+            <span class="man-name">Lakehouse Federation</span>
+            <span class="man-pages">43 pages</span>
+            <span class="badge badge-created">Written</span>
+            <span class="man-chev" aria-hidden="true"></span>
+          </summary>
+          <div class="man-body">
+            <p class="man-blurb">Foreign catalogs, connection objects, pushdown behaviour, credentials, and the load you put on the source system.</p>
+            <dl class="man-meta">
+              <div><dt>Length</dt><dd>43 pages</dd></div>
+              <div><dt>Reference</dt><dd>16 failure modes</dd></div>
+              <div><dt>Category</dt><dd>4 — Governance</dd></div>
+            </dl>
+            <div class="man-cta">
+              <a class="btn btn-ghost btn-sm" href="#notify">Tell me when it ships<span class="btn-meta">written · not yet published</span></a>
+            </div>
+          </div>
+        </details>
+        <details class="man man-created" data-status="created">
+          <summary class="man-head">
+            <span class="man-n">17</span>
+            <span class="man-name">Delta Sharing / Open Sharing</span>
+            <span class="man-pages">41 pages</span>
+            <span class="badge badge-created">Written</span>
+            <span class="man-chev" aria-hidden="true"></span>
+          </summary>
+          <div class="man-body">
+            <p class="man-blurb">Providers, recipients, open versus Databricks-to-Databricks sharing, and the operational surface of sharing outside the account.</p>
+            <dl class="man-meta">
+              <div><dt>Length</dt><dd>41 pages</dd></div>
+              <div><dt>Reference</dt><dd>16 failure modes</dd></div>
+              <div><dt>Category</dt><dd>4 — Governance</dd></div>
+            </dl>
+            <div class="man-cta">
+              <a class="btn btn-ghost btn-sm" href="#notify">Tell me when it ships<span class="btn-meta">written · not yet published</span></a>
+            </div>
+          </div>
+        </details>
+        <details class="man man-created" data-status="created">
+          <summary class="man-head">
+            <span class="man-n">18</span>
+            <span class="man-name">Lakehouse Monitoring &amp; data quality</span>
+            <span class="man-pages">42 pages</span>
+            <span class="badge badge-created">Written</span>
+            <span class="man-chev" aria-hidden="true"></span>
+          </summary>
+          <div class="man-body">
+            <p class="man-blurb">Profile and drift metrics, quality expectations, alerting, and telling a green pipeline apart from correct data.</p>
+            <dl class="man-meta">
+              <div><dt>Length</dt><dd>42 pages</dd></div>
+              <div><dt>Reference</dt><dd>16 failure modes</dd></div>
+              <div><dt>Category</dt><dd>4 — Governance</dd></div>
+            </dl>
+            <div class="man-cta">
+              <a class="btn btn-ghost btn-sm" href="#notify">Tell me when it ships<span class="btn-meta">written · not yet published</span></a>
+            </div>
+          </div>
+        </details>
+        <details class="man man-planned" data-status="planned">
+          <summary class="man-head">
+            <span class="man-n">19</span>
+            <span class="man-name">Audit logs &amp; system tables</span>
+            <span class="man-prio" title="Priority">★★</span>
+            <span class="man-pages">—</span>
+            <span class="badge badge-planned">Not created</span>
+            <span class="man-chev" aria-hidden="true"></span>
+          </summary>
+          <div class="man-body">
+            <p class="man-blurb">System tables, audit event schemas, retention, and reconstructing who changed what.</p>
+            <dl class="man-meta">
+              <div><dt>Length</dt><dd>—</dd></div>
+              <div><dt>Reference</dt><dd>not yet scoped</dd></div>
+              <div><dt>Category</dt><dd>4 — Governance</dd></div>
+            </dl>
+            <div class="man-cta">
+              <a class="btn btn-ghost btn-sm" href="#notify">Ask for this one next</a>
+            </div>
+          </div>
+        </details>
+        <details class="man man-planned" data-status="planned">
+          <summary class="man-head">
+            <span class="man-n">20</span>
+            <span class="man-name">Clean Rooms</span>
+            <span class="man-prio" title="Priority">★</span>
+            <span class="man-pages">—</span>
+            <span class="badge badge-planned">Not created</span>
+            <span class="man-chev" aria-hidden="true"></span>
+          </summary>
+          <div class="man-body">
+            <p class="man-blurb">Collaborator setup, allowed operations, and where the privacy boundary actually sits.</p>
+            <dl class="man-meta">
+              <div><dt>Length</dt><dd>—</dd></div>
+              <div><dt>Reference</dt><dd>not yet scoped</dd></div>
+              <div><dt>Category</dt><dd>4 — Governance</dd></div>
+            </dl>
+            <div class="man-cta">
+              <a class="btn btn-ghost btn-sm" href="#notify">Ask for this one next</a>
+            </div>
+          </div>
+        </details>
+        <details class="man man-planned" data-status="planned">
+          <summary class="man-head">
+            <span class="man-n">21</span>
+            <span class="man-name">Unity Catalog Metrics</span>
+            <span class="man-prio" title="Priority">★</span>
+            <span class="man-pages">—</span>
+            <span class="badge badge-planned">Not created</span>
+            <span class="man-chev" aria-hidden="true"></span>
+          </summary>
+          <div class="man-body">
+            <p class="man-blurb">Metric views, semantic definitions, and keeping one definition of a number across every tool.</p>
+            <dl class="man-meta">
+              <div><dt>Length</dt><dd>—</dd></div>
+              <div><dt>Reference</dt><dd>not yet scoped</dd></div>
+              <div><dt>Category</dt><dd>4 — Governance</dd></div>
+            </dl>
+            <div class="man-cta">
+              <a class="btn btn-ghost btn-sm" href="#notify">Ask for this one next</a>
+            </div>
+          </div>
+        </details>
+        <details class="man man-deferred" data-status="deferred">
+          <summary class="man-head">
+            <span class="man-n">22</span>
+            <span class="man-name">Catalog Federation</span>
+            <span class="man-prio" title="Priority">★</span>
+            <span class="man-pages">—</span>
+            <span class="badge badge-deferred">Deferred</span>
+            <span class="man-chev" aria-hidden="true"></span>
+          </summary>
+          <div class="man-body">
+            <p class="man-blurb">Federating external catalogs into Unity Catalog. Deferred until the feature settles.</p>
+            <dl class="man-meta">
+              <div><dt>Length</dt><dd>—</dd></div>
+              <div><dt>Reference</dt><dd>not yet scoped</dd></div>
+              <div><dt>Category</dt><dd>4 — Governance</dd></div>
+            </dl>
+            <div class="man-cta">
+              <a class="btn btn-ghost btn-sm" href="#notify">Ask for this one next</a>
+            </div>
+          </div>
+        </details>
+      </div>
+    </section>
+    <section class="cat-block" data-cat-block style="--cc:var(--teal)">
+      <div class="cat-head">
+        <span class="cat-n">5</span>
+        <h3 class="cat-name">Serving, BI &amp; apps</h3>
+        <span class="cat-count">1/5</span>
+      </div>
+      <p class="cat-desc">The query and application layer: warehouses, dashboards, transactional serving and apps.</p>
+      <p class="cat-sum cat-sum-partial">1 of 5 written · 46 pages</p>
+      <p class="cat-note">Lakebase is written. The SQL warehouse manual is the highest-priority gap in the series.</p>
+      <div class="mans">
+        <details class="man man-created" data-status="created">
+          <summary class="man-head">
+            <span class="man-n">23</span>
+            <span class="man-name">Lakebase</span>
+            <span class="man-pages">46 pages</span>
+            <span class="badge badge-created">Written</span>
+            <span class="man-chev" aria-hidden="true"></span>
+          </summary>
+          <div class="man-body">
+            <p class="man-blurb">Transactional Postgres alongside the lakehouse: branching, sync to and from Delta, and the operational model.</p>
+            <dl class="man-meta">
+              <div><dt>Length</dt><dd>46 pages</dd></div>
+              <div><dt>Reference</dt><dd>16 failure modes</dd></div>
+              <div><dt>Category</dt><dd>5 — Serving, BI &amp; apps</dd></div>
+            </dl>
+            <div class="man-cta">
+              <a class="btn btn-ghost btn-sm" href="#notify">Tell me when it ships<span class="btn-meta">written · not yet published</span></a>
+            </div>
+          </div>
+        </details>
+        <details class="man man-planned" data-status="planned">
+          <summary class="man-head">
+            <span class="man-n">24</span>
+            <span class="man-name">Databricks SQL warehouses</span>
+            <span class="man-prio" title="Priority">★★★</span>
+            <span class="man-pages">—</span>
+            <span class="badge badge-planned">Not created</span>
+            <span class="man-chev" aria-hidden="true"></span>
+          </summary>
+          <div class="man-body">
+            <p class="man-blurb">Sizing, scaling, queueing, result caching and concurrency for BI workloads that have to stay fast.</p>
+            <dl class="man-meta">
+              <div><dt>Length</dt><dd>—</dd></div>
+              <div><dt>Reference</dt><dd>not yet scoped</dd></div>
+              <div><dt>Category</dt><dd>5 — Serving, BI &amp; apps</dd></div>
+            </dl>
+            <div class="man-cta">
+              <a class="btn btn-ghost btn-sm" href="#notify">Ask for this one next</a>
+            </div>
+          </div>
+        </details>
+        <details class="man man-planned" data-status="planned">
+          <summary class="man-head">
+            <span class="man-n">25</span>
+            <span class="man-name">Databricks Apps</span>
+            <span class="man-prio" title="Priority">★★</span>
+            <span class="man-pages">—</span>
+            <span class="badge badge-planned">Not created</span>
+            <span class="man-chev" aria-hidden="true"></span>
+          </summary>
+          <div class="man-body">
+            <p class="man-blurb">Hosting applications next to your data: runtime, permissions, secrets and deployment.</p>
+            <dl class="man-meta">
+              <div><dt>Length</dt><dd>—</dd></div>
+              <div><dt>Reference</dt><dd>not yet scoped</dd></div>
+              <div><dt>Category</dt><dd>5 — Serving, BI &amp; apps</dd></div>
+            </dl>
+            <div class="man-cta">
+              <a class="btn btn-ghost btn-sm" href="#notify">Ask for this one next</a>
+            </div>
+          </div>
+        </details>
+        <details class="man man-planned" data-status="planned">
+          <summary class="man-head">
+            <span class="man-n">26</span>
+            <span class="man-name">AI/BI Dashboards</span>
+            <span class="man-prio" title="Priority">★★</span>
+            <span class="man-pages">—</span>
+            <span class="badge badge-planned">Not created</span>
+            <span class="man-chev" aria-hidden="true"></span>
+          </summary>
+          <div class="man-body">
+            <p class="man-blurb">Datasets, parameters, refresh behaviour, sharing, and performance under real usage.</p>
+            <dl class="man-meta">
+              <div><dt>Length</dt><dd>—</dd></div>
+              <div><dt>Reference</dt><dd>not yet scoped</dd></div>
+              <div><dt>Category</dt><dd>5 — Serving, BI &amp; apps</dd></div>
+            </dl>
+            <div class="man-cta">
+              <a class="btn btn-ghost btn-sm" href="#notify">Ask for this one next</a>
+            </div>
+          </div>
+        </details>
+        <details class="man man-deferred" data-status="deferred">
+          <summary class="man-head">
+            <span class="man-n">27</span>
+            <span class="man-name">AI/BI Genie</span>
+            <span class="man-prio" title="Priority">★</span>
+            <span class="man-pages">—</span>
+            <span class="badge badge-deferred">Deferred</span>
+            <span class="man-chev" aria-hidden="true"></span>
+          </summary>
+          <div class="man-body">
+            <p class="man-blurb">Natural-language querying, instruction tuning and trust boundaries. Deferred.</p>
+            <dl class="man-meta">
+              <div><dt>Length</dt><dd>—</dd></div>
+              <div><dt>Reference</dt><dd>not yet scoped</dd></div>
+              <div><dt>Category</dt><dd>5 — Serving, BI &amp; apps</dd></div>
+            </dl>
+            <div class="man-cta">
+              <a class="btn btn-ghost btn-sm" href="#notify">Ask for this one next</a>
+            </div>
+          </div>
+        </details>
+      </div>
+    </section>
+    <section class="cat-block" data-cat-block style="--cc:var(--iris)">
+      <div class="cat-head">
+        <span class="cat-n">6</span>
+        <h3 class="cat-name">AI &amp; ML</h3>
+        <span class="cat-count">0/7</span>
+      </div>
+      <p class="cat-desc">The production side of models — tracking, features, serving, retrieval and agents.</p>
+      <p class="cat-sum cat-sum-none">Nothing written yet</p>
+      <p class="cat-note">Nothing written yet. MLflow 3 is the entry point for this category.</p>
+      <div class="mans">
+        <details class="man man-planned" data-status="planned">
+          <summary class="man-head">
+            <span class="man-n">28</span>
+            <span class="man-name">MLflow 3 &amp; model lifecycle</span>
+            <span class="man-prio" title="Priority">★★★</span>
+            <span class="man-pages">—</span>
+            <span class="badge badge-planned">Not created</span>
+            <span class="man-chev" aria-hidden="true"></span>
+          </summary>
+          <div class="man-body">
+            <p class="man-blurb">Runs, experiments, model versions, aliases, and reproducing a model six months later.</p>
+            <dl class="man-meta">
+              <div><dt>Length</dt><dd>—</dd></div>
+              <div><dt>Reference</dt><dd>not yet scoped</dd></div>
+              <div><dt>Category</dt><dd>6 — AI &amp; ML</dd></div>
+            </dl>
+            <div class="man-cta">
+              <a class="btn btn-ghost btn-sm" href="#notify">Ask for this one next</a>
+            </div>
+          </div>
+        </details>
+        <details class="man man-planned" data-status="planned">
+          <summary class="man-head">
+            <span class="man-n">29</span>
+            <span class="man-name">Model Serving</span>
+            <span class="man-prio" title="Priority">★★</span>
+            <span class="man-pages">—</span>
+            <span class="badge badge-planned">Not created</span>
+            <span class="man-chev" aria-hidden="true"></span>
+          </summary>
+          <div class="man-body">
+            <p class="man-blurb">Endpoints, scaling, cold starts, and the latency budget of a real request.</p>
+            <dl class="man-meta">
+              <div><dt>Length</dt><dd>—</dd></div>
+              <div><dt>Reference</dt><dd>not yet scoped</dd></div>
+              <div><dt>Category</dt><dd>6 — AI &amp; ML</dd></div>
+            </dl>
+            <div class="man-cta">
+              <a class="btn btn-ghost btn-sm" href="#notify">Ask for this one next</a>
+            </div>
+          </div>
+        </details>
+        <details class="man man-planned" data-status="planned">
+          <summary class="man-head">
+            <span class="man-n">30</span>
+            <span class="man-name">Feature Engineering</span>
+            <span class="man-prio" title="Priority">★★</span>
+            <span class="man-pages">—</span>
+            <span class="badge badge-planned">Not created</span>
+            <span class="man-chev" aria-hidden="true"></span>
+          </summary>
+          <div class="man-body">
+            <p class="man-blurb">Feature tables, point-in-time lookups, online stores and training/serving skew.</p>
+            <dl class="man-meta">
+              <div><dt>Length</dt><dd>—</dd></div>
+              <div><dt>Reference</dt><dd>not yet scoped</dd></div>
+              <div><dt>Category</dt><dd>6 — AI &amp; ML</dd></div>
+            </dl>
+            <div class="man-cta">
+              <a class="btn btn-ghost btn-sm" href="#notify">Ask for this one next</a>
+            </div>
+          </div>
+        </details>
+        <details class="man man-planned" data-status="planned">
+          <summary class="man-head">
+            <span class="man-n">31</span>
+            <span class="man-name">Vector Search</span>
+            <span class="man-prio" title="Priority">★★</span>
+            <span class="man-pages">—</span>
+            <span class="badge badge-planned">Not created</span>
+            <span class="man-chev" aria-hidden="true"></span>
+          </summary>
+          <div class="man-body">
+            <p class="man-blurb">Index types, sync from Delta, chunking, and retrieval quality you can actually measure.</p>
+            <dl class="man-meta">
+              <div><dt>Length</dt><dd>—</dd></div>
+              <div><dt>Reference</dt><dd>not yet scoped</dd></div>
+              <div><dt>Category</dt><dd>6 — AI &amp; ML</dd></div>
+            </dl>
+            <div class="man-cta">
+              <a class="btn btn-ghost btn-sm" href="#notify">Ask for this one next</a>
+            </div>
+          </div>
+        </details>
+        <details class="man man-planned" data-status="planned">
+          <summary class="man-head">
+            <span class="man-n">32</span>
+            <span class="man-name">Mosaic AI Agent Framework</span>
+            <span class="man-prio" title="Priority">★★</span>
+            <span class="man-pages">—</span>
+            <span class="badge badge-planned">Not created</span>
+            <span class="man-chev" aria-hidden="true"></span>
+          </summary>
+          <div class="man-body">
+            <p class="man-blurb">Authoring, tracing, evaluating and deploying agents as governed assets.</p>
+            <dl class="man-meta">
+              <div><dt>Length</dt><dd>—</dd></div>
+              <div><dt>Reference</dt><dd>not yet scoped</dd></div>
+              <div><dt>Category</dt><dd>6 — AI &amp; ML</dd></div>
+            </dl>
+            <div class="man-cta">
+              <a class="btn btn-ghost btn-sm" href="#notify">Ask for this one next</a>
+            </div>
+          </div>
+        </details>
+        <details class="man man-planned" data-status="planned">
+          <summary class="man-head">
+            <span class="man-n">33</span>
+            <span class="man-name">Foundation Model APIs</span>
+            <span class="man-prio" title="Priority">★★</span>
+            <span class="man-pages">—</span>
+            <span class="badge badge-planned">Not created</span>
+            <span class="man-chev" aria-hidden="true"></span>
+          </summary>
+          <div class="man-body">
+            <p class="man-blurb">Pay-per-token and provisioned throughput, rate limits, cost per row, and failure handling.</p>
+            <dl class="man-meta">
+              <div><dt>Length</dt><dd>—</dd></div>
+              <div><dt>Reference</dt><dd>not yet scoped</dd></div>
+              <div><dt>Category</dt><dd>6 — AI &amp; ML</dd></div>
+            </dl>
+            <div class="man-cta">
+              <a class="btn btn-ghost btn-sm" href="#notify">Ask for this one next</a>
+            </div>
+          </div>
+        </details>
+        <details class="man man-deferred" data-status="deferred">
+          <summary class="man-head">
+            <span class="man-n">34</span>
+            <span class="man-name">Agent Bricks / Unity AI Gateway</span>
+            <span class="man-prio" title="Priority">★</span>
+            <span class="man-pages">—</span>
+            <span class="badge badge-deferred">Deferred</span>
+            <span class="man-chev" aria-hidden="true"></span>
+          </summary>
+          <div class="man-body">
+            <p class="man-blurb">Governed model access, routing and usage control. Deferred until it stabilises.</p>
+            <dl class="man-meta">
+              <div><dt>Length</dt><dd>—</dd></div>
+              <div><dt>Reference</dt><dd>not yet scoped</dd></div>
+              <div><dt>Category</dt><dd>6 — AI &amp; ML</dd></div>
+            </dl>
+            <div class="man-cta">
+              <a class="btn btn-ghost btn-sm" href="#notify">Ask for this one next</a>
+            </div>
+          </div>
+        </details>
+      </div>
+    </section>
+    <section class="cat-block" data-cat-block style="--cc:var(--amber)">
+      <div class="cat-head">
+        <span class="cat-n">7</span>
+        <h3 class="cat-name">Platform &amp; operations</h3>
+        <span class="cat-count">0/9</span>
+      </div>
+      <p class="cat-desc">Deployment as code, cost, compute shape, observability and recovery.</p>
+      <p class="cat-sum cat-sum-none">Nothing written yet</p>
+      <p class="cat-note">The largest uncovered category, and the one production teams ask about most.</p>
+      <div class="mans">
+        <details class="man man-planned" data-status="planned">
+          <summary class="man-head">
+            <span class="man-n">35</span>
+            <span class="man-name">Databricks Asset Bundles / CI-CD</span>
+            <span class="man-prio" title="Priority">★★★</span>
+            <span class="man-pages">—</span>
+            <span class="badge badge-planned">Not created</span>
+            <span class="man-chev" aria-hidden="true"></span>
+          </summary>
+          <div class="man-body">
+            <p class="man-blurb">Workspaces as code, environments, promotion without drift, and pipelines that deploy themselves.</p>
+            <dl class="man-meta">
+              <div><dt>Length</dt><dd>—</dd></div>
+              <div><dt>Reference</dt><dd>not yet scoped</dd></div>
+              <div><dt>Category</dt><dd>7 — Platform &amp; operations</dd></div>
+            </dl>
+            <div class="man-cta">
+              <a class="btn btn-ghost btn-sm" href="#notify">Ask for this one next</a>
+            </div>
+          </div>
+        </details>
+        <details class="man man-planned" data-status="planned">
+          <summary class="man-head">
+            <span class="man-n">36</span>
+            <span class="man-name">Cost management &amp; FinOps</span>
+            <span class="man-prio" title="Priority">★★★</span>
+            <span class="man-pages">—</span>
+            <span class="badge badge-planned">Not created</span>
+            <span class="man-chev" aria-hidden="true"></span>
+          </summary>
+          <div class="man-body">
+            <p class="man-blurb">DBU accounting, tagging, system tables, chargeback, and finding the workload that tripled the bill.</p>
+            <dl class="man-meta">
+              <div><dt>Length</dt><dd>—</dd></div>
+              <div><dt>Reference</dt><dd>not yet scoped</dd></div>
+              <div><dt>Category</dt><dd>7 — Platform &amp; operations</dd></div>
+            </dl>
+            <div class="man-cta">
+              <a class="btn btn-ghost btn-sm" href="#notify">Ask for this one next</a>
+            </div>
+          </div>
+        </details>
+        <details class="man man-planned" data-status="planned">
+          <summary class="man-head">
+            <span class="man-n">37</span>
+            <span class="man-name">Compute configuration</span>
+            <span class="man-prio" title="Priority">★★</span>
+            <span class="man-pages">—</span>
+            <span class="badge badge-planned">Not created</span>
+            <span class="man-chev" aria-hidden="true"></span>
+          </summary>
+          <div class="man-body">
+            <p class="man-blurb">Instance families, autoscaling behaviour, driver pressure, spot interruptions and pools.</p>
+            <dl class="man-meta">
+              <div><dt>Length</dt><dd>—</dd></div>
+              <div><dt>Reference</dt><dd>not yet scoped</dd></div>
+              <div><dt>Category</dt><dd>7 — Platform &amp; operations</dd></div>
+            </dl>
+            <div class="man-cta">
+              <a class="btn btn-ghost btn-sm" href="#notify">Ask for this one next</a>
+            </div>
+          </div>
+        </details>
+        <details class="man man-planned" data-status="planned">
+          <summary class="man-head">
+            <span class="man-n">38</span>
+            <span class="man-name">Observability &amp; monitoring</span>
+            <span class="man-prio" title="Priority">★★</span>
+            <span class="man-pages">—</span>
+            <span class="badge badge-planned">Not created</span>
+            <span class="man-chev" aria-hidden="true"></span>
+          </summary>
+          <div class="man-body">
+            <p class="man-blurb">Streaming metrics, query history, system tables, and alerts actually worth waking up for.</p>
+            <dl class="man-meta">
+              <div><dt>Length</dt><dd>—</dd></div>
+              <div><dt>Reference</dt><dd>not yet scoped</dd></div>
+              <div><dt>Category</dt><dd>7 — Platform &amp; operations</dd></div>
+            </dl>
+            <div class="man-cta">
+              <a class="btn btn-ghost btn-sm" href="#notify">Ask for this one next</a>
+            </div>
+          </div>
+        </details>
+        <details class="man man-planned" data-status="planned">
+          <summary class="man-head">
+            <span class="man-n">39</span>
+            <span class="man-name">Disaster recovery</span>
+            <span class="man-prio" title="Priority">★★</span>
+            <span class="man-pages">—</span>
+            <span class="badge badge-planned">Not created</span>
+            <span class="man-chev" aria-hidden="true"></span>
+          </summary>
+          <div class="man-body">
+            <p class="man-blurb">Replication strategy, RPO and RTO, failover mechanics, and rehearsing a recovery before you need it.</p>
+            <dl class="man-meta">
+              <div><dt>Length</dt><dd>—</dd></div>
+              <div><dt>Reference</dt><dd>not yet scoped</dd></div>
+              <div><dt>Category</dt><dd>7 — Platform &amp; operations</dd></div>
+            </dl>
+            <div class="man-cta">
+              <a class="btn btn-ghost btn-sm" href="#notify">Ask for this one next</a>
+            </div>
+          </div>
+        </details>
+        <details class="man man-planned" data-status="planned">
+          <summary class="man-head">
+            <span class="man-n">40</span>
+            <span class="man-name">Terraform provider</span>
+            <span class="man-prio" title="Priority">★★</span>
+            <span class="man-pages">—</span>
+            <span class="badge badge-planned">Not created</span>
+            <span class="man-chev" aria-hidden="true"></span>
+          </summary>
+          <div class="man-body">
+            <p class="man-blurb">Managing workspaces, catalogs and permissions declaratively, and surviving state drift.</p>
+            <dl class="man-meta">
+              <div><dt>Length</dt><dd>—</dd></div>
+              <div><dt>Reference</dt><dd>not yet scoped</dd></div>
+              <div><dt>Category</dt><dd>7 — Platform &amp; operations</dd></div>
+            </dl>
+            <div class="man-cta">
+              <a class="btn btn-ghost btn-sm" href="#notify">Ask for this one next</a>
+            </div>
+          </div>
+        </details>
+        <details class="man man-planned" data-status="planned">
+          <summary class="man-head">
+            <span class="man-n">41</span>
+            <span class="man-name">Serverless compute</span>
+            <span class="man-prio" title="Priority">★</span>
+            <span class="man-pages">—</span>
+            <span class="badge badge-planned">Not created</span>
+            <span class="man-chev" aria-hidden="true"></span>
+          </summary>
+          <div class="man-body">
+            <p class="man-blurb">What serverless changes about startup, networking, cost shape and debugging.</p>
+            <dl class="man-meta">
+              <div><dt>Length</dt><dd>—</dd></div>
+              <div><dt>Reference</dt><dd>not yet scoped</dd></div>
+              <div><dt>Category</dt><dd>7 — Platform &amp; operations</dd></div>
+            </dl>
+            <div class="man-cta">
+              <a class="btn btn-ghost btn-sm" href="#notify">Ask for this one next</a>
+            </div>
+          </div>
+        </details>
+        <details class="man man-planned" data-status="planned">
+          <summary class="man-head">
+            <span class="man-n">42</span>
+            <span class="man-name">CLI / SDK / REST API</span>
+            <span class="man-prio" title="Priority">★</span>
+            <span class="man-pages">—</span>
+            <span class="badge badge-planned">Not created</span>
+            <span class="man-chev" aria-hidden="true"></span>
+          </summary>
+          <div class="man-body">
+            <p class="man-blurb">Authentication, automation patterns, pagination, and scripting a workspace safely.</p>
+            <dl class="man-meta">
+              <div><dt>Length</dt><dd>—</dd></div>
+              <div><dt>Reference</dt><dd>not yet scoped</dd></div>
+              <div><dt>Category</dt><dd>7 — Platform &amp; operations</dd></div>
+            </dl>
+            <div class="man-cta">
+              <a class="btn btn-ghost btn-sm" href="#notify">Ask for this one next</a>
+            </div>
+          </div>
+        </details>
+        <details class="man man-planned" data-status="planned">
+          <summary class="man-head">
+            <span class="man-n">43</span>
+            <span class="man-name">Git folders &amp; dev workflow</span>
+            <span class="man-prio" title="Priority">★</span>
+            <span class="man-pages">—</span>
+            <span class="badge badge-planned">Not created</span>
+            <span class="man-chev" aria-hidden="true"></span>
+          </summary>
+          <div class="man-body">
+            <p class="man-blurb">Branching in the workspace, review, environment separation and reproducible development.</p>
+            <dl class="man-meta">
+              <div><dt>Length</dt><dd>—</dd></div>
+              <div><dt>Reference</dt><dd>not yet scoped</dd></div>
+              <div><dt>Category</dt><dd>7 — Platform &amp; operations</dd></div>
+            </dl>
+            <div class="man-cta">
+              <a class="btn btn-ghost btn-sm" href="#notify">Ask for this one next</a>
+            </div>
+          </div>
+        </details>
+      </div>
+    </section>
+    <section class="cat-block" data-cat-block style="--cc:var(--rose)">
+      <div class="cat-head">
+        <span class="cat-n">8</span>
+        <h3 class="cat-name">Security &amp; networking</h3>
+        <span class="cat-count">0/5</span>
+      </div>
+      <p class="cat-desc">Network architecture, identity, secrets and encryption across a real workspace.</p>
+      <p class="cat-sum cat-sum-none">Nothing written yet</p>
+      <p class="cat-note">Referenced repeatedly by the Lakehouse Federation and Delta Sharing manuals.</p>
+      <div class="mans">
+        <details class="man man-planned" data-status="planned">
+          <summary class="man-head">
+            <span class="man-n">44</span>
+            <span class="man-name">Networking</span>
+            <span class="man-prio" title="Priority">★★★</span>
+            <span class="man-pages">—</span>
+            <span class="badge badge-planned">Not created</span>
+            <span class="man-chev" aria-hidden="true"></span>
+          </summary>
+          <div class="man-body">
+            <p class="man-blurb">VPC and VNet architecture, private connectivity, egress control, and the failure signature of each.</p>
+            <dl class="man-meta">
+              <div><dt>Length</dt><dd>—</dd></div>
+              <div><dt>Reference</dt><dd>not yet scoped</dd></div>
+              <div><dt>Category</dt><dd>8 — Security &amp; networking</dd></div>
+            </dl>
+            <div class="man-cta">
+              <a class="btn btn-ghost btn-sm" href="#notify">Ask for this one next</a>
+            </div>
+          </div>
+        </details>
+        <details class="man man-planned" data-status="planned">
+          <summary class="man-head">
+            <span class="man-n">45</span>
+            <span class="man-name">Identity &amp; access</span>
+            <span class="man-prio" title="Priority">★★★</span>
+            <span class="man-pages">—</span>
+            <span class="badge badge-planned">Not created</span>
+            <span class="man-chev" aria-hidden="true"></span>
+          </summary>
+          <div class="man-body">
+            <p class="man-blurb">SSO, SCIM provisioning, groups, service principals, and diagnosing a permission denied that should not be.</p>
+            <dl class="man-meta">
+              <div><dt>Length</dt><dd>—</dd></div>
+              <div><dt>Reference</dt><dd>not yet scoped</dd></div>
+              <div><dt>Category</dt><dd>8 — Security &amp; networking</dd></div>
+            </dl>
+            <div class="man-cta">
+              <a class="btn btn-ghost btn-sm" href="#notify">Ask for this one next</a>
+            </div>
+          </div>
+        </details>
+        <details class="man man-planned" data-status="planned">
+          <summary class="man-head">
+            <span class="man-n">46</span>
+            <span class="man-name">Secrets management</span>
+            <span class="man-prio" title="Priority">★★</span>
+            <span class="man-pages">—</span>
+            <span class="badge badge-planned">Not created</span>
+            <span class="man-chev" aria-hidden="true"></span>
+          </summary>
+          <div class="man-body">
+            <p class="man-blurb">Secret scopes, backends, rotation, and keeping credentials out of notebooks and logs.</p>
+            <dl class="man-meta">
+              <div><dt>Length</dt><dd>—</dd></div>
+              <div><dt>Reference</dt><dd>not yet scoped</dd></div>
+              <div><dt>Category</dt><dd>8 — Security &amp; networking</dd></div>
+            </dl>
+            <div class="man-cta">
+              <a class="btn btn-ghost btn-sm" href="#notify">Ask for this one next</a>
+            </div>
+          </div>
+        </details>
+        <details class="man man-planned" data-status="planned">
+          <summary class="man-head">
+            <span class="man-n">47</span>
+            <span class="man-name">Encryption &amp; CMK</span>
+            <span class="man-prio" title="Priority">★★</span>
+            <span class="man-pages">—</span>
+            <span class="badge badge-planned">Not created</span>
+            <span class="man-chev" aria-hidden="true"></span>
+          </summary>
+          <div class="man-body">
+            <p class="man-blurb">Encryption at rest and in transit, customer-managed keys, and the operational cost of rotation.</p>
+            <dl class="man-meta">
+              <div><dt>Length</dt><dd>—</dd></div>
+              <div><dt>Reference</dt><dd>not yet scoped</dd></div>
+              <div><dt>Category</dt><dd>8 — Security &amp; networking</dd></div>
+            </dl>
+            <div class="man-cta">
+              <a class="btn btn-ghost btn-sm" href="#notify">Ask for this one next</a>
+            </div>
+          </div>
+        </details>
+        <details class="man man-planned" data-status="planned">
+          <summary class="man-head">
+            <span class="man-n">48</span>
+            <span class="man-name">Compliance profiles</span>
+            <span class="man-prio" title="Priority">★</span>
+            <span class="man-pages">—</span>
+            <span class="badge badge-planned">Not created</span>
+            <span class="man-chev" aria-hidden="true"></span>
+          </summary>
+          <div class="man-body">
+            <p class="man-blurb">Enhanced security settings, compliance standards, and what each one actually restricts.</p>
+            <dl class="man-meta">
+              <div><dt>Length</dt><dd>—</dd></div>
+              <div><dt>Reference</dt><dd>not yet scoped</dd></div>
+              <div><dt>Category</dt><dd>8 — Security &amp; networking</dd></div>
+            </dl>
+            <div class="man-cta">
+              <a class="btn btn-ghost btn-sm" href="#notify">Ask for this one next</a>
+            </div>
+          </div>
+        </details>
+      </div>
+    </section>
+    <section class="cat-block" data-cat-block style="--cc:var(--cyan)">
+      <div class="cat-head">
+        <span class="cat-n">9</span>
+        <h3 class="cat-name">Migration</h3>
+        <span class="cat-count">0/3</span>
+      </div>
+      <p class="cat-desc">Moving onto Unity Catalog, off DBFS, and onto Databricks from another platform.</p>
+      <p class="cat-sum cat-sum-none">Nothing written yet</p>
+      <div class="mans">
+        <details class="man man-planned" data-status="planned">
+          <summary class="man-head">
+            <span class="man-n">49</span>
+            <span class="man-name">Hive metastore → Unity Catalog</span>
+            <span class="man-prio" title="Priority">★★★</span>
+            <span class="man-pages">—</span>
+            <span class="badge badge-planned">Not created</span>
+            <span class="man-chev" aria-hidden="true"></span>
+          </summary>
+          <div class="man-body">
+            <p class="man-blurb">Assessment, upgrade paths, external locations, cutover sequencing and rollback.</p>
+            <dl class="man-meta">
+              <div><dt>Length</dt><dd>—</dd></div>
+              <div><dt>Reference</dt><dd>not yet scoped</dd></div>
+              <div><dt>Category</dt><dd>9 — Migration</dd></div>
+            </dl>
+            <div class="man-cta">
+              <a class="btn btn-ghost btn-sm" href="#notify">Ask for this one next</a>
+            </div>
+          </div>
+        </details>
+        <details class="man man-planned" data-status="planned">
+          <summary class="man-head">
+            <span class="man-n">50</span>
+            <span class="man-name">DBFS mounts → Volumes</span>
+            <span class="man-prio" title="Priority">★★</span>
+            <span class="man-pages">—</span>
+            <span class="badge badge-planned">Not created</span>
+            <span class="man-chev" aria-hidden="true"></span>
+          </summary>
+          <div class="man-body">
+            <p class="man-blurb">Replacing mounts with volumes and external locations, and rewriting every path that assumed a mount.</p>
+            <dl class="man-meta">
+              <div><dt>Length</dt><dd>—</dd></div>
+              <div><dt>Reference</dt><dd>not yet scoped</dd></div>
+              <div><dt>Category</dt><dd>9 — Migration</dd></div>
+            </dl>
+            <div class="man-cta">
+              <a class="btn btn-ghost btn-sm" href="#notify">Ask for this one next</a>
+            </div>
+          </div>
+        </details>
+        <details class="man man-planned" data-status="planned">
+          <summary class="man-head">
+            <span class="man-n">51</span>
+            <span class="man-name">From Snowflake / Synapse / Hadoop</span>
+            <span class="man-prio" title="Priority">★★</span>
+            <span class="man-pages">—</span>
+            <span class="badge badge-planned">Not created</span>
+            <span class="man-chev" aria-hidden="true"></span>
+          </summary>
+          <div class="man-body">
+            <p class="man-blurb">Mapping concepts across platforms, translating workloads, and sequencing a migration that stays reversible.</p>
+            <dl class="man-meta">
+              <div><dt>Length</dt><dd>—</dd></div>
+              <div><dt>Reference</dt><dd>not yet scoped</dd></div>
+              <div><dt>Category</dt><dd>9 — Migration</dd></div>
+            </dl>
+            <div class="man-cta">
+              <a class="btn btn-ghost btn-sm" href="#notify">Ask for this one next</a>
+            </div>
+          </div>
+        </details>
+      </div>
+    </section>
+<!--/BUILD:catalogue-->
+  </div>
+</section>
+
+<!-- ══════════════════ NOTIFY ══════════════════ -->
+<section class="sec" id="notify">
+  <div class="wrap wrap-narrow">
+    <div class="signup rv">
+      <h2>Get told when the next manual ships<span class="dot">.</span></h2>
+      <p>
+        Seventeen manuals are written and waiting on review. One short email per release —
+        what it covers and what it costs. Nothing else, and one click to stop.
+      </p>
+
+      <form class="signup-form notify-form" method="POST"
+            action="https://hakkache.gumroad.com/subscribe">
+        <label class="sr-only" for="notify-email">Email address</label>
+        <input id="notify-email" name="email" type="email" required
+               autocomplete="email" placeholder="you@company.com">
+        <input class="hp" type="text" name="_gotcha" tabindex="-1" autocomplete="off" aria-hidden="true">
+        <button class="btn btn-primary" type="submit">Notify me</button>
+      </form>
+
+      <p class="signup-fine notify-msg" hidden></p>
+      <p class="signup-fine">
+        Roughly one email a fortnight. No sharing, no selling.
+        <a href="legal/">How your data is handled</a>.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════ SPINE ══════════════════ -->
+<section class="sec sec-alt" id="structure">
+  <div class="wrap">
+    <header class="sec-head">
+      <p class="eyebrow"><span>Guide structure</span></p>
+      <h2 class="sec-title">Every manual has the<br>same engineering spine<span class="dot">.</span></h2>
+      <p class="sec-lead">
+        Nine parts, roughly forty pages, one idea holding it together. The numbering is the
+        reading order and the reference order at the same time.
+      </p>
+    </header>
+
+    <ol class="spine">
+      <li class="step rv"><span class="step-n">01</span><div class="step-b">
+        <h3>Explained simply</h3>
+        <p>The one sentence that makes the rest predictable, and an honest section on where the technology does not belong at all.</p></div></li>
+      <li class="step rv"><span class="step-n">02</span><div class="step-b">
+        <h3>Architecture</h3>
+        <p>How the components actually fit together, in diagrams drawn for the manual rather than lifted from the docs.</p></div></li>
+      <li class="step rv"><span class="step-n">03</span><div class="step-b">
+        <h3>The mechanism, watched closely</h3>
+        <p>A walkthrough of the thing working — and the day it stops working — before any theory about why.</p></div></li>
+      <li class="step rv"><span class="step-n">04</span><div class="step-b">
+        <h3>The part that decides your costs</h3>
+        <p>Discovery modes, gateways, compute shape. Different per topic, always the section that quietly sets your bill.</p></div></li>
+      <li class="step rv"><span class="step-n">05</span><div class="step-b">
+        <h3>Schema and state</h3>
+        <p>What happens when the upstream system changes something on a Tuesday, and which of your options are actually configurable.</p></div></li>
+      <li class="step rv"><span class="step-n">06</span><div class="step-b">
+        <h3>Sixteen failures and their fixes</h3>
+        <p>Symptom, cause, fix, and what to check first. Grouped into families, including the silent ones that never raise an error.</p></div></li>
+      <li class="step rv"><span class="step-n">07</span><div class="step-b">
+        <h3>Production patterns</h3>
+        <p>Complete, copyable arrangements that hold up in real systems — including the ones where the right answer is a different tool.</p></div></li>
+      <li class="step rv"><span class="step-n">08</span><div class="step-b">
+        <h3>Pre-production checklist</h3>
+        <p>Everything to confirm before this goes near production data. Every item exists because someone skipped it and paid for it.</p></div></li>
+      <li class="step rv"><span class="step-n">09</span><div class="step-b">
+        <h3>Cheat sheet</h3>
+        <p>Decision trees, the options that actually matter, and three rules worth memorising. The page people print.</p></div></li>
+    </ol>
+
+    <p style="margin-top:22px;font-size:14.5px;color:var(--fg-3)">
+      Part numbering shifts slightly between topics — a CDC connector needs a section on gateways
+      that Auto Loader does not. The shape holds: once you've read one, you know where to look in
+      the next.
+    </p>
+  </div>
+</section>
+
+<!-- ══════════════════ AUDIENCE ══════════════════ -->
+<section class="sec" id="audience">
+  <div class="wrap">
+    <header class="sec-head">
+      <p class="eyebrow"><span>Audience</span></p>
+      <h2 class="sec-title">Who these are for<span class="dot">.</span></h2>
+    </header>
+
+    <div class="aud">
+      <div class="aud-col aud-yes">
+        <h3 class="aud-h">Written for</h3>
+        <ul>
+          <li>Data engineers running Databricks in production</li>
+          <li>Analytics engineers who inherited someone else's pipelines</li>
+          <li>Platform engineers supporting a Databricks workspace</li>
+          <li>Cloud and data architects making platform decisions</li>
+          <li>Engineers moving onto Databricks from another stack</li>
+          <li>Anyone who wants a compact technical reference on the desk</li>
+        </ul>
+      </div>
+
+      <div class="aud-col aud-no">
+        <h3 class="aud-h">Not for</h3>
+        <ul>
+          <li>People who need the official Databricks documentation</li>
+          <li>People after certification exam training</li>
+          <li>People after a beginner course in Spark</li>
+          <li>People expecting someone to build their project</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════ RELEASES ══════════════════ -->
+<section class="sec sec-alt" id="releases">
+  <div class="wrap">
+    <header class="sec-head">
+      <p class="eyebrow"><span>Release schedule</span></p>
+      <h2 class="sec-title">Built in public<span class="dot">.</span></h2>
+      <p class="sec-lead">
+        Nineteen manuals are written; each goes through a technical review pass against current
+        Databricks behaviour before it ships. Auto Loader and Lakeflow Connect are live. These
+        are next.
+      </p>
+    </header>
+
+    <div class="next">
+<!--BUILD:next-->
+      <article class="nx rv">
+        <p class="nx-q">Next · 01</p>
+        <h3>Structured Streaming</h3>
+        <p>Micro-batches, triggers, checkpoints and state — the guarantees you actually get, and the failures that only appear after a restart.</p>
+        <span class="badge badge-created">Written</span>
+      </article>
+      <article class="nx rv">
+        <p class="nx-q">Next · 02</p>
+        <h3>Delta Lake performance and maintenance</h3>
+        <p>File sizing, compaction, clustering, data skipping statistics and vacuum — the layout work that decides query speed.</p>
+        <span class="badge badge-created">Written</span>
+      </article>
+      <article class="nx rv">
+        <p class="nx-q">Next · 03</p>
+        <h3>Spark on Databricks</h3>
+        <p>Jobs, stages, tasks and partitions; shuffle, joins, skew and spill — reading a query plan instead of guessing at one.</p>
+        <span class="badge badge-created">Written</span>
+      </article>
+      <article class="nx rv">
+        <p class="nx-q">Next · 04</p>
+        <h3>Unity Catalog</h3>
+        <p>Metastore, three-level namespace, identity, privileges, ownership and external locations in a working workspace.</p>
+        <span class="badge badge-created">Written</span>
+      </article>
+<!--/BUILD:next-->
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════ DEPTH ══════════════════ -->
+<section class="sec" id="depth">
+  <div class="wrap">
+    <header class="sec-head">
+      <p class="eyebrow"><span>Three ways in</span></p>
+      <h2 class="sec-title">Choose your depth<span class="dot">.</span></h2>
+      <p class="sec-lead">
+        Auto Loader is free and stays free. Lakeflow Connect is $7.99. Collections arrive as the
+        catalogue fills out, with pricing published the day each one goes live.
+      </p>
+    </header>
+
+    <div class="depth">
+      <article class="dep rv" style="--dc:var(--teal)">
+        <p class="dep-n">Level 01</p>
+        <h3 class="dep-t">One manual</h3>
+        <p class="dep-d">For the specific thing in front of you right now. A single field manual on one topic, priced per manual.</p>
+        <div class="dep-f"><span class="badge badge-sale">2 on sale now</span></div>
+      </article>
+
+      <article class="dep rv" style="--dc:var(--amber)">
+        <p class="dep-n">Level 02</p>
+        <h3 class="dep-t">Category collection</h3>
+        <p class="dep-d">For engineers working across a whole technical domain — every manual in one of the nine categories.</p>
+        <div class="dep-f"><span class="badge badge-created">Coming soon</span></div>
+      </article>
+
+      <article class="dep rv" style="--dc:var(--iris)">
+        <p class="dep-n">Level 03</p>
+        <h3 class="dep-t">Complete library</h3>
+        <p class="dep-d">For engineers building broad Databricks expertise across ingestion, storage, governance, ML and operations.</p>
+        <div class="dep-f"><span class="badge badge-created">Coming soon</span></div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════ ABOUT ══════════════════ -->
+<section class="sec sec-alt" id="about">
+  <div class="wrap">
+    <div class="author">
+      <div>
+        <p class="eyebrow"><span>About</span></p>
+        <h2 class="sec-title">Who writes these<span class="dot">.</span></h2>
+
+        <p class="sec-lead">
+          I'm Mohamed Hakkache, a lead data engineer with <b>more than 8 years</b> building and
+          operating data platforms. I write these because the reference I wanted during an incident
+          never existed: something that starts from the symptom rather than from the feature.
+        </p>
+
+        <ul class="credentials">
+          <li><b>Lead Data Engineer at Allianz</b>, migrating legacy Mainframe and SAS insurance
+            processing onto an Azure Databricks lakehouse — medallion architecture, automated
+            ingestion, a data quality framework, and CI/CD with infrastructure as code.</li>
+          <li><b>Production Databricks work across Azure, GCP and AWS</b> — DLT and Lakeflow
+            pipelines, Unity Catalog governance and lineage, PySpark, dbt, and the monitoring and
+            incident response around all of it.</li>
+          <li><b>Eight years across five companies</b> — Allianz, Expleo for Renault Group,
+            Emirates Logistics, APM Terminals and LEAR — covering everything from on-premise to
+            cloud migrations to IoT port telemetry and automotive testing analytics.</li>
+          <li><b>Creator of OpenLakehouse</b>, a self-hosted open-source lakehouse platform of
+            39+ services: Spark and Iceberg, Trino, Kafka and Debezium, Dagster, dbt, MLflow and
+            OpenMetadata, behind single sign-on.</li>
+          <li><b>Databricks Certified Data Engineer Associate</b>, Databricks Fundamentals
+            accreditation, and 100+ certifications across Microsoft, Google Cloud, AWS and IBM.</li>
+        </ul>
+
+        <p class="sec-lead" style="margin-top:24px">
+          Each manual is researched against the current Databricks documentation, tested through
+          hands-on experimentation, and then organised around the one idea that makes the feature
+          predictable. The failure modes come from documented behaviour, platform limits and
+          production patterns — written as diagnosis and recovery, not as a list of things that
+          could theoretically go wrong.
+        </p>
+
+        <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:30px">
+          <a class="btn btn-ghost" href="https://www.linkedin.com/in/hakkache-mohamed/" rel="noopener" target="_blank">
+            LinkedIn
+            <span class="btn-meta">in/hakkache-mohamed</span>
+          </a>
+          <a class="btn btn-ghost" href="https://github.com/hakkache" rel="noopener" target="_blank">
+            GitHub
+            <span class="btn-meta">github.com/hakkache</span>
+          </a>
+          <a class="btn btn-ghost" href="mailto:hakkache.mohamed@gmail.com">
+            Ask a question
+            <span class="btn-meta">by email</span>
+          </a>
+        </div>
+      </div>
+
+      <a class="au-card" href="https://www.linkedin.com/in/hakkache-mohamed/" rel="noopener" target="_blank">
+        <span class="grid-bg" aria-hidden="true"></span>
+        <span class="au-mark" aria-hidden="true"></span>
+        <span class="au-name">Hakkache Mohamed</span>
+        <span class="au-role">Lead Data Engineer · Allianz<br>Author, Databricks Guide Series</span>
+        <span class="au-div" aria-hidden="true"></span>
+        <span class="au-stats">
+<!--BUILD:authorstats-->
+        <span><b>19</b><span>Written</span></span>
+        <span><b>813</b><span>Pages</span></span>
+        <span><b>9</b><span>Categories</span></span>
+<!--/BUILD:authorstats-->
+        </span>
+        <span class="au-link">
+          linkedin.com/in/hakkache-mohamed
+          <span class="au-arrow" aria-hidden="true">→</span>
+        </span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════ FAQ ══════════════════ -->
+<section class="sec" id="faq">
+  <div class="wrap wrap-narrow">
+    <header class="sec-head">
+      <p class="eyebrow"><span>Questions</span></p>
+      <h2 class="sec-title">Before you ask<span class="dot">.</span></h2>
+    </header>
+
+    <div class="faq">
+      <details open>
+        <summary>What is a Field Manual?</summary>
+        <div><p>A focused technical reference on one Databricks topic, built around a single organising idea and sixteen documented failure modes with symptom, cause and fix. It also includes architecture, production patterns, limits, a checklist and a cheat sheet across nine parts — roughly forty pages of engineering reference rather than tutorial prose.</p></div>
+      </details>
+
+      <details>
+        <summary>How is this different from the Databricks documentation?</summary>
+        <div><p>The documentation tells you what a feature does and how to configure it. A field manual tells you what happens when it's wrong: how to recognise the failure, why it happened, what to check first, and how to recover. Both are useful. They answer different questions.</p></div>
+      </details>
+
+      <details>
+        <summary>Is the Auto Loader manual really free?</summary>
+        <div><p><b>Yes.</b> The complete 47-page manual, as a print-ready PDF. Not a sample chapter, not a preview, and no email required — the download is on Gumroad at a price of zero.</p></div>
+      </details>
+
+      <details>
+        <summary>Nineteen manuals are written. Why can I only buy two?</summary>
+        <div>
+          <p>Written is not the same as published. Each manual goes through a technical review pass against current Databricks behaviour before it ships, because a reference with a wrong fix in it is worse than no reference at all.</p>
+          <p>Auto Loader and Lakeflow Connect have been through that pass. The other seventeen are queued for it.</p>
+          <p>The catalogue shows exactly where each one stands, so you can see what's coming rather than take my word for it.</p>
+        </div>
+      </details>
+
+      <details>
+        <summary>Will there be bundles, and what will they cost?</summary>
+        <div><p>Individual manuals are $7.99, and Auto Loader is free. Category collections covering one of the nine domains and a complete library are planned, and their pricing goes up the day each one goes live — I'd rather publish no price than a price I have to change.</p></div>
+      </details>
+
+      <details>
+        <summary>Are these official Databricks publications?</summary>
+        <div><p><b>No.</b> They are independent educational publications, not affiliated with or endorsed by Databricks.</p></div>
+      </details>
+
+      <details>
+        <summary>What format are the manuals in?</summary>
+        <div><p>Print-ready PDF, laid out for reading on screen and for printing. The cheat sheet on the last page is designed to be printed on its own and pinned up.</p></div>
+      </details>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════ FINAL ══════════════════ -->
+<section class="final">
+  <div class="grid-bg grid-fade" aria-hidden="true"></div>
+  <div class="wrap final-in">
+    <div class="final-lines">
+      <span>The series has started.</span>
+      <span>Auto Loader is free.</span>
+      <span>The library is growing.</span>
+    </div>
+    <p class="final-sub">
+      Forty-seven pages — architecture, sixteen failure modes, eight production patterns and a
+      cheat sheet you'll actually print.
+    </p>
+    <a class="btn btn-primary btn-lg" data-buy="auto-loader" href="https://hakkache.gumroad.com/l/auto-loader-field-manual">
+      Download the manual
+      <span class="btn-meta">Free · PDF · via Gumroad</span>
+    </a>
+  </div>
+</section>
+
+</main>
+
+<!-- ══════════════════ FOOTER ══════════════════ -->
+<footer class="foot">
+  <div class="wrap foot-in">
+    <div>
+      <span class="brand-mark" aria-hidden="true"></span>
+      <p class="foot-name">Databricks Guide Series</p>
+      <p class="foot-tag">Practical field manuals for Databricks engineers.</p>
+      <p class="foot-by">
+        Written and designed by
+        <a class="foot-author" href="https://github.com/hakkache" rel="noopener" target="_blank"><b>Mohamed Hakkache</b> ↗</a><br>Lead Data Engineer
+      </p>
+    </div>
+
+    <nav class="foot-col" aria-label="Series">
+      <p class="foot-h">Series</p>
+      <a href="manuals/auto-loader/">Auto Loader manual</a>
+      <a href="library/">Full catalogue</a>
+      <a href="#releases">Release schedule</a>
+      <a href="#depth">Collections</a>
+    </nav>
+
+    <nav class="foot-col" aria-label="About">
+      <p class="foot-h">About</p>
+      <a href="#read">Read a page</a>
+      <a href="#structure">Guide structure</a>
+      <a href="#about">About the author</a>
+      <a href="#faq">FAQ</a>
+    </nav>
+
+    <nav class="foot-col" aria-label="Contact">
+      <p class="foot-h">Contact</p>
+      <a href="mailto:hakkache.mohamed@gmail.com">hakkache.mohamed@gmail.com</a>
+      <a href="legal/">Privacy &amp; terms</a>
+      <a href="https://www.linkedin.com/in/hakkache-mohamed/" rel="noopener" target="_blank">LinkedIn ↗</a>
+      <a href="https://github.com/hakkache" rel="noopener" target="_blank">GitHub ↗</a>
+    </nav>
+  </div>
+
+  <div class="wrap foot-legal">
+    <p class="disc">Independent educational publication. Not affiliated with or endorsed by Databricks.</p>
+    <p>Databricks is a trademark of Databricks, Inc. Runtime requirements and preview status change — verify against your own workspace.</p>
+    <p>© <span id="year">2026</span> Mohamed Hakkache. All rights reserved.</p>
+  </div>
+</footer>
+
+<script src="assets/js/app.js" defer></script>
+<!-- Cloudflare Web Analytics -->
+<script type='module' src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "b52138e1d6cd45bcb4fa471087975469"}'></script>
+<!-- End Cloudflare Web Analytics -->
+</body>
+</html>
