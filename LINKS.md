@@ -88,8 +88,17 @@ Swap `REPLACE-ME` for a slug describing that specific post — `checkpoint-dupli
 
 ## Site links — pick a different page per campaign
 
-Remember these won't show UTM data in Cloudflare yet. The **page path** is your signal, so vary
-the destination, not just the tag.
+Cloudflare won't show the UTM values, but it **does** log the page path — so vary the
+destination, not just the tag, and the path tells you which post sent the visitor.
+
+**The tag is not wasted.** `app.js` carries any `utm_*` on the page URL across to the Gumroad
+button, so a LinkedIn visitor who lands on your site and then buys still shows up in Gumroad as
+`utm_source=linkedin`. Without that, Gumroad would record the referrer as your own site and the
+LinkedIn credit would vanish at the hop.
+
+If someone arrives with no tag at all — organic search, a bare link — the buttons send
+`utm_source=website&utm_medium=referral&utm_campaign=<page>` instead, so you can still separate
+site-driven sales from people who went to Gumroad directly.
 
 **Homepage — general "I published a series" post**
 ```

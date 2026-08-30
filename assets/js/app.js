@@ -32,13 +32,69 @@ const GUMROAD_OVERLAY = false;
   /* ── 1. Wire every download / buy CTA ────────────────────────
      Buttons ship with a real href in the HTML, so a JS failure
      still leaves a working link. Buttons carrying data-buy="key"
-     are re-pointed from PRODUCTS above, so you can change a URL
-     in one place.                                              */
+     are re-pointed from PRODUCTS above.
+
+     Campaign pass-through: if someone arrives from LinkedIn on a
+     tagged link, Gumroad would otherwise see the referrer as this
+     site and the original source would be lost. So any utm_* on
+     the page URL is carried across to the Gumroad link. When there
+     is no campaign tag, the site identifies itself instead, so
+     Gumroad can still tell site traffic from a direct visit.    */
+
+  var pageParams = (function () {
+    var out = {};
+    var q = window.location.search.replace(/^\?/, "");
+    if (!q) return out;
+    var parts = q.split("&");
+    for (var i = 0; i < parts.length; i++) {
+      var kv = parts[i].split("=");
+      var k = decodeURIComponent(kv[0] || "");
+      if (k.indexOf("utm_") === 0 && kv[1]) {
+        out[k] = decodeURIComponent(kv[1].replace(/\+/g, " "));
+      }
+    }
+    return out;
+  })();
+
+  var pageSlug = (function () {
+    var path = window.location.pathname.replace(/\/+$/, "");
+    var last = path.split("/").pop();
+    return last && last.indexOf(".") === -1 ? last : "home";
+  })();
+
+  var withCampaign = function (url) {
+    var params = [];
+    var has = false;
+    for (var k in pageParams) {
+      if (Object.prototype.hasOwnProperty.call(pageParams, k)) {
+        has = true;
+        params.push(encodeURIComponent(k) + "=" + encodeURIComponent(pageParams[k]));
+      }
+    }
+    if (!has) {
+      /* No campaign tag at all: identify the site as the source. */
+      params.push("utm_source=website");
+      params.push("utm_medium=referral");
+      params.push("utm_campaign=" + encodeURIComponent(pageSlug));
+    } else {
+      /* Partially tagged link: fill the gaps so Gumroad always
+         receives a complete source/medium/campaign triple. */
+      if (!pageParams.utm_medium) params.push("utm_medium=referral");
+      if (!pageParams.utm_campaign) {
+        params.push("utm_campaign=" + encodeURIComponent(pageSlug));
+      }
+    }
+    return url + (url.indexOf("?") === -1 ? "?" : "&") + params.join("&");
+  };
+
   var buys = doc.querySelectorAll("[data-buy]");
   for (var i = 0; i < buys.length; i++) {
     var el = buys[i];
     var key = el.getAttribute("data-buy");
-    if (key && PRODUCTS[key]) el.setAttribute("href", key && PRODUCTS[key]);
+    var base = (key && PRODUCTS[key]) || el.getAttribute("href");
+    if (base && base.indexOf("http") === 0) {
+      el.setAttribute("href", withCampaign(base));
+    }
     el.setAttribute("rel", "noopener");
     if (GUMROAD_OVERLAY) {
       el.classList.add("gumroad-button");

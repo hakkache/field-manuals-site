@@ -19,6 +19,7 @@ data/catalogue.json             ALL content — edit this, not the HTML
 build.py                        renders catalogue.json into the HTML
 utm.py                          builds tagged campaign links
 DEPLOY.md                       how to push this to GitHub
+LAUNCH.md                       launch checklist + growth playbook
 LINKS.md                        ready-to-paste LinkedIn links
 assets/css/style.css            design system
 assets/js/app.js                behaviour + product URLs (top of file)
