@@ -10,7 +10,8 @@
 
 const PRODUCTS = {
   "auto-loader":     "https://hakkache.gumroad.com/l/auto-loader-field-manual",
-  "lakeflow-connect": "https://hakkache.gumroad.com/l/lakeflow-connect-field-manual"
+  "lakeflow-connect": "https://hakkache.gumroad.com/l/lakeflow-connect-field-manual",
+  "structured-streaming": "https://hakkache.gumroad.com/l/structured-streaming-field-manual"
 };
 
 /* Where the "notify me" form posts. See README section 2.

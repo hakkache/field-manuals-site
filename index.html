@@ -102,8 +102,8 @@
       "acceptedAnswer": { "@type": "Answer", "text": "The documentation tells you what a feature does and how to configure it. A Field Manual tells you what happens when it is wrong: how to recognise the failure, why it happened, what to check first, and how to recover. Both are useful, and they answer different questions." } },
     { "@type": "Question", "name": "Is the Auto Loader manual really free?",
       "acceptedAnswer": { "@type": "Answer", "text": "Yes. The complete 47-page Auto Loader Field Manual is free. Not a sample chapter, not a preview — the whole manual, as a print-ready PDF." } },
-    { "@type": "Question", "name": "Nineteen manuals are written. Why can I only buy two?",
-      "acceptedAnswer": { "@type": "Answer", "text": "Written is not the same as published. Each manual goes through a technical review pass against current Databricks behaviour before it ships, because a reference with a wrong fix in it is worse than no reference at all. Auto Loader and Lakeflow Connect have been through that pass. The other seventeen are queued for it." } },
+    { "@type": "Question", "name": "Nineteen manuals are written. Why can I only buy three?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Written is not the same as published. Each manual goes through a technical review pass against current Databricks behaviour before it ships, because a reference with a wrong fix in it is worse than no reference at all. Auto Loader, Lakeflow Connect and Structured Streaming have been through that pass. The other sixteen are queued for it." } },
     { "@type": "Question", "name": "Will there be bundles, and what will they cost?",
       "acceptedAnswer": { "@type": "Answer", "text": "Individual manuals are $7.99, and Auto Loader is free. Category collections covering one of the nine domains and a complete library are planned, and their pricing goes up the day each one goes live." } },
     { "@type": "Question", "name": "Are these official Databricks publications?",
@@ -168,9 +168,9 @@
       </p>
 
       <div class="hero-cta">
-        <a class="btn btn-primary" data-buy="auto-loader" data-cover-hover="auto-loader" href="https://hakkache.gumroad.com/l/auto-loader-field-manual">
-          Get the Auto Loader manual
-          <span class="btn-meta">47 pages · free · PDF</span>
+        <a class="btn btn-primary" data-buy="structured-streaming" data-cover-hover="structured-streaming" href="https://hakkache.gumroad.com/l/structured-streaming-field-manual">
+          Get the Structured Streaming manual
+          <span class="btn-meta">43 pages · $9.99 · PDF</span>
         </a>
         <a class="btn btn-ghost" data-buy="lakeflow-connect" data-cover-hover="lakeflow-connect" href="https://hakkache.gumroad.com/l/lakeflow-connect-field-manual">
           Lakeflow Connect — $7.99
@@ -179,38 +179,38 @@
       </div>
 
       <div class="hero-trust">
-        <span>Two manuals on sale now</span>
+        <span>Three manuals on sale now</span>
         <span>Complete manuals, never samples</span>
         <span>16 failure modes each, all with fixes</span>
       </div>
     </div>
 
     <div class="hero-art">
-      <div class="cover-stack" id="cover-stack" data-active="auto-loader">
+      <div class="cover-stack" id="cover-stack" data-active="structured-streaming">
         <div class="cover-ghost cover-ghost-2" aria-hidden="true"></div>
         <div class="cover-ghost cover-ghost-1" aria-hidden="true"></div>
 
-        <span class="cover-flag" data-flag="auto-loader">Free</span>
+        <span class="cover-flag" data-flag="structured-streaming">New</span>
         <span class="cover-flag cover-flag-paid" data-flag="lakeflow-connect">$7.99</span>
 
-        <article class="cover cover-swap" data-cover="auto-loader" style="--cc:var(--teal)"
-                 aria-label="Auto Loader Field Manual, 47 pages, free">
+        <article class="cover cover-swap" data-cover="structured-streaming" style="--cc:var(--teal)"
+                 aria-label="Structured Streaming Field Manual, 43 pages, $9.99">
           <div class="grid-bg" aria-hidden="true"></div>
           <p class="cover-series">Databricks Guide Series</p>
           <p class="cover-kind">Field Manual</p>
           <div class="cover-bar" aria-hidden="true"></div>
-          <p class="cover-name">Auto<br>Loader</p>
+          <p class="cover-name">Structured<br>Streaming</p>
           <p class="cover-cat">01 — Ingestion</p>
           <div class="cover-mid">
             <div class="cover-spine">
               <span>16 failure modes</span>
-              <span>8 production patterns</span>
-              <span>Schema evolution</span>
+              <span>Checkpoint contract</span>
+              <span>Watermarks &amp; state</span>
               <span>Cheat sheet</span>
             </div>
           </div>
           <div class="cover-foot">
-            <p class="cover-pages">47<small>Pages</small></p>
+            <p class="cover-pages">43<small>Pages</small></p>
             <p class="cover-wm">HAKKACHE<br>MOHAMED</p>
           </div>
         </article>
@@ -249,7 +249,7 @@
       <div class="stat"><dt>19</dt><dd>Guides written</dd></div>
       <div class="stat"><dt>813</dt><dd>Pages created</dd></div>
       <div class="stat"><dt>304</dt><dd>Failure modes documented</dd></div>
-      <div class="stat"><dt>2</dt><dd>On sale now</dd></div>
+      <div class="stat"><dt>3</dt><dd>On sale now</dd></div>
       <div class="stat"><dt>32</dt><dd>Topics remaining</dd></div>
 <!--/BUILD:stats-->
   </dl>
@@ -624,7 +624,7 @@
       <p class="eyebrow"><span>The catalogue</span></p>
       <h2 class="sec-title">Fifty-one topics,<br>nine categories<span class="dot">.</span></h2>
       <p class="sec-lead">
-        Nineteen manuals are written and two are on sale. Click any topic to see what it covers,
+        Nineteen manuals are written and three are on sale. Click any topic to see what it covers,
         how long it is, and whether you can buy it today. Status is shown honestly — including
         the thirty-two topics that are still only scoped.
       </p>
@@ -694,15 +694,17 @@
             </div>
           </div>
         </details>
-        <details class="man man-created" data-status="created">
+        <details class="man man-sale" data-status="sale">
           <summary class="man-head">
             <span class="man-n">03</span>
             <span class="man-name">Structured Streaming</span>
+            <span class="man-price">$9.99</span>
             <span class="man-pages">43 pages</span>
-            <span class="badge badge-created">Written</span>
+            <span class="badge badge-sale">On sale</span>
             <span class="man-chev" aria-hidden="true"></span>
           </summary>
           <div class="man-body">
+            <p class="man-idea">A streaming query is a contract with its checkpoint.</p>
             <p class="man-blurb">Micro-batches, triggers, checkpoints and state — the guarantees you actually get, and the failures that only appear after a restart.</p>
             <dl class="man-meta">
               <div><dt>Length</dt><dd>43 pages</dd></div>
@@ -710,7 +712,8 @@
               <div><dt>Category</dt><dd>1 — Ingestion</dd></div>
             </dl>
             <div class="man-cta">
-              <a class="btn btn-ghost btn-sm" href="#notify">Tell me when it ships<span class="btn-meta">written · not yet published</span></a>
+              <a class="btn btn-primary btn-sm" data-buy="structured-streaming" href="https://hakkache.gumroad.com/l/structured-streaming-field-manual" target="_blank" rel="noopener">Buy — $9.99<span class="btn-meta">PDF · one-time · via Gumroad</span></a>
+              <a class="btn btn-ghost btn-sm" href="manuals/structured-streaming/">Read more first</a>
             </div>
           </div>
         </details>
@@ -1933,24 +1936,18 @@
 <!--BUILD:next-->
       <article class="nx rv">
         <p class="nx-q">Next · 01</p>
-        <h3>Structured Streaming</h3>
-        <p>Micro-batches, triggers, checkpoints and state — the guarantees you actually get, and the failures that only appear after a restart.</p>
-        <span class="badge badge-created">Written</span>
-      </article>
-      <article class="nx rv">
-        <p class="nx-q">Next · 02</p>
         <h3>Delta Lake performance and maintenance</h3>
         <p>File sizing, compaction, clustering, data skipping statistics and vacuum — the layout work that decides query speed.</p>
         <span class="badge badge-created">Written</span>
       </article>
       <article class="nx rv">
-        <p class="nx-q">Next · 03</p>
+        <p class="nx-q">Next · 02</p>
         <h3>Spark on Databricks</h3>
         <p>Jobs, stages, tasks and partitions; shuffle, joins, skew and spill — reading a query plan instead of guessing at one.</p>
         <span class="badge badge-created">Written</span>
       </article>
       <article class="nx rv">
-        <p class="nx-q">Next · 04</p>
+        <p class="nx-q">Next · 03</p>
         <h3>Unity Catalog</h3>
         <p>Metastore, three-level namespace, identity, privileges, ownership and external locations in a working workspace.</p>
         <span class="badge badge-created">Written</span>
@@ -1967,8 +1964,9 @@
       <p class="eyebrow"><span>Three ways in</span></p>
       <h2 class="sec-title">Choose your depth<span class="dot">.</span></h2>
       <p class="sec-lead">
-        Auto Loader is free and stays free. Lakeflow Connect is $7.99. Collections arrive as the
-        catalogue fills out, with pricing published the day each one goes live.
+        Auto Loader is free and stays free. Lakeflow Connect is $7.99 and Structured Streaming is
+        $9.99. Collections arrive as the catalogue fills out, with pricing published the day each
+        one goes live.
       </p>
     </header>
 
@@ -1977,7 +1975,7 @@
         <p class="dep-n">Level 01</p>
         <h3 class="dep-t">One manual</h3>
         <p class="dep-d">For the specific thing in front of you right now. A single field manual on one topic, priced per manual.</p>
-        <div class="dep-f"><span class="badge badge-sale">2 on sale now</span></div>
+        <div class="dep-f"><span class="badge badge-sale">3 on sale now</span></div>
       </article>
 
       <article class="dep rv" style="--dc:var(--amber)">
@@ -2099,10 +2097,10 @@
       </details>
 
       <details>
-        <summary>Nineteen manuals are written. Why can I only buy two?</summary>
+        <summary>Nineteen manuals are written. Why can I only buy three?</summary>
         <div>
           <p>Written is not the same as published. Each manual goes through a technical review pass against current Databricks behaviour before it ships, because a reference with a wrong fix in it is worse than no reference at all.</p>
-          <p>Auto Loader and Lakeflow Connect have been through that pass. The other seventeen are queued for it.</p>
+          <p>Auto Loader, Lakeflow Connect and Structured Streaming have been through that pass. The other sixteen are queued for it.</p>
           <p>The catalogue shows exactly where each one stands, so you can see what's coming rather than take my word for it.</p>
         </div>
       </details>

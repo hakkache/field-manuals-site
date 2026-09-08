@@ -24,10 +24,12 @@ DESTINATIONS = {
     # key            (url,                                          tracked?, default campaign)
     "autoloader":    (f"{GUM}/l/auto-loader-field-manual",           True,  "autoloader-free"),
     "lakeflow":      (f"{GUM}/l/lakeflow-connect-field-manual",      True,  "lakeflow-launch"),
+    "streaming":     (f"{GUM}/l/structured-streaming-field-manual",  True,  "streaming-launch"),
     "subscribe":     (f"{GUM}/subscribe",                            True,  "notify-list"),
     "home":          (f"{SITE}/",                                    False, "series-intro"),
     "autoloader-page": (f"{SITE}/manuals/auto-loader/",              False, "autoloader-free"),
     "lakeflow-page": (f"{SITE}/manuals/lakeflow-connect/",           False, "lakeflow-launch"),
+    "streaming-page": (f"{SITE}/manuals/structured-streaming/",      False, "streaming-launch"),
     "catalogue":     (f"{SITE}/library/",                            False, "roadmap"),
 }
 

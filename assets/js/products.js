@@ -109,12 +109,46 @@ const MANUALS = [
       { img: "lakeflow-full-refresh.jpg",       label: "Decision reference", alt: "Lakeflow Connect Field Manual cheat sheet listing what forces a full refresh" },
     ],
   },
+
+  {
+    id: "structured-streaming",
+    category: "ingestion",
+    title: "Databricks Structured Streaming",
+    subtitle: "The Complete Practical Guide",
+    pages: 43,
+    price: 9.99,
+    status: "available",
+    slug: "structured-streaming-field-manual",
+    badge: "$9.99",
+    idea: "A streaming query is a contract with its checkpoint.",
+    desc: "A production-focused guide to the streaming engine underneath every pipeline: sources, checkpoints, watermarks, state stores, failure modes and the restart rules that decide whether a query survives a deploy.",
+    topics: [
+      "The checkpoint contract",
+      "Watermarks & event time",
+      "Stateful operations & state store",
+      "Kafka, Kinesis & other sources",
+      "Triggers & batch size",
+      "Production patterns",
+      "Operational troubleshooting",
+    ],
+    deepTitle: "Structured Streaming — the contract your query signs at startup",
+    deepLead: "A streaming query is a batch query the engine keeps running for you. Production introduces checkpoints, watermarks, state that grows forever, joins that never emit and restarts that fail on the deploy, not the code.",
+    problems: [
+      ["Restart failures", "A code change that passed review breaks the checkpoint on the next restart."],
+      ["State growth", "Without a watermark, state for every key is kept until the query dies on memory."],
+      ["Watermark stalls", "One idle Kafka partition holds back the global watermark and nothing is evicted."],
+      ["Joins that never emit", "An outer join without a watermark can never decide a row has waited long enough."],
+      ["Silent late-data loss", "A watermark shorter than real lateness drops records with no error at all."],
+      ["Duplicate side effects", "foreachBatch re-runs a batch after a failure — a blind INSERT writes it twice."],
+    ],
+    previews: [],
+  },
 ];
 
 /* ---- Categories, for the growing catalogue ------------------ */
 
 const CATEGORIES = [
-  { id: "ingestion",  name: "Ingestion",         note: "Auto Loader, Lakeflow Connect, and more to come" },
+  { id: "ingestion",  name: "Ingestion",         note: "Auto Loader, Lakeflow Connect, Structured Streaming, and more to come" },
   { id: "spark",      name: "Spark Performance", note: "Query execution, shuffle, skew, memory, Photon" },
   { id: "storage",    name: "Delta Lake",        note: "Optimization, maintenance, concurrency" },
   { id: "governance", name: "Unity Catalog",     note: "Governance, access control, production design" },
@@ -128,14 +162,13 @@ const UPCOMING = [
   { name: "Spark Performance",      desc: "Query execution, shuffle, skew, memory, Photon and performance diagnosis." },
   { name: "Delta Lake",             desc: "Optimization, maintenance, concurrency and production patterns." },
   { name: "Unity Catalog",          desc: "Governance, access control and production design." },
-  { name: "Structured Streaming",   desc: "State, checkpoints, recovery and operational failure modes." },
   { name: "Databricks Jobs",        desc: "Scheduling, retries, dependencies and production operations." },
 ];
 
 /* ---- Bundles (not yet priced) ------------------------------- */
 
 const BUNDLES = [
-  { name: "Ingestion Bundle",  desc: "Auto Loader + Lakeflow Connect + future ingestion manuals." },
+  { name: "Ingestion Bundle",  desc: "Auto Loader + Lakeflow Connect + Structured Streaming + future ingestion manuals." },
   { name: "Production Bundle", desc: "A broader collection focused on production architecture, reliability, performance and operations." },
 ];
 

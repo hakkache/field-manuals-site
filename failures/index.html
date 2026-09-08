@@ -97,6 +97,36 @@
       "@type": "TechArticle",
       "headline": "Lakeflow Connect Skipped a Scheduled Update — Overlap Protection",
       "url": "https://hakkache.github.io/field-manuals-site/failures/lakeflow-connect-scheduled-update-skipped/"
+    },
+    {
+      "@type": "TechArticle",
+      "headline": "Structured Streaming Query Will Not Restart After a Code Change",
+      "url": "https://hakkache.github.io/field-manuals-site/failures/structured-streaming-query-will-not-restart-after-code-change/"
+    },
+    {
+      "@type": "TechArticle",
+      "headline": "Structured Streaming State Grows Until the Query Dies — Watermark Fix",
+      "url": "https://hakkache.github.io/field-manuals-site/failures/structured-streaming-state-grows-until-query-dies/"
+    },
+    {
+      "@type": "TechArticle",
+      "headline": "Stream-Stream Outer Join Never Emits in Structured Streaming",
+      "url": "https://hakkache.github.io/field-manuals-site/failures/structured-streaming-outer-join-never-emits/"
+    },
+    {
+      "@type": "TechArticle",
+      "headline": "Late Records Silently Disappeared in Structured Streaming",
+      "url": "https://hakkache.github.io/field-manuals-site/failures/structured-streaming-late-records-silently-disappeared/"
+    },
+    {
+      "@type": "TechArticle",
+      "headline": "foreachBatch Ran the Same Batch Twice — Duplicates After Restart",
+      "url": "https://hakkache.github.io/field-manuals-site/failures/structured-streaming-foreachbatch-ran-batch-twice/"
+    },
+    {
+      "@type": "TechArticle",
+      "headline": "Structured Streaming First Batch Never Finishes — Rate Limit Fix",
+      "url": "https://hakkache.github.io/field-manuals-site/failures/structured-streaming-first-batch-never-finished/"
     }
   ]
 }
@@ -121,6 +151,7 @@
       <a href="../library/">Catalogue</a>
       <a href="../manuals/auto-loader/">Auto Loader</a>
       <a href="../manuals/lakeflow-connect/">Lakeflow Connect</a>
+      <a href="../manuals/structured-streaming/">Structured Streaming</a>
     </nav>
     <a class="btn btn-sm btn-primary nav-cta" data-buy="auto-loader" href="https://hakkache.gumroad.com/l/auto-loader-field-manual">Free manual</a>
     <button class="nav-toggle" type="button" aria-label="Open menu" aria-controls="nav-links" aria-expanded="false">
@@ -173,6 +204,20 @@
         <li class="row-rel"><a href="lakeflow-connect-deletes-not-replicated/">Deleted rows never disappear from the destination</a><span class="rel-fam">Schema</span></li>
         <li class="row-rel"><a href="lakeflow-connect-failover-forces-full-refresh/">A failover invalidated every table in the pipeline</a><span class="rel-fam">Gateway</span></li>
         <li class="row-rel"><a href="lakeflow-connect-scheduled-update-skipped/">A scheduled update was silently skipped</a><span class="rel-fam">Operations</span></li>
+      </ul>
+    </section>
+    <section class="cat-block">
+      <div class="cat-head">
+        <h3 class="cat-name">Structured Streaming</h3>
+        <span class="cat-count">6 of 16 published</span>
+      </div>
+      <ul class="rel-list">
+        <li class="row-rel"><a href="structured-streaming-query-will-not-restart-after-code-change/">The query will not restart after a code change</a><span class="rel-fam">Restart</span></li>
+        <li class="row-rel"><a href="structured-streaming-state-grows-until-query-dies/">State grows until the query dies</a><span class="rel-fam">State</span></li>
+        <li class="row-rel"><a href="structured-streaming-outer-join-never-emits/">The outer join never emits anything</a><span class="rel-fam">Semantics</span></li>
+        <li class="row-rel"><a href="structured-streaming-late-records-silently-disappeared/">Late records silently disappeared</a><span class="rel-fam">Semantics</span></li>
+        <li class="row-rel"><a href="structured-streaming-foreachbatch-ran-batch-twice/">foreachBatch ran the same batch twice</a><span class="rel-fam">Semantics</span></li>
+        <li class="row-rel"><a href="structured-streaming-first-batch-never-finished/">The first batch never finished</a><span class="rel-fam">Operations</span></li>
       </ul>
     </section>
   </div>

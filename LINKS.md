@@ -76,6 +76,16 @@ https://hakkache.gumroad.com/l/lakeflow-connect-field-manual?utm_source=linkedin
 https://hakkache.gumroad.com/l/lakeflow-connect-field-manual?utm_source=linkedin&utm_medium=comment&utm_campaign=lakeflow-launch&utm_content=REPLACE-ME
 ```
 
+**Structured Streaming ($9.99) — from a LinkedIn post**
+```
+https://hakkache.gumroad.com/l/structured-streaming-field-manual?utm_source=linkedin&utm_medium=post&utm_campaign=streaming-launch&utm_content=REPLACE-ME
+```
+
+**Structured Streaming ($9.99) — from a comment**
+```
+https://hakkache.gumroad.com/l/structured-streaming-field-manual?utm_source=linkedin&utm_medium=comment&utm_campaign=streaming-launch&utm_content=REPLACE-ME
+```
+
 **Mailing list**
 ```
 https://hakkache.gumroad.com/subscribe?utm_source=linkedin&utm_medium=post&utm_campaign=notify-list&utm_content=REPLACE-ME
@@ -113,6 +123,11 @@ https://hakkache.github.io/field-manuals-site/manuals/auto-loader/?utm_source=li
 **Lakeflow Connect page — a post about gateways or CDC**
 ```
 https://hakkache.github.io/field-manuals-site/manuals/lakeflow-connect/?utm_source=linkedin&utm_medium=post&utm_campaign=lakeflow-launch&utm_content=REPLACE-ME
+```
+
+**Structured Streaming page — a post about checkpoints, watermarks or state**
+```
+https://hakkache.github.io/field-manuals-site/manuals/structured-streaming/?utm_source=linkedin&utm_medium=post&utm_campaign=streaming-launch&utm_content=REPLACE-ME
 ```
 
 **Catalogue — a post about the roadmap or "what should I write next"**

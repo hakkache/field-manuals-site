@@ -122,8 +122,13 @@
       "id": 3,
       "cat": "ingestion",
       "name": "Structured Streaming",
-      "status": "created",
+      "status": "sale",
       "pages": 43,
+      "price": "$9.99",
+      "priceValue": "9.99",
+      "url": "https://hakkache.gumroad.com/l/structured-streaming-field-manual",
+      "page": "manuals/structured-streaming/",
+      "idea": "A streaming query is a contract with its checkpoint.",
       "blurb": "Micro-batches, triggers, checkpoints and state — the guarantees you actually get, and the failures that only appear after a restart."
     },
     {
@@ -512,7 +517,6 @@
     }
   ],
   "nextReleases": [
-    3,
     5,
     11,
     15
@@ -701,6 +705,98 @@
         "manual": "lakeflow-connect",
         "manualName": "Lakeflow Connect"
       }
+    ],
+    "structured-streaming": [
+      {
+        "id": "ss-01",
+        "n": "01",
+        "family": "Restart",
+        "query": "streaming query will not restart after code change state schema",
+        "symptom": "A deploy that passed review fails on restart with a state schema or compatibility error. The code change looked harmless.",
+        "cause": "You changed something the checkpoint locks. Any addition, deletion or schema modification to a stateful operation is not allowed between restarts — grouping keys, aggregate types, join columns, join type, timeout type.",
+        "fix": "There is no in-place repair. Either revert the change and ship it differently with a side-by-side deploy, or start with a new checkpoint and accept that state is rebuilt and the source reprocessed. Prevention: if you expect the state schema to evolve, encode state as bytes with a schema-migration-capable format such as Avro, so the binary state restores cleanly across schema changes.",
+        "check": "Treat grouping keys, aggregate types, join columns, join type and timeout type as part of the query's identity. If your diff touches any of them on a stateful operator, the old checkpoint will not load — plan a new checkpoint before you deploy, not after.",
+        "slug": "structured-streaming-query-will-not-restart-after-code-change",
+        "title": "Structured Streaming Query Will Not Restart After a Code Change",
+        "h1": "The query will not restart after a code change",
+        "manual": "structured-streaming",
+        "manualName": "Structured Streaming"
+      },
+      {
+        "id": "ss-05",
+        "n": "05",
+        "family": "State",
+        "query": "streaming state grows until query dies out of memory watermark",
+        "symptom": "A stateful query runs fine for weeks, then slows steadily and eventually fails with memory errors. Restarting helps briefly.",
+        "cause": "No watermark. Without one, state for every key is retained indefinitely — the engine has no basis for deciding a key is finished. This is the most common stateful streaming outage there is.",
+        "fix": "Add a watermark with withWatermark(\"event_time\", \"10 minutes\") before the stateful operation. Caveat: adding a watermark to an existing query changes the stateful operation, which the checkpoint locks — so in practice this means a new checkpoint. Note that complete output mode never drops state, so on complete mode with a growing key space the mode itself is the problem.",
+        "check": "Alert on state size per operator, not just on throughput. A stateful operator with no watermark grows without bound for weeks before it dies, and state size is where it shows up first — long before the memory error.",
+        "slug": "structured-streaming-state-grows-until-query-dies",
+        "title": "Structured Streaming State Grows Until the Query Dies — Watermark Fix",
+        "h1": "State grows until the query dies",
+        "manual": "structured-streaming",
+        "manualName": "Structured Streaming"
+      },
+      {
+        "id": "ss-10",
+        "n": "10",
+        "family": "Semantics",
+        "query": "stream stream left outer join never emits null rows watermark",
+        "symptom": "A stream-stream left outer join produces matched rows but never the expected null-padded unmatched ones — or produces nothing at all.",
+        "cause": "Watermarking is mandatory for outer joins. It is what tells the engine when an unmatched key must finally be written with a null. Without it — or without an appropriate range condition — the engine can never decide a row has waited long enough.",
+        "fix": "Set a watermark on both sides and add a time-range condition to the join so 'final' is well defined. Expect the delay: because joins only append, unmatched data is not recorded until after the lateness threshold has passed. Remember that stream-stream joins support append mode only.",
+        "check": "An outer join is inherently later than the matched path — that is by design, not a bug. If unmatched rows are missing entirely, check that both sides carry a watermark and that the join has a time-range condition; without both, the engine never emits the null-padded side.",
+        "slug": "structured-streaming-outer-join-never-emits",
+        "title": "Stream-Stream Outer Join Never Emits in Structured Streaming",
+        "h1": "The outer join never emits anything",
+        "manual": "structured-streaming",
+        "manualName": "Structured Streaming"
+      },
+      {
+        "id": "ss-11",
+        "n": "11",
+        "family": "Semantics",
+        "query": "late arriving records silently dropped watermark too short",
+        "symptom": "Counts do not reconcile against a batch recomputation. Some late-arriving events are simply not represented.",
+        "cause": "The watermark threshold is shorter than the actual lateness of your data. Records arriving outside the threshold might still be processed, but this is not guaranteed.",
+        "fix": "Measure real lateness before choosing a threshold — the distribution of (processing time − event time) at the 99th percentile, not the median. Lengthen the watermark, accepting more state and higher latency. Where completeness matters more than latency, run a periodic batch reconciliation against the raw source and treat the stream as the fast path rather than the authority.",
+        "check": "Do not treat the watermark threshold as a limit on what might be handled — treat it as a promise about what will definitely be handled. If counts drift from a batch recompute, compare the threshold against the 99th-percentile lateness of your actual data.",
+        "slug": "structured-streaming-late-records-silently-disappeared",
+        "title": "Late Records Silently Disappeared in Structured Streaming",
+        "h1": "Late records silently disappeared",
+        "manual": "structured-streaming",
+        "manualName": "Structured Streaming"
+      },
+      {
+        "id": "ss-13",
+        "n": "13",
+        "family": "Semantics",
+        "query": "foreachBatch duplicate rows same batch twice after restart",
+        "symptom": "Duplicate rows, duplicate API calls, or duplicate notifications after a failure and restart.",
+        "cause": "foreachBatch gives at-least-once semantics for your function. The same batch_id can be re-executed if the query fails between executing your code and committing the batch.",
+        "fix": "Make the function idempotent — a MERGE on a key is naturally so; a blind INSERT is not. Use batch_id for external side effects: record which batch IDs have been applied and skip on re-execution. Prefer toTable() where you can, since Delta sinks get exactly-once through the checkpoint without any of this.",
+        "check": "If you see duplicates after a restart, look for a non-idempotent sink inside foreachBatch — a plain INSERT, an API call, or a notification. Any side effect that is not keyed on batch_id will fire twice when a batch is re-executed.",
+        "slug": "structured-streaming-foreachbatch-ran-batch-twice",
+        "title": "foreachBatch Ran the Same Batch Twice — Duplicates After Restart",
+        "h1": "foreachBatch ran the same batch twice",
+        "manual": "structured-streaming",
+        "manualName": "Structured Streaming"
+      },
+      {
+        "id": "ss-15",
+        "n": "15",
+        "family": "Operations",
+        "query": "first micro batch never finishes kafka memory maxOffsetsPerTrigger",
+        "symptom": "A new query against an existing Kafka topic or large Delta table runs for hours, fails on memory, restarts, and repeats.",
+        "cause": "No rate limit. The first micro-batch attempts to consume everything the source retains — which for a Kafka topic with long retention can be months of events.",
+        "fix": "Set a rate limit: maxOffsetsPerTrigger for Kafka, maxFilesPerTrigger or maxBytesPerTrigger for Delta and Auto Loader. Rate limits are safe to add, change and remove across restarts. Combined with Trigger.AvailableNow, which processes a backlog across multiple rate-limited micro-batches, this is how you get through a large initial load without a single impossible batch.",
+        "check": "If the first batch runs for hours against a source with a long history, there is no rate limit. Add maxOffsetsPerTrigger (Kafka) or maxFilesPerTrigger (Delta/Auto Loader) and the backlog drains across many bounded micro-batches instead of one unbounded one.",
+        "slug": "structured-streaming-first-batch-never-finished",
+        "title": "Structured Streaming First Batch Never Finishes — Rate Limit Fix",
+        "h1": "The first batch never finished",
+        "manual": "structured-streaming",
+        "manualName": "Structured Streaming"
+      }
     ]
   },
   "tocs": {
@@ -814,6 +910,62 @@
         "t": "Limits, checklist and cheat sheet",
         "p": "38",
         "d": "Every documented limit, a pre-production checklist, and the full-refresh triggers worth memorising."
+      }
+    ],
+    "structured-streaming": [
+      {
+        "n": "01",
+        "t": "Structured Streaming, explained simply",
+        "p": "03",
+        "d": "The micro-batch model, and the one sentence that explains every restart failure in this guide."
+      },
+      {
+        "n": "02",
+        "t": "The checkpoint contract",
+        "p": "06",
+        "d": "What is inside a checkpoint, what it silently locks, and exactly which code changes survive a restart."
+      },
+      {
+        "n": "03",
+        "t": "Streaming sources",
+        "p": "10",
+        "d": "Kafka, Kinesis, Event Hubs, Pub/Sub, Delta tables and Auto Loader — and how each handles offsets."
+      },
+      {
+        "n": "04",
+        "t": "Triggers and batch size",
+        "p": "14",
+        "d": "How much to process per micro-batch, and why the default trigger fails on serverless."
+      },
+      {
+        "n": "05",
+        "t": "Watermarks and event time",
+        "p": "17",
+        "d": "The tuning dial between latency and tolerance for late data — and what happens with no watermark at all."
+      },
+      {
+        "n": "06",
+        "t": "Stateful operations and the state store",
+        "p": "20",
+        "d": "Aggregations, deduplication, stream-stream joins, RocksDB and changelog checkpointing."
+      },
+      {
+        "n": "07",
+        "t": "Sixteen failures and their fixes",
+        "p": "24",
+        "d": "Symptom, cause, fix — queries that will not restart, state that grows forever, joins that never emit."
+      },
+      {
+        "n": "08",
+        "t": "Production patterns",
+        "p": "34",
+        "d": "Deploying changes safely, sizing state, joining streams, and knowing when to use a pipeline instead."
+      },
+      {
+        "n": "09",
+        "t": "Limits, checklist and cheat sheet",
+        "p": "40",
+        "d": "Allowed and forbidden changes in one table, a pre-production checklist, and the configs that matter."
       }
     ]
   }

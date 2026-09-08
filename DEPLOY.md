@@ -103,8 +103,8 @@ Work through these in order. The first three take a minute.
 
 - [ ] Open the site. The hero loads and the catalogue shows all 51 topics.
 - [ ] Hover the **Lakeflow Connect — $7.99** button. The cover swaps and the badge turns amber.
-- [ ] Click both buy buttons. Each opens the right Gumroad product.
-- [ ] Open `/library/`, `/manuals/auto-loader/`, `/manuals/lakeflow-connect/`, `/legal/`.
+- [ ] Click all three buy buttons. Each opens the right Gumroad product.
+- [ ] Open `/library/`, `/manuals/auto-loader/`, `/manuals/lakeflow-connect/`, `/manuals/structured-streaming/`, `/legal/`.
 - [ ] Visit a URL that doesn't exist — you should get the styled 404, not GitHub's.
 - [ ] Submit the notify form once yourself.
 - [ ] Check Cloudflare Web Analytics shows your own visit after a few minutes.

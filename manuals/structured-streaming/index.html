@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>Databricks Structured Streaming Field Manual — 43-Page Practical Guide</title>
+<meta name="description" content="A 43-page Databricks Structured Streaming field manual: micro-batches, the checkpoint contract, watermarks, state stores and 16 documented failure modes with symptom, cause and fix.">
+<link rel="canonical" href="https://hakkache.github.io/field-manuals-site/manuals/structured-streaming/">
+
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Databricks Field Manuals">
+<meta property="og:url" content="https://hakkache.github.io/field-manuals-site/manuals/structured-streaming/">
+<meta property="og:title" content="Databricks Structured Streaming Field Manual — 43 pages">
+<meta property="og:description" content="Checkpoints, watermarks and state — and the sixteen ways a streaming query breaks after a restart.">
+<meta property="og:image" content="https://hakkache.github.io/field-manuals-site/assets/img/og-cover.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Databricks Structured Streaming Field Manual — 43 pages">
+<meta name="twitter:description" content="Checkpoints, watermarks and state, and the sixteen ways a streaming query breaks after a restart.">
+<meta name="twitter:image" content="https://hakkache.github.io/field-manuals-site/assets/img/og-cover.png">
+
+<meta name="theme-color" content="#0A0D10">
+<link rel="icon" href="../../assets/img/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="../../assets/img/apple-touch-icon.png">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=IBM+Plex+Sans:wght@400;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/css/style.css">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Book",
+      "name": "Structured Streaming Field Manual",
+      "url": "https://hakkache.github.io/field-manuals-site/manuals/structured-streaming/",
+      "image": "https://hakkache.github.io/field-manuals-site/assets/img/og-cover.png",
+      "bookFormat": "https://schema.org/EBook",
+      "numberOfPages": 43,
+      "inLanguage": "en",
+      "author": { "@type": "Person", "name": "Mohamed Hakkache" },
+      "isPartOf": { "@type": "BookSeries", "name": "Databricks Guide Series" },
+      "description": "A 43-page practical field manual on Databricks Structured Streaming: the checkpoint contract, watermarks and event time, stateful operations and the state store, 16 failure modes with symptom, cause and fix, production patterns, limits, a checklist and a cheat sheet.",
+      "offers": {
+        "@type": "Offer",
+        "price": "9.99",
+        "priceCurrency": "USD",
+        "availability": "https://schema.org/InStock",
+        "url": "https://hakkache.gumroad.com/l/structured-streaming-field-manual"
+      }
+    },
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Field Manuals", "item": "https://hakkache.github.io/field-manuals-site/" },
+        { "@type": "ListItem", "position": 2, "name": "Catalogue", "item": "https://hakkache.github.io/field-manuals-site/library/" },
+        { "@type": "ListItem", "position": 3, "name": "Structured Streaming", "item": "https://hakkache.github.io/field-manuals-site/manuals/structured-streaming/" }
+      ]
+    }
+  ]
+}
+</script>
+</head>
+
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="nav" id="nav">
+  <div class="wrap nav-in">
+    <a class="brand" href="../../">
+      <span class="brand-mark" aria-hidden="true"></span>
+      <span class="brand-txt">
+        <span class="brand-a">Databricks Guide Series</span>
+        <span class="brand-b">Field Manuals</span>
+      </span>
+    </a>
+    <nav class="nav-links" id="nav-links" aria-label="Main">
+      <a href="../../">Home</a>
+      <a href="../../library/">Catalogue</a>
+      <a href="#modes">Failure modes</a>
+      <a href="#contents">Contents</a>
+      <a href="../../#faq">FAQ</a>
+    </nav>
+    <a class="btn btn-sm btn-primary nav-cta" data-buy="structured-streaming" href="https://hakkache.gumroad.com/l/structured-streaming-field-manual">Buy — $9.99</a>
+    <button class="nav-toggle" type="button" aria-label="Open menu" aria-controls="nav-links" aria-expanded="false">
+      <span></span><span></span>
+    </button>
+  </div>
+</header>
+
+<main id="main">
+
+<section class="page-head">
+  <div class="grid-bg grid-fade" aria-hidden="true"></div>
+  <div class="wrap">
+    <p class="crumb"><a href="../../">Field Manuals</a><span>/</span><a href="../../library/">Catalogue</a><span>/</span>Structured Streaming</p>
+    <p class="eyebrow"><span>1 — Ingestion · On sale · $9.99</span></p>
+    <h1 class="sec-title">Databricks Structured Streaming<br>Field Manual<span class="dot">.</span></h1>
+    <p class="sec-lead">
+      Forty-three pages on the engine underneath every pipeline: sources, checkpoints, watermarks
+      and state — and the restart rules that decide whether your query survives a deploy.
+    </p>
+    <div class="hero-cta">
+      <a class="btn btn-primary" data-buy="structured-streaming" href="https://hakkache.gumroad.com/l/structured-streaming-field-manual">
+        Buy the manual — $9.99
+        <span class="btn-meta">43 pages · PDF · one-time</span>
+      </a>
+      <a class="btn btn-ghost" href="#modes">
+        Read six failure modes first
+        <span class="btn-meta">free · on this page</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<section class="sec">
+  <div class="wrap">
+    <div class="prose">
+      <h2 id="idea">The organising idea</h2>
+      <p><b>A streaming query is a contract with its checkpoint.</b></p>
+      <p>
+        The moment you start a query, the checkpoint fixes far more than most people realise —
+        source identity by position in the plan, state schema, shuffle partition count, and the
+        state store provider. Editing your code can break that contract, and the error arrives on
+        restart rather than at deploy.
+      </p>
+      <p>
+        Almost every outage in this guide traces back to that single fact. Understand what the
+        checkpoint locks and the sixteen failure modes stop being surprises — they become the
+        predictable consequence of a contract you can read.
+      </p>
+
+      <h2>What the manual covers</h2>
+      <ul>
+        <li>The micro-batch model, and the stateless-versus-stateful distinction that decides how hard your query is to operate.</li>
+        <li>The checkpoint contract: what is inside a checkpoint, what it silently locks, and exactly which code changes survive a restart.</li>
+        <li>Streaming sources — Kafka, Kinesis, Event Hubs, Pub/Sub, Delta tables and Auto Loader — and how each handles offsets.</li>
+        <li>Triggers and batch size, including why the default trigger fails on serverless.</li>
+        <li>Watermarks and event time — the tuning dial between latency and tolerance for late data.</li>
+        <li>Stateful operations and the state store: aggregations, deduplication, stream-stream joins, RocksDB and changelog checkpointing.</li>
+        <li>Sixteen documented failure modes with symptom, cause and fix, plus production patterns, every documented limit, a checklist and a cheat sheet.</li>
+      </ul>
+
+      <h2>Who it's for</h2>
+      <p>
+        Data and platform engineers running streaming workloads, or debugging one that will not
+        restart, grows state forever, or stops emitting rows. It assumes you can read a PySpark
+        query; it does not assume you have operated Structured Streaming in production.
+      </p>
+
+
+      <div class="xsell" style="border-color:rgba(62,207,178,.3);background:rgba(62,207,178,.05)">
+        <span class="xsell-tag" style="color:var(--teal)">Try before you buy</span>
+        <div>
+          <h3>The Auto Loader Field Manual is free</h3>
+          <p>
+            Forty-seven pages, same nine-part structure, sixteen failure modes. If you want to
+            judge the writing before spending anything, read that one first — it's the whole
+            manual, not a sample.
+          </p>
+        </div>
+        <div style="text-align:right">
+          <p class="xsell-price" style="color:var(--teal)">Free</p>
+          <a class="btn btn-ghost btn-sm" data-buy="auto-loader" href="https://hakkache.gumroad.com/l/auto-loader-field-manual" style="margin-top:12px">Download</a>
+        </div>
+      </div>
+
+      <div class="launch" style="margin-top:36px">
+        <p class="launch-tag">Same spine as every manual</p>
+        <p>
+          Organising idea, architecture, sixteen failure modes, production patterns, limits and
+          trade-offs, a pre-production checklist and a one-page cheat sheet. If you have read the
+          free Auto Loader manual, you already know where everything is.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="sec sec-alt" id="modes">
+  <div class="wrap">
+    <header class="sec-head">
+      <p class="eyebrow"><span>Part 06 · sample</span></p>
+      <h2 class="sec-title">Six of the sixteen<br>failure modes<span class="dot">.</span></h2>
+      <p class="sec-lead">
+        Reproduced from the manual, in the same structure as the printed page. If these are
+        useful, the other ten are in the PDF.
+      </p>
+    </header>
+
+    <div class="fm-list">
+<!--BUILD:fmprose-->
+      <article class="fm-card" data-fm-card="ss-01" id="panel-ss-01" role="tabpanel" aria-labelledby="tab-ss-01" tabindex="0">
+        <div class="fm-head">
+          <span class="fm-fam">Failure family · Restart</span>
+          <span class="fm-folio">Failure 01 of 16</span>
+        </div>
+        <div class="fm-rows">
+          <div class="fm-row fm-row-symptom">
+            <div class="fm-k">Symptom</div>
+            <div class="fm-v">A deploy that passed review fails on restart with a state schema or compatibility error. The code change looked harmless.</div>
+          </div>
+          <div class="fm-row fm-row-cause">
+            <div class="fm-k">Cause</div>
+            <div class="fm-v">You changed something the checkpoint locks. Any addition, deletion or schema modification to a stateful operation is not allowed between restarts — grouping keys, aggregate types, join columns, join type, timeout type.</div>
+          </div>
+          <div class="fm-row fm-row-fix">
+            <div class="fm-k">Fix</div>
+            <div class="fm-v">There is no in-place repair. Either revert the change and ship it differently with a side-by-side deploy, or start with a new checkpoint and accept that state is rebuilt and the source reprocessed. Prevention: if you expect the state schema to evolve, encode state as bytes with a schema-migration-capable format such as Avro, so the binary state restores cleanly across schema changes.</div>
+          </div>
+        </div>
+        <p class="fm-foot"><b>Check first —</b> Treat grouping keys, aggregate types, join columns, join type and timeout type as part of the query&#x27;s identity. If your diff touches any of them on a stateful operator, the old checkpoint will not load — plan a new checkpoint before you deploy, not after.</p>
+      </article>
+      <article class="fm-card" data-fm-card="ss-05" id="panel-ss-05" role="tabpanel" aria-labelledby="tab-ss-05" tabindex="0">
+        <div class="fm-head">
+          <span class="fm-fam">Failure family · State</span>
+          <span class="fm-folio">Failure 05 of 16</span>
+        </div>
+        <div class="fm-rows">
+          <div class="fm-row fm-row-symptom">
+            <div class="fm-k">Symptom</div>
+            <div class="fm-v">A stateful query runs fine for weeks, then slows steadily and eventually fails with memory errors. Restarting helps briefly.</div>
+          </div>
+          <div class="fm-row fm-row-cause">
+            <div class="fm-k">Cause</div>
+            <div class="fm-v">No watermark. Without one, state for every key is retained indefinitely — the engine has no basis for deciding a key is finished. This is the most common stateful streaming outage there is.</div>
+          </div>
+          <div class="fm-row fm-row-fix">
+            <div class="fm-k">Fix</div>
+            <div class="fm-v">Add a watermark with withWatermark(&quot;event_time&quot;, &quot;10 minutes&quot;) before the stateful operation. Caveat: adding a watermark to an existing query changes the stateful operation, which the checkpoint locks — so in practice this means a new checkpoint. Note that complete output mode never drops state, so on complete mode with a growing key space the mode itself is the problem.</div>
+          </div>
+        </div>
+        <p class="fm-foot"><b>Check first —</b> Alert on state size per operator, not just on throughput. A stateful operator with no watermark grows without bound for weeks before it dies, and state size is where it shows up first — long before the memory error.</p>
+      </article>
+      <article class="fm-card" data-fm-card="ss-10" id="panel-ss-10" role="tabpanel" aria-labelledby="tab-ss-10" tabindex="0">
+        <div class="fm-head">
+          <span class="fm-fam">Failure family · Semantics</span>
+          <span class="fm-folio">Failure 10 of 16</span>
+        </div>
+        <div class="fm-rows">
+          <div class="fm-row fm-row-symptom">
+            <div class="fm-k">Symptom</div>
+            <div class="fm-v">A stream-stream left outer join produces matched rows but never the expected null-padded unmatched ones — or produces nothing at all.</div>
+          </div>
+          <div class="fm-row fm-row-cause">
+            <div class="fm-k">Cause</div>
+            <div class="fm-v">Watermarking is mandatory for outer joins. It is what tells the engine when an unmatched key must finally be written with a null. Without it — or without an appropriate range condition — the engine can never decide a row has waited long enough.</div>
+          </div>
+          <div class="fm-row fm-row-fix">
+            <div class="fm-k">Fix</div>
+            <div class="fm-v">Set a watermark on both sides and add a time-range condition to the join so &#x27;final&#x27; is well defined. Expect the delay: because joins only append, unmatched data is not recorded until after the lateness threshold has passed. Remember that stream-stream joins support append mode only.</div>
+          </div>
+        </div>
+        <p class="fm-foot"><b>Check first —</b> An outer join is inherently later than the matched path — that is by design, not a bug. If unmatched rows are missing entirely, check that both sides carry a watermark and that the join has a time-range condition; without both, the engine never emits the null-padded side.</p>
+      </article>
+      <article class="fm-card" data-fm-card="ss-11" id="panel-ss-11" role="tabpanel" aria-labelledby="tab-ss-11" tabindex="0">
+        <div class="fm-head">
+          <span class="fm-fam">Failure family · Semantics</span>
+          <span class="fm-folio">Failure 11 of 16</span>
+        </div>
+        <div class="fm-rows">
+          <div class="fm-row fm-row-symptom">
+            <div class="fm-k">Symptom</div>
+            <div class="fm-v">Counts do not reconcile against a batch recomputation. Some late-arriving events are simply not represented.</div>
+          </div>
+          <div class="fm-row fm-row-cause">
+            <div class="fm-k">Cause</div>
+            <div class="fm-v">The watermark threshold is shorter than the actual lateness of your data. Records arriving outside the threshold might still be processed, but this is not guaranteed.</div>
+          </div>
+          <div class="fm-row fm-row-fix">
+            <div class="fm-k">Fix</div>
+            <div class="fm-v">Measure real lateness before choosing a threshold — the distribution of (processing time − event time) at the 99th percentile, not the median. Lengthen the watermark, accepting more state and higher latency. Where completeness matters more than latency, run a periodic batch reconciliation against the raw source and treat the stream as the fast path rather than the authority.</div>
+          </div>
+        </div>
+        <p class="fm-foot"><b>Check first —</b> Do not treat the watermark threshold as a limit on what might be handled — treat it as a promise about what will definitely be handled. If counts drift from a batch recompute, compare the threshold against the 99th-percentile lateness of your actual data.</p>
+      </article>
+      <article class="fm-card" data-fm-card="ss-13" id="panel-ss-13" role="tabpanel" aria-labelledby="tab-ss-13" tabindex="0">
+        <div class="fm-head">
+          <span class="fm-fam">Failure family · Semantics</span>
+          <span class="fm-folio">Failure 13 of 16</span>
+        </div>
+        <div class="fm-rows">
+          <div class="fm-row fm-row-symptom">
+            <div class="fm-k">Symptom</div>
+            <div class="fm-v">Duplicate rows, duplicate API calls, or duplicate notifications after a failure and restart.</div>
+          </div>
+          <div class="fm-row fm-row-cause">
+            <div class="fm-k">Cause</div>
+            <div class="fm-v">foreachBatch gives at-least-once semantics for your function. The same batch_id can be re-executed if the query fails between executing your code and committing the batch.</div>
+          </div>
+          <div class="fm-row fm-row-fix">
+            <div class="fm-k">Fix</div>
+            <div class="fm-v">Make the function idempotent — a MERGE on a key is naturally so; a blind INSERT is not. Use batch_id for external side effects: record which batch IDs have been applied and skip on re-execution. Prefer toTable() where you can, since Delta sinks get exactly-once through the checkpoint without any of this.</div>
+          </div>
+        </div>
+        <p class="fm-foot"><b>Check first —</b> If you see duplicates after a restart, look for a non-idempotent sink inside foreachBatch — a plain INSERT, an API call, or a notification. Any side effect that is not keyed on batch_id will fire twice when a batch is re-executed.</p>
+      </article>
+      <article class="fm-card" data-fm-card="ss-15" id="panel-ss-15" role="tabpanel" aria-labelledby="tab-ss-15" tabindex="0">
+        <div class="fm-head">
+          <span class="fm-fam">Failure family · Operations</span>
+          <span class="fm-folio">Failure 15 of 16</span>
+        </div>
+        <div class="fm-rows">
+          <div class="fm-row fm-row-symptom">
+            <div class="fm-k">Symptom</div>
+            <div class="fm-v">A new query against an existing Kafka topic or large Delta table runs for hours, fails on memory, restarts, and repeats.</div>
+          </div>
+          <div class="fm-row fm-row-cause">
+            <div class="fm-k">Cause</div>
+            <div class="fm-v">No rate limit. The first micro-batch attempts to consume everything the source retains — which for a Kafka topic with long retention can be months of events.</div>
+          </div>
+          <div class="fm-row fm-row-fix">
+            <div class="fm-k">Fix</div>
+            <div class="fm-v">Set a rate limit: maxOffsetsPerTrigger for Kafka, maxFilesPerTrigger or maxBytesPerTrigger for Delta and Auto Loader. Rate limits are safe to add, change and remove across restarts. Combined with Trigger.AvailableNow, which processes a backlog across multiple rate-limited micro-batches, this is how you get through a large initial load without a single impossible batch.</div>
+          </div>
+        </div>
+        <p class="fm-foot"><b>Check first —</b> If the first batch runs for hours against a source with a long history, there is no rate limit. Add maxOffsetsPerTrigger (Kafka) or maxFilesPerTrigger (Delta/Auto Loader) and the backlog drains across many bounded micro-batches instead of one unbounded one.</p>
+      </article>
+<!--/BUILD:fmprose-->
+    </div>
+
+    <div style="text-align:center;margin-top:40px">
+      <a class="btn btn-primary btn-lg" data-buy="structured-streaming" href="https://hakkache.gumroad.com/l/structured-streaming-field-manual">
+        Get the other ten
+        <span class="btn-meta">$9.99 · 43-page PDF</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="contents">
+  <div class="wrap wrap-narrow">
+    <header class="sec-head">
+      <p class="eyebrow"><span>Contents</span></p>
+      <h2 class="sec-title">All nine parts<span class="dot">.</span></h2>
+      <p class="sec-lead">Nine parts, forty-three pages, structured the same way as every other manual in the series.</p>
+    </header>
+    <ol class="toc">
+<!--BUILD:toc-->
+        <li>
+          <span class="toc-n">01</span>
+          <div>
+            <h3>Structured Streaming, explained simply</h3>
+            <p>The micro-batch model, and the one sentence that explains every restart failure in this guide.</p>
+          </div>
+          <span class="toc-p">p.03</span>
+        </li>
+        <li>
+          <span class="toc-n">02</span>
+          <div>
+            <h3>The checkpoint contract</h3>
+            <p>What is inside a checkpoint, what it silently locks, and exactly which code changes survive a restart.</p>
+          </div>
+          <span class="toc-p">p.06</span>
+        </li>
+        <li>
+          <span class="toc-n">03</span>
+          <div>
+            <h3>Streaming sources</h3>
+            <p>Kafka, Kinesis, Event Hubs, Pub/Sub, Delta tables and Auto Loader — and how each handles offsets.</p>
+          </div>
+          <span class="toc-p">p.10</span>
+        </li>
+        <li>
+          <span class="toc-n">04</span>
+          <div>
+            <h3>Triggers and batch size</h3>
+            <p>How much to process per micro-batch, and why the default trigger fails on serverless.</p>
+          </div>
+          <span class="toc-p">p.14</span>
+        </li>
+        <li>
+          <span class="toc-n">05</span>
+          <div>
+            <h3>Watermarks and event time</h3>
+            <p>The tuning dial between latency and tolerance for late data — and what happens with no watermark at all.</p>
+          </div>
+          <span class="toc-p">p.17</span>
+        </li>
+        <li>
+          <span class="toc-n">06</span>
+          <div>
+            <h3>Stateful operations and the state store</h3>
+            <p>Aggregations, deduplication, stream-stream joins, RocksDB and changelog checkpointing.</p>
+          </div>
+          <span class="toc-p">p.20</span>
+        </li>
+        <li>
+          <span class="toc-n">07</span>
+          <div>
+            <h3>Sixteen failures and their fixes</h3>
+            <p>Symptom, cause, fix — queries that will not restart, state that grows forever, joins that never emit.</p>
+          </div>
+          <span class="toc-p">p.24</span>
+        </li>
+        <li>
+          <span class="toc-n">08</span>
+          <div>
+            <h3>Production patterns</h3>
+            <p>Deploying changes safely, sizing state, joining streams, and knowing when to use a pipeline instead.</p>
+          </div>
+          <span class="toc-p">p.34</span>
+        </li>
+        <li>
+          <span class="toc-n">09</span>
+          <div>
+            <h3>Limits, checklist and cheat sheet</h3>
+            <p>Allowed and forbidden changes in one table, a pre-production checklist, and the configs that matter.</p>
+          </div>
+          <span class="toc-p">p.40</span>
+        </li>
+<!--/BUILD:toc-->
+    </ol>
+  </div>
+</section>
+
+
+<section class="sec">
+  <div class="wrap wrap-narrow">
+    <div class="signup">
+      <h2>Seventeen more manuals are written<span class="dot">.</span></h2>
+      <p>One short email per release — what it covers and what it costs. One click to stop.</p>
+      <form class="signup-form notify-form" method="POST" action="https://hakkache.gumroad.com/subscribe">
+        <label class="sr-only" for="notify-email">Email address</label>
+        <input id="notify-email" name="email" type="email" required autocomplete="email" placeholder="you@company.com">
+        <input class="hp" type="text" name="_gotcha" tabindex="-1" autocomplete="off" aria-hidden="true">
+        <button class="btn btn-primary" type="submit">Notify me</button>
+      </form>
+      <p class="signup-fine notify-msg" hidden></p>
+      <p class="signup-fine">No sharing, no selling. <a href="../../legal/">How your data is handled</a>.</p>
+    </div>
+  </div>
+</section>
+
+<section class="final">
+  <div class="grid-bg grid-fade" aria-hidden="true"></div>
+  <div class="wrap final-in">
+    <div class="final-lines">
+      <span>Forty-three pages.</span>
+      <span>$9.99.</span>
+    </div>
+    <p class="final-sub">
+      The checkpoint contract, watermarks and state, sixteen failure modes, production patterns, a checklist and a cheat sheet.
+    </p>
+    <a class="btn btn-primary btn-lg" data-buy="structured-streaming" href="https://hakkache.gumroad.com/l/structured-streaming-field-manual">
+      Buy the manual
+      <span class="btn-meta">$9.99 · PDF · via Gumroad</span>
+    </a>
+  </div>
+</section>
+
+</main>
+
+<footer class="foot">
+  <div class="wrap foot-legal">
+    <p class="disc">Independent educational publication. Not affiliated with or endorsed by Databricks.</p>
+    <p>Databricks is a trademark of Databricks, Inc. Runtime behaviour changes — verify against your own workspace.</p>
+    <p>&copy; <span id="year">2026</span> Mohamed Hakkache &middot; <a href="../../" style="color:var(--fg-2)">Field Manuals</a> &middot; <a href="../../legal/" style="color:var(--fg-2)">Privacy &amp; terms</a></p>
+  </div>
+</footer>
+
+<script src="../../assets/js/app.js" defer></script>
+<!-- Cloudflare Web Analytics -->
+<script type='module' src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "b52138e1d6cd45bcb4fa471087975469"}'></script>
+<!-- End Cloudflare Web Analytics -->
+</body>
+</html>

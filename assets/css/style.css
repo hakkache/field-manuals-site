@@ -537,6 +537,7 @@ b,strong{ font-weight:600; color:var(--fg); }
 .xsell h3{ font-size:20px; margin-top:8px; }
 .xsell p{ margin-top:8px; color:var(--fg-2); font-size:15px; max-width:60ch; }
 .xsell-price{ font:700 26px/1 var(--display); color:var(--fg); white-space:nowrap; }
+.xsell .btn{ width:auto; }                   /* override global mobile .btn{width:100%} so it stays aligned under the price */
 @media (max-width:860px){
   .xsell{ grid-template-columns:1fr; gap:16px; }
 }
@@ -686,7 +687,7 @@ b,strong{ font-weight:600; color:var(--fg); }
 .prose ul li::before{ content:""; position:absolute; left:0; top:12px; width:10px; height:1px; background:var(--teal); }
 .prose code{ font:400 .88em/1.4 var(--mono); background:var(--bg-700); border:1px solid var(--line);
              padding:2px 6px; border-radius:4px; color:var(--cyan); }
-.prose a{ color:var(--teal); text-decoration:underline; text-underline-offset:3px; }
+.prose a:not(.btn){ color:var(--teal); text-decoration:underline; text-underline-offset:3px; }
 
 .fm-list{ display:flex; flex-direction:column; gap:20px; }
 

@@ -313,6 +313,7 @@ def build_sitemap(cat, extra=()):
         ("/", "1.0", "weekly"),
         ("/manuals/auto-loader/", "0.9", "monthly"),
         ("/manuals/lakeflow-connect/", "0.9", "monthly"),
+        ("/manuals/structured-streaming/", "0.9", "monthly"),
         ("/library/", "0.8", "weekly"),
         ("/failures/", "0.8", "weekly"),
         ("/legal/", "0.3", "yearly"),
@@ -363,6 +364,10 @@ def main():
         "manuals/lakeflow-connect/index.html": [
             ("toc", render_toc(cat, "lakeflow-connect")),
             ("fmprose", render_fm_prose(cat, "lakeflow-connect", "Lakeflow Connect")),
+        ],
+        "manuals/structured-streaming/index.html": [
+            ("toc", render_toc(cat, "structured-streaming")),
+            ("fmprose", render_fm_prose(cat, "structured-streaming", "Structured Streaming")),
         ],
     }
 

@@ -83,6 +83,7 @@ def nav(depth=2):
       <a href="{up}library/">Catalogue</a>
       <a href="{up}manuals/auto-loader/">Auto Loader</a>
       <a href="{up}manuals/lakeflow-connect/">Lakeflow Connect</a>
+      <a href="{up}manuals/structured-streaming/">Structured Streaming</a>
     </nav>
     <a class="btn btn-sm btn-primary nav-cta" data-buy="auto-loader" href="https://hakkache.gumroad.com/l/auto-loader-field-manual">Free manual</a>
     <button class="nav-toggle" type="button" aria-label="Open menu" aria-controls="nav-links" aria-expanded="false">
